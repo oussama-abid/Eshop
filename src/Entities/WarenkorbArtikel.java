@@ -12,6 +12,7 @@ public class WarenkorbArtikel
     }
 
 
+
     public Artikel getArtikel() {
         return Artikel;
     }

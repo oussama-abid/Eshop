@@ -13,6 +13,7 @@ public class Rechnung
 
 
 
+
     public Rechnung(Date date, List<WarenkorbArtikel> gekaufteArtikel, double gesamtpreis, Kunde kunde) {
         super();
         this.date = date;

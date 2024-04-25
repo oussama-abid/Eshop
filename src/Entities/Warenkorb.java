@@ -13,6 +13,7 @@ public class Warenkorb
         this.items = items;
     }
 
+
     public List<WarenkorbArtikel> getItems() {
         return items;
     }
