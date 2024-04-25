@@ -3,12 +3,14 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import Entities.Kunde;
 import Entities.Mitarbeiter;
 import Entities.User;
 
 
-public class PersonenVerwaltung {
+public class PersonenVerwaltung
+{
 
     private List<Mitarbeiter> Mitarbeiter = new ArrayList<>();
     private List<Kunde> Kunde = new ArrayList<>();

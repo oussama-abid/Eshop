@@ -1,10 +1,12 @@
 package Entities;
 
-public class Artikel {
+public class Artikel
+{
     private int Artikelnummer;
     private String Bezeichnung;
     private String Bestand;
     private float Preis;
+
 
 
     public Artikel(int artikelnummer, String bezeichnung, String bestand, float preis) {

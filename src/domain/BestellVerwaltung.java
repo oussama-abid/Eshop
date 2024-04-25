@@ -1,4 +1,6 @@
 package domain;
 
-public class BestellVerwaltung {
+public class BestellVerwaltung
+{
 }
+

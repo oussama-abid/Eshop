@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Rechnung {
+public class Rechnung
+{
     private Date date;
     private List<WarenkorbArtikel> gekaufteArtikel = new ArrayList<>();
     private double gesamtpreis;

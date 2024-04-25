@@ -1,5 +1,4 @@
-import Entities.Artikel;
-import Entities.Mitarbeiter;
+package Entities;
 
 import java.util.Date;
 
@@ -8,6 +7,7 @@ public class Events {
     private Artikel artikel;
     private int anzahl;
     private Entities.Mitarbeiter Mitarbeiter;
+
 
 
 

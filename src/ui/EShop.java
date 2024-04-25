@@ -1,9 +1,12 @@
+package ui;
+
 import Entities.User;
 import domain.PersonenVerwaltung;
 
 public class EShop {
 
     private PersonenVerwaltung BenutzerManagement;
+
 
     public EShop() {
         this.BenutzerManagement = new PersonenVerwaltung();

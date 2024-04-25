@@ -1,4 +1,5 @@
 package domain;
 
-public class WarenkorbVerwaltung {
+public class WarenkorbVerwaltung
+{
 }

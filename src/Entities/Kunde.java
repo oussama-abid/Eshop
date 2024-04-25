@@ -1,8 +1,10 @@
 package Entities;
 
-public class Kunde extends User {
+public class Kunde extends User
+{
 
     private String Adresse;
+
 
 
 

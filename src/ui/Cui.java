@@ -1,15 +1,20 @@
+package ui;
+
 import Entities.Artikel;
 import Entities.Kunde;
 import Entities.User;
 import domain.PersonenVerwaltung;
+import domain.Eshopproducts;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class Cui {
     private Scanner scanner;
-    private PersonenVerwaltung userManagement;   // TODO: löschen (-> EShop)
+    private PersonenVerwaltung userManagement;   // TODO: löschen (-> ui.EShop)
     private EShop shop;
     private Eshopproducts Produkte;
     private boolean isFirstTime = true;

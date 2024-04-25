@@ -1,6 +1,7 @@
 package Entities;
 
-public class WarenkorbArtikel {
+public class WarenkorbArtikel
+{
     private Artikel Artikel;
     private int Anzahl;
 
