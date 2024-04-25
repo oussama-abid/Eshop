@@ -1,3 +1,4 @@
+package Entities;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -5,13 +6,13 @@ import java.util.List;
 
 public class Rechnung {
     private Date date;
-    private List<WarenkorbArticle> gekaufteArtikel = new ArrayList<>();
+    private List<WarenkorbArtikel> gekaufteArtikel = new ArrayList<>();
     private double gesamtpreis;
     private Kunde kunde;
 
 
 
-    public Rechnung(Date date, List<WarenkorbArticle> gekaufteArtikel, double gesamtpreis, Kunde kunde) {
+    public Rechnung(Date date, List<WarenkorbArtikel> gekaufteArtikel, double gesamtpreis, Kunde kunde) {
         super();
         this.date = date;
         this.gekaufteArtikel = gekaufteArtikel;
@@ -24,10 +25,10 @@ public class Rechnung {
     public void setDate(Date date) {
         this.date = date;
     }
-    public List<WarenkorbArticle> getGekaufteArtikel() {
+    public List<WarenkorbArtikel> getGekaufteArtikel() {
         return gekaufteArtikel;
     }
-    public void setGekaufteArtikel(List<WarenkorbArticle> gekaufteArtikel) {
+    public void setGekaufteArtikel(List<WarenkorbArtikel> gekaufteArtikel) {
         this.gekaufteArtikel = gekaufteArtikel;
     }
     public double getGesamtpreis() {

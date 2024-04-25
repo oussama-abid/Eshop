@@ -1,13 +1,16 @@
+import Entities.User;
+import domain.PersonenVerwaltung;
+
 public class EShop {
 
-    private Usermanagment userManagement;
+    private PersonenVerwaltung BenutzerManagement;
 
     public EShop() {
-        this.userManagement = new Usermanagment();
+        this.BenutzerManagement = new PersonenVerwaltung();
     }
 
     public User login(String benutzerkennung, String passwort) {
-        return userManagement.login(benutzerkennung, passwort);
+        return BenutzerManagement.login(benutzerkennung, passwort);
     }
 
     // public Article addArticle() {

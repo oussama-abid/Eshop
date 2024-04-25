@@ -1,23 +1,19 @@
+package Entities;
 
-public class Article {
+public class Artikel {
     private int Artikelnummer;
     private String Bezeichnung;
     private String Bestand;
-    private float price;
+    private float Preis;
 
 
-    public Article(int artikelnummer, String bezeichnung, String bestand, float price) {
+    public Artikel(int artikelnummer, String bezeichnung, String bestand, float preis) {
         super();
         Artikelnummer = artikelnummer;
         Bezeichnung = bezeichnung;
         Bestand = bestand;
-        this.price = price;
+        this.Preis = preis;
     }
-
-
-
-
-
 
     public int getArtikelnummer() {
         return Artikelnummer;
@@ -37,12 +33,8 @@ public class Article {
     public void setBestand(String bestand) {
         Bestand = bestand;
     }
-    public float getPrice() {
-        return price;
-    }
-    public void setPrice(float price) {
-        this.price = price;
-    }
+    public float getPreis() { return Preis;}
+    public void setPreis(float preis) { this.Preis = preis;}
 
 
 

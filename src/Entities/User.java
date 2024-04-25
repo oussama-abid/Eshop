@@ -1,4 +1,4 @@
-
+package Entities;
 
 public class User {
     private int usernummer;
@@ -10,7 +10,7 @@ public class User {
 
 
 
-    public User(int usernummer, String name, String benutzerkennung, String passwort, String usertype) {
+    public User (int usernummer, String name, String benutzerkennung, String passwort, String usertype) {
         super();
         this.usernummer = usernummer;
         this.name = name;

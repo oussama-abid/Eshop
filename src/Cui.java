@@ -1,20 +1,26 @@
+import Entities.Artikel;
+import Entities.Kunde;
+import Entities.User;
+import domain.PersonenVerwaltung;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Cui {
     private Scanner scanner;
-    private Usermanagment userManagement;   // TODO: löschen (-> EShop)
+    private PersonenVerwaltung userManagement;   // TODO: löschen (-> EShop)
     private EShop shop;
-    private Eshopproducts products;
+    private Eshopproducts Produkte;
     private boolean isFirstTime = true;
-    private List<Kunde> kunden = new ArrayList<>();
+    private List<Kunde> kundenliste = new ArrayList<>();
+
+
     public Cui() {
         scanner = new Scanner(System.in);
-        userManagement = new Usermanagment();
+        userManagement = new PersonenVerwaltung();
         shop = new EShop();
-        products = new Eshopproducts();
+        Produkte = new Eshopproducts();
         actions();
     }
 
@@ -22,34 +28,36 @@ public class Cui {
         boolean shouldExit = false;
         boolean isValid = false;
         while (!shouldExit) {
-            System.out.print("register ? login ? add article ?: ");
+            System.out.print("Wollen sie sich registrieren (R) oder einloggen (L)? : ");
             String input1 = scanner.nextLine();
             switch (input1) {
-                case "2":
+                case "L":
+                case "l":
                     loginUser();
                     isValid = true;
                     break;
-                case "1":
+                case "R"  :
+                case "r"  :
                     registerUser();
-                    isValid = true;
-                    break;
-                case "3":
-                    add();
                     isValid = true;
                     break;
                 case "exit":
                     shouldExit = true; // Allow exit to break the loop
                     break;
                 default:
-                    System.out.println("choose from the list");
+                    System.out.println("----------------------");
             }
         }
         scanner.close();
     }
 
+
+
     private void registerUser() {
-        System.out.println("Enter registration infos:");
-        System.out.print("Nummer: ");
+
+        // es muss noch eine UserExistiertBereitsException gemacht werden
+        System.out.println("Geben sie ihre Informationen ein");
+        System.out.print("Nummer: ");                            //sollte dies nicht vom System gemacht werden? (frage Eyüphan) ist da die Telefonnummer?
 
         int nummer = Integer.parseInt(scanner.nextLine());
 
@@ -62,8 +70,8 @@ public class Cui {
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
-        userManagement.registerkunde(nummer, name, benutzerkennung, passwort,Adresse);
-        System.out.println("Kunde registered .");
+        userManagement.registriereKunde(nummer, name, benutzerkennung, passwort,Adresse);
+        System.out.println("Sie wurden erfolgreich registriert. Sie können sich nun einloggen. ");
 
 //        actions();
     }
@@ -71,7 +79,7 @@ public class Cui {
     private void loginUser() {
         boolean loggedIn = false;
         while (!loggedIn) {
-            System.out.println("Enter login infos:");
+            System.out.println("Geben sie ihre Login Informationen ein.");
             System.out.print("Benutzerkennung: ");
             String benutzerkennung = scanner.nextLine();
             System.out.print("Passwort: ");
@@ -83,7 +91,7 @@ public class Cui {
             if (user != null) {
                 if(user instanceof Kunde) {
                     loggedIn = true;
-                    System.out.println("LogED IN.");
+                    System.out.println("Herzlich Willkommen bei unserem E-shop, Viel Spas!");
                     showeshop();
                 }
                 else {
@@ -91,56 +99,69 @@ public class Cui {
                     while (!isValid) {
                         System.out.print(" 1. Artikelliste ausgeben");
                         System.out.print(" 2. Artikel hinzufuegen");
-                        System.out.print(" 3. Kundenliste ausgeben");
-                        System.out.print(" 4. Mitarbeiterliste ausgeben");
-                        System.out.print(" 5. Mitarbeiter hinzufuegen");
-                        System.out.print(" 6. Logout");
+                        System.out.print(" 3. Artikel Bestand aenern");
+                        System.out.print(" 4. Kundenliste ausgeben");
+                        System.out.print(" 5. Mitarbeiterliste ausgeben");
+                        System.out.print(" 6. Mitarbeiter hinzufuegen");
+                        System.out.print(" 7. Logout");
 
                         String input1 = scanner.nextLine();
                         switch (input1) {
-                            case "1":
-
+                           /* case "1":
+                              zeigeArtikelliste();
                                 isValid = true;
-                                break;
+                                break;                       */
                             case "2":
-                                registerUser();
+                                FuegeArtikelHinzu();
                                 isValid = true;
                                 break;
-                            case "3":
-                                add();
+                /*              case "3":
+                                aendereBestand();   //funktion muss noch geamcht werden
                                 isValid = true;
                                 break;
-                            case "exit":
+                                case "4":
+                                ZeigeKundenListe();   //funktion muss noch geamcht werden
+                                isValid = true;
+                                break;
+                            case "5":
+                                ZeigeMitarbeiterListe();   //funktion muss noch gemacht werden
+                                isValid = true;
+                                break;
+                            case "6":
+                               registriereMitarbeiter();              //funktion muss noch gemacht werden
+                                isValid = true;
+                                break;                          */
+                            case "7":
                                 isValid = true; // Allow exit to break the loop
                                 break;
                             default:
-                                System.out.println("choose from the list");
+                                System.out.println("Was möchten sie machen?");
                         }
                     }
                     scanner.close();
                 }
 
             } else {
-                System.out.println("Login failed try again.");
+                System.out.println("Falscher Benutzername oder Passwort");
             }
         }
     }
 
-    private void add() {
-        System.out.println("Enter article details:");
-        System.out.print("Nummer: ");
+    private void FuegeArtikelHinzu() {
+        System.out.println("Artikelbeschreibung: ");
+        System.out.print("Nummer: ");                //sollte dies nicht vom system automatisch passieren? (eyüphan frage)
         int nummer = Integer.parseInt(scanner.nextLine());
 
         System.out.print("Bezeichnung: ");
         String Bezeichnung = scanner.nextLine();
         System.out.print("Bestand: ");
         String Bestand = scanner.nextLine();
-        System.out.print("price: ");
-        float price;
-        price = Float.parseFloat(scanner.nextLine());
-        Article art = new Article(nummer, Bezeichnung, Bestand, price);
-        products.addArticle(art);
-        System.out.println("article created.");
+        System.out.print("Preis: ");
+        float Preis;
+        Preis = Float.parseFloat(scanner.nextLine());
+        Artikel art = new Artikel(nummer, Bezeichnung, Bestand, Preis);
+        Produkte.addArticle(art);
+        System.out.println("Artikel wurde Hinzugefuegt");
 
 //        actions();
 
@@ -148,13 +169,13 @@ public class Cui {
 
     private void showeshop() {
 
-        List<Article> articles = products.getArticles();
-        System.out.println("-------- article : ----------");
-        for (Article article : articles) {
-            System.out.println("Article Number: " + article.getArtikelnummer());
-            System.out.println("Bezeichnung: " + article.getBezeichnung());
-            System.out.println("Bestand: " + article.getBestand());
-            System.out.println("Price: " + article.getPrice());
+        List<Artikel> artikels = Produkte.getArticles();
+        System.out.println("-------- Artikel: ----------");
+        for (Artikel artikel : artikels) {
+            System.out.println("Artikel Nummer: " + artikel.getArtikelnummer());
+            System.out.println("Bezeichnung: " + artikel.getBezeichnung());
+            System.out.println("Bestand: " + artikel.getBestand());
+            System.out.println("Preis: " + artikel.getPreis());
             System.out.println("----------------------");
         }
 

@@ -1,18 +1,18 @@
+import Entities.Artikel;
+import Entities.Mitarbeiter;
+
 import java.util.Date;
 
 public class Events {
     private Date datum;
-    private Article artikel;
+    private Artikel artikel;
     private int anzahl;
-    private Mitarbeiter Mitarbeiter;
+    private Entities.Mitarbeiter Mitarbeiter;
 
 
 
 
-
-
-
-    public Events(Date datum, Article artikel, int anzahl, Mitarbeiter mitarbeiter) {
+    public Events(Date datum, Artikel artikel, int anzahl, Mitarbeiter mitarbeiter) {
         super();
         this.datum = datum;
         this.artikel = artikel;
@@ -25,10 +25,10 @@ public class Events {
     public void setDatum(Date datum) {
         this.datum = datum;
     }
-    public Article getArtikel() {
+    public Artikel getArtikel() {
         return artikel;
     }
-    public void setArtikel(Article artikel) {
+    public void setArtikel(Artikel artikel) {
         this.artikel = artikel;
     }
     public int getAnzahl() {
