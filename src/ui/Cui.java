@@ -160,7 +160,7 @@ public class Cui {
         System.out.print("Bezeichnung: ");
         String Bezeichnung = scanner.nextLine();
         System.out.print("Bestand: ");
-        String Bestand = scanner.nextLine();
+        int Bestand = scanner.nextInt();
         System.out.print("Preis: ");
         float Preis;
         Preis = Float.parseFloat(scanner.nextLine());
@@ -186,3 +186,6 @@ public class Cui {
 
     }
 }
+
+
+

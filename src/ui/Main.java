@@ -6,8 +6,8 @@ import domain.PersonenVerwaltung;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        PersonenVerwaltung us = new PersonenVerwaltung();
-        us.registriereMitarbeiter(1, "Admin", "Admin", "Admin");
+        PersonenVerwaltung user = new PersonenVerwaltung();
+        user.registriereMitarbeiter(1, "admin", "admin", "admin");
         Cui cui = new Cui();
 
     }

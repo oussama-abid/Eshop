@@ -4,22 +4,20 @@ public class Artikel
 {
     private int Artikelnummer;
     private String Bezeichnung;
-    private String Bestand;
+    private int Bestand;
     private float Preis;
 
 
 
-    public Artikel(int artikelnummer, String bezeichnung, String bestand, float preis) {
+    public Artikel(int artikelnummer, String bezeichnung,int bestand, float preis) {
         super();
-        Artikelnummer = artikelnummer;
-        Bezeichnung = bezeichnung;
-        Bestand = bestand;
+        this.Artikelnummer = artikelnummer;
+        this.Bezeichnung = bezeichnung;
+        this.Bestand = bestand;
         this.Preis = preis;
     }
 
-    public int getArtikelnummer() {
-        return Artikelnummer;
-    }
+    public int getArtikelnummer() {return Artikelnummer;}
     public void setArtikelnummer(int artikelnummer) {
         Artikelnummer = artikelnummer;
     }
@@ -29,27 +27,13 @@ public class Artikel
     public void setBezeichnung(String bezeichnung) {
         Bezeichnung = bezeichnung;
     }
-    public String getBestand() {
+    public int getBestand() {
         return Bestand;
     }
-    public void setBestand(String bestand) {
+    public void setBestand(int bestand) {
         Bestand = bestand;
     }
     public float getPreis() { return Preis;}
     public void setPreis(float preis) { this.Preis = preis;}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

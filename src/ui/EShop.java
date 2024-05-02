@@ -16,7 +16,5 @@ public class EShop {
         return BenutzerManagement.login(benutzerkennung, passwort);
     }
 
-    // public Article addArticle() {
-    //     articleManagement.addArticle();
-    // }
+
 }
