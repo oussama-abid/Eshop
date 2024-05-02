@@ -41,6 +41,20 @@ public class ArtikelVerwaltung {
         }
     }
 
+    public Artikel SucheArtikelPerID(int artikelnummer) {
+        for (Artikel artikel : artikelListe) { //Artikelliste
+            if (artikel.getArtikelnummer() == artikelnummer) {  //überprüft ob die Artikelnummer vorhanden ist
+                return artikel;    //Falls gefunden wird Artikel zurückgegeben
+            }
+        }
+        return null;       //Falls nicht wird null zurückgegeben
+    }
+
+    public List<Artikel> getArtikelListe() {
+                                            //Um die Artikelliste auszugeben
+        return artikelListe;
+    }
+
 
 }
 
