@@ -6,17 +6,19 @@ public class Artikel
     private String Bezeichnung;
     private int Bestand;
     private float Preis;
+    private static int letzteArtikelnummer = 1000;
 
 
-
-    public Artikel(int artikelnummer, String bezeichnung,int bestand, float preis) {
+    public Artikel(String bezeichnung,int bestand, float preis) {
         super();
-        this.Artikelnummer = artikelnummer;
+        this.Artikelnummer = ++letzteArtikelnummer;
         this.Bezeichnung = bezeichnung;
         this.Bestand = bestand;
         this.Preis = preis;
     }
-
+    private static int EindeutigeArtikelnummer() {
+        return ++letzteArtikelnummer;
+    }
     public int getArtikelnummer() {return Artikelnummer;}
     public void setArtikelnummer(int artikelnummer) {
         Artikelnummer = artikelnummer;

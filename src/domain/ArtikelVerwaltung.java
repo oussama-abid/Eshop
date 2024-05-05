@@ -13,20 +13,24 @@ public class ArtikelVerwaltung {
     public ArtikelVerwaltung() {
 
         artikelListe = new ArrayList<>();
-        ArtikelHinzufuegen(new Artikel(111,"Tisch", 7, 39.99F));// Fügt den neuen Artikel hinzu
-        ArtikelHinzufuegen(new Artikel(222,"Lampe", 21, 19.99F));
-        ArtikelHinzufuegen(new Artikel(333,"Stift", 100, 5.99F));
-        ArtikelHinzufuegen(new Artikel(444,"Tacker", 49, 4.99F));
-        ArtikelHinzufuegen(new Artikel(555,"Laptop", 10, 1119.99F));
+        ArtikelHinzufuegen(new Artikel("tisch",123, 39.99F));// Fügt den neuen Artikel hinzu
+        ArtikelHinzufuegen(new Artikel("lampe,", 21, 19.99F));
+        ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
+        ArtikelHinzufuegen(new Artikel("Tacker",21,  4.99F));
+        ArtikelHinzufuegen(new Artikel("Laptop",32,  1119.99F));
     }
 
     public void ArtikelHinzufuegen(Artikel artikel) {
-        for (Artikel neuerArtikel : artikelListe) {
-            if (neuerArtikel.getArtikelnummer() == artikel.getArtikelnummer()) {
-                return;  // Beendet die Methode, wenn ein Artikel mit der gleichen Nummer gefunden wird
+        // Überprüfe, ob ein Artikel mit der gleichen Artikelnummer bereits vorhanden ist
+        for (Artikel vorhandenerArtikel : artikelListe) {
+            if (vorhandenerArtikel.getArtikelnummer() == artikel.getArtikelnummer()) {
+                System.out.println("Artikel mit der Artikelnummer " + artikel.getArtikelnummer() + " existiert bereits.");
+                return;  // Beende die Methode, wenn ein Artikel mit der gleichen Nummer gefunden wird
             }
         }
-        artikelListe.add(artikel);  // Fügt den Artikel hinzu, wenn kein Duplikat gefunden wurde
+        // Füge den Artikel zur Liste hinzu
+        artikelListe.add(artikel);
+        System.out.println("Neuer Artikel hinzugefügt: " + artikel.getBezeichnung() + ", Artikelnummer: " + artikel.getArtikelnummer());
     }
 
     public void EntferneArtikel(Artikel artikel) {
@@ -34,11 +38,17 @@ public class ArtikelVerwaltung {
         artikelListe.remove(artikel);
     }
 
-    public void ArtikelBestandVeraendern(Artikel artikel, int AenderungsMenge) {
-
-        if (artikel != null && (artikel.getBestand() + AenderungsMenge >= 0)) {                 // Überprüfen, ob der Artikel existiert und ob die Menge den Bestand nicht negativ macht
-            artikel.setBestand(artikel.getBestand() + AenderungsMenge);                 // + - ist immer noch minus (wenn man -3 als AenderungsMenge eingibt) 5 + (-3) = 2 neuer Bestand
+    public void BestandAendern(int artikelnummer, int newBestand) {
+        Artikel veraenderterArtikel = null;
+        for (Artikel artikel : artikelListe) {
+            if (artikel.getArtikelnummer() == artikelnummer) {
+                veraenderterArtikel = artikel;
+                break;
+            }
         }
+
+        veraenderterArtikel.setBestand(newBestand);
+
     }
 
     public Artikel SucheArtikelPerID(int artikelnummer) {

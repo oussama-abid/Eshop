@@ -1,17 +1,18 @@
 package Entities;
 
-public class WarenkorbArtikel
-{
+
+import java.util.List;
+
+public class WarenkorbArtikel {
     private Artikel Artikel;
     private int Anzahl;
+    private List<WarenkorbArtikel> WarenkorbArtikelListe;
 
     public WarenkorbArtikel(Artikel artikel, int anzahl) {
         super();
         this.Artikel = artikel;
         this.Anzahl = anzahl;
     }
-
-
 
     public Artikel getArtikel() {
         return Artikel;

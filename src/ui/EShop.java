@@ -2,6 +2,7 @@ package ui;
 
 import Entities.User;
 import domain.PersonenVerwaltung;
+import domain.ArtikelVerwaltung;
 
 public class EShop {
 

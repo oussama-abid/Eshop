@@ -5,20 +5,18 @@ import Entities.Kunde;
 import Entities.Mitarbeiter;
 import Entities.User;
 import domain.PersonenVerwaltung;
-import domain.Eshopproducts;
+import domain.ArtikelVerwaltung;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
-import Entities.User;
 
 public class Cui {
     private Scanner scanner;
     private PersonenVerwaltung userManagement;   // TODO: löschen (-> ui.EShop)
     private EShop shop;
-    private Eshopproducts Produkte;
+    private ArtikelVerwaltung Produkte;
     private boolean isFirstTime = true;
 
     private List<Kunde> kundenList = new ArrayList<>();
@@ -32,7 +30,7 @@ public class Cui {
 
         this.userManagement = userManagement;
         shop = new EShop();
-        Produkte = new Eshopproducts();
+        Produkte = new ArtikelVerwaltung();
         actions();
     }
 
@@ -115,30 +113,27 @@ public class Cui {
             System.out.println("Falscher Benutzername oder Passwort");
         }
 
-
-
     }
 
     private void showeshop() {
-
-        List<Artikel> artikels = Produkte.getArticles();
+        List<Artikel> artikelListe = Produkte.getArtikelListe();
         System.out.println("-------- Artikel: ----------");
-        for (Artikel artikel : artikels) {
+
+        for (Artikel artikel : artikelListe) {
             System.out.println("Artikel Nummer: " + artikel.getArtikelnummer());
             System.out.println("Bezeichnung: " + artikel.getBezeichnung());
             System.out.println("Bestand: " + artikel.getBestand());
             System.out.println("Preis: " + artikel.getPreis());
             System.out.println("----------------------");
         }
-        if(authuser instanceof Kunde) {
-
-        }
-        else {
+        if (authuser instanceof Kunde) {
+            KundenMenu();
+        } else {
             Mitarbeitermenu();
-
         }
-
     }
+
+
     //--------------------- Kunde functions --------------------------------------------------
 
 
@@ -156,54 +151,55 @@ public class Cui {
 
     private void FuegeArtikelHinzu() {
         System.out.println("Artikelbeschreibung: ");
-        int nummer = EindeutigeArtikelnummer();
 
         System.out.print("Bezeichnung: ");
         String Bezeichnung = scanner.nextLine();
-        System.out.print("Bestand: ");
-        int Bestand = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
-        System.out.print("Preis: ");
-        float Preis = Float.parseFloat(scanner.nextLine());
 
-
-
-        Artikel art = new Artikel(nummer, Bezeichnung, Bestand, Preis);
-        Produkte.addArticle(art);
-        System.out.println("Artikel wurde Hinzugefuegt");
-        Mitarbeitermenu();
-//        actions();
-
-    }
-    private int EindeutigeArtikelnummer() {
-        Random random = new Random();
-        int newNummer;
-        boolean unique = false;
-        do {
-            newNummer = random.nextInt();
-            newNummer = Math.abs(newNummer);
-            unique = true;
-            for (Artikel artikel : Produkte.getArticles()) {
-                if (artikel.getArtikelnummer() == newNummer) {
-                    unique = false;
-                    break;
-                }
+        int Bestand = 0;
+        boolean validBestand = false;
+        while (!validBestand) {
+            System.out.print("Bestand: ");
+            if (scanner.hasNextInt()) {
+                Bestand = scanner.nextInt();
+                validBestand = true;
+            } else {
+                System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
+                scanner.next(); // Verbrauche ungültige Eingabe
             }
-        } while (!unique);
-        return newNummer;
-    }
+        }
+        scanner.nextLine();
+        float Preis = 0;
+        boolean validPreis = false;
+        while (!validPreis) {
+            System.out.print("Preis: ");
+            if (scanner.hasNextFloat()) {
+                Preis = scanner.nextFloat();
+                validPreis = true;
+            } else {
+                System.out.println("Fehler: Bitte geben Sie einen gültigen Preis ein.");
+                scanner.next();
+            }
+        }
+        scanner.nextLine();
 
+        Artikel art = new Artikel(Bezeichnung, Bestand, Preis);
+        Produkte.ArtikelHinzufuegen(art);
+        System.out.println("Artikel wurde hinzugefügt");
+        Mitarbeitermenu();
+        actions();
+    }
 
     private void Mitarbeitermenu (){
         boolean isValid = false;
         while (!isValid) {
-            System.out.print(" 1. Artikelliste ausgeben");
-            System.out.print(" 2. Artikel hinzufuegen");
-            System.out.print(" 3. Artikel Bestand aenern");
-            System.out.print(" 4. Kundenliste ausgeben");
-            System.out.print(" 5. Mitarbeiterliste ausgeben");
-            System.out.print(" 6. Mitarbeiter hinzufuegen");
-            System.out.print(" 7. Logout");
+            System.out.println(" 1. Artikelliste ausgeben");
+            System.out.println(" 2. Artikel hinzufuegen");
+            System.out.println(" 3. Artikel Bestand aendern");
+            System.out.println(" 4. Kundenliste ausgeben");
+            System.out.println(" 5. Mitarbeiterliste ausgeben");
+            System.out.println(" 6. Mitarbeiter hinzufuegen");
+            System.out.println(" 7. Shop Verlauf Ansehen");
+            System.out.println(" 8. Logout");
 
             String input1 = scanner.nextLine();
             switch (input1) {
@@ -216,7 +212,7 @@ public class Cui {
                     isValid = true;
                     break;
                             case "3":
-                                aendereBestand();   
+                                aendereBestand();
                                 isValid = true;
                                 break;
                                case "4":
@@ -231,7 +227,11 @@ public class Cui {
                                registriereMitarbeiter();
                                 isValid = true;
                                 break;
-                case "7":
+                            case "7":
+                                //ShopVerlaufAnzeigen();
+                                isValid = true;
+                                break;
+                case "8":
                     isValid = true; // Allow exit to break the loop
                     break;
                 default:
@@ -276,17 +276,27 @@ public class Cui {
         Mitarbeitermenu ();
     }
 
+    private void HinzufuegenZumWarenkorb(){
+
+
+
+
+    }
+
+    private void WarenkorbAnsehen(){
+
+
+    }
+
     private void aendereBestand() {
         System.out.print("Geben Sie die Artikelnummer ein: ");
         int artikelnummer = Integer.parseInt(scanner.nextLine());
-        for (Artikel artikel : Produkte.getArticles()) {
+        for (Artikel artikel : Produkte.getArtikelListe()) {
             if (artikel.getArtikelnummer() == artikelnummer) {
-
-
                     System.out.print("Geben Sie den neue bestand ein: ");
                     String newBestandInput = scanner.nextLine();
                     int newBestand = Integer.parseInt(newBestandInput);
-                    Produkte.updateStock(artikelnummer, newBestand);
+                    Produkte.BestandAendern(artikelnummer, newBestand);
                     System.out.println("Lagerbestand für Artikel " + artikelnummer + " auf " + newBestand + " aktualisiert.");
                     Mitarbeitermenu ();
                     return;
@@ -297,7 +307,46 @@ public class Cui {
         Mitarbeitermenu ();
     }
 
+
+private void KundenMenu () {
+    boolean isValid = false;
+    while (!isValid) {
+        System.out.println(" 1. Artikelliste ausgeben");
+        System.out.println(" 2. Artikel suchen");
+        System.out.println(" 3. Artikel zum Warenkorb hinzufuegen");
+        System.out.println(" 4. Warenkorb ansehen");
+        System.out.println(" 5. Logout");
+
+        String input1 = scanner.nextLine();
+        switch (input1) {
+            case "1":
+                showeshop();
+                isValid = true;
+                break;
+            case "2":
+                //ArtikelSuchen
+                isValid = true;
+                break;
+            case "3":
+                HinzufuegenZumWarenkorb();
+                isValid = true;
+                break;
+            case "4":
+                WarenkorbAnsehen();
+                isValid = true;
+                break;
+            case "5":
+                isValid = true; // Allow exit to break the loop
+                break;
+            default:
+                System.out.println("Was möchten sie machen?");
+        }
+    }
+
+
 }
+}
+
 
 
 

@@ -2,7 +2,7 @@ package domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
 
 import Entities.Kunde;
 import Entities.Mitarbeiter;
@@ -13,6 +13,7 @@ public class PersonenVerwaltung {
     private List<User> users = new ArrayList<>();
     List<Kunde> kundenList = new ArrayList<>();
     List<Mitarbeiter> mitarbeiterList = new ArrayList<>();
+    private int letzteBenutzernummer = 5000;
 
     public PersonenVerwaltung() {
     }
@@ -21,6 +22,8 @@ public class PersonenVerwaltung {
         int nummer = EindeutigeBenutzernummer();
         Mitarbeiter mitarbeiter = new Mitarbeiter(nummer, name, benutzerkennung, passwort);
         users.add(mitarbeiter);
+        System.out.println(" Mitarbeiter registriert: "+" Benutzernummer: " + nummer + " Name: " + name);
+
     }
 
     public void registriereKunde(String name, String benutzerkennung, String passwort, String adresse) {
@@ -29,21 +32,7 @@ public class PersonenVerwaltung {
         users.add(kunde);
     }
     private int EindeutigeBenutzernummer() {
-        Random random = new Random();
-        int newNummer;
-        boolean unique = false;
-        do {
-            newNummer = random.nextInt();
-            newNummer = Math.abs(newNummer);
-            unique = true;
-            for (User user : users) {
-                if (user.getUsernummer() == newNummer) {
-                    unique = false;
-                    break;
-                }
-            }
-        } while (!unique);
-        return newNummer;
+        return ++letzteBenutzernummer;
     }
 
     public User login(String benutzerkennung, String passwort) {
