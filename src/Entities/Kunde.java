@@ -10,8 +10,8 @@ public class Kunde extends User
 
 
 
-    public Kunde(int usernummer, String name, String benutzerkennung, String passwort, String usertype, String Adresse) {
-        super(usernummer, name, benutzerkennung, passwort, usertype);
+    public Kunde(int usernummer, String name, String benutzerkennung, String passwort,String Adresse) {
+        super(usernummer, name, benutzerkennung, passwort);
         this.Adresse=Adresse;
 
     }
@@ -24,5 +24,8 @@ public class Kunde extends User
         Adresse = adresse;
     }
 
-
+    @Override
+    public String toString() {
+        return "Kunde: nummer=" + getUsernummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung()+ ", adresse=" + getAdresse();
+    }
 }

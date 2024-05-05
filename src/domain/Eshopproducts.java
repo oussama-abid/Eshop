@@ -21,9 +21,21 @@ public class Eshopproducts {
     }
 
     public void addArticle(Artikel artikel) {
+
         artikels.add(artikel);
     }
+    public void updateStock(int artikelnummer, int newBestand) {
+        Artikel artikelToUpdate = null;
+        for (Artikel artikel : artikels) {
+            if (artikel.getArtikelnummer() == artikelnummer) {
+                artikelToUpdate = artikel;
+                break;
+            }
+        }
 
+            artikelToUpdate.setBestand(newBestand);
+
+    }
 
 
 

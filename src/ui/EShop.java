@@ -5,16 +5,18 @@ import domain.PersonenVerwaltung;
 
 public class EShop {
 
-    private PersonenVerwaltung BenutzerManagement;
+    private PersonenVerwaltung PersonenVerwaltung;
 
 
     public EShop() {
-        this.BenutzerManagement = new PersonenVerwaltung();
+        this.PersonenVerwaltung = new PersonenVerwaltung();
     }
 
     public User login(String benutzerkennung, String passwort) {
-        return BenutzerManagement.login(benutzerkennung, passwort);
+        return PersonenVerwaltung.login(benutzerkennung, passwort);
     }
+
+
 
 
 }

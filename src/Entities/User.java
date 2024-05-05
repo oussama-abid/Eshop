@@ -6,19 +6,17 @@ public class User
     private String name;
     private String Benutzerkennung;
     private String Passwort;
-//    private String usertype;
 
 
 
 
 
-    public User (int usernummer, String name, String benutzerkennung, String passwort, String usertype) {
+    public User (int usernummer, String name, String benutzerkennung, String passwort) {
         super();
         this.usernummer = usernummer;
         this.name = name;
         Benutzerkennung = benutzerkennung;
         Passwort = passwort;
-//		this.usertype = usertype;
     }
 
 
@@ -55,11 +53,6 @@ public class User
         Passwort = passwort;
     }
 
-/* 	public String getUsertype() {
-		return usertype;
-	}
-	public void setUsertype(String usertype) {
-		this.usertype = usertype;
-	} */
+
 
 }
