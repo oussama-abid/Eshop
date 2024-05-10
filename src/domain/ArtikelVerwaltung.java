@@ -1,6 +1,8 @@
 package domain;
 
 import Entities.Artikel;
+import Entities.User;
+import ui.EShop;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,28 +10,19 @@ import java.util.List;
 
 public class ArtikelVerwaltung {
 
-    private List<Artikel> artikelListe;
+    private List<Artikel> artikelListe= new ArrayList<>();
+
+
 
     public ArtikelVerwaltung() {
 
-        artikelListe = new ArrayList<>();
-        ArtikelHinzufuegen(new Artikel("tisch",123, 39.99F));// Fügt den neuen Artikel hinzu
-        ArtikelHinzufuegen(new Artikel("lampe,", 21, 19.99F));
-        ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
-        ArtikelHinzufuegen(new Artikel("Tacker",21,  4.99F));
-        ArtikelHinzufuegen(new Artikel("Laptop",32,  1119.99F));
+
     }
 
-    public void ArtikelHinzufuegen(Artikel artikel) {
-        // Überprüfe, ob ein Artikel mit der gleichen Artikelnummer bereits vorhanden ist
-        for (Artikel vorhandenerArtikel : artikelListe) {
-            if (vorhandenerArtikel.getArtikelnummer() == artikel.getArtikelnummer()) {
-                System.out.println("Artikel mit der Artikelnummer " + artikel.getArtikelnummer() + " existiert bereits.");
-                return;  // Beende die Methode, wenn ein Artikel mit der gleichen Nummer gefunden wird
-            }
-        }
-        // Füge den Artikel zur Liste hinzu
+    public void ArtikelHinzufuegen(Artikel artikel ,User authuser) {
+
         artikelListe.add(artikel);
+
         System.out.println("Neuer Artikel hinzugefügt: " + artikel.getBezeichnung() + ", Artikelnummer: " + artikel.getArtikelnummer());
     }
 
@@ -47,7 +40,7 @@ public class ArtikelVerwaltung {
             }
         }
 
-        veraenderterArtikel.setBestand(newBestand);
+        veraenderterArtikel.setBestand(veraenderterArtikel.getBestand() + newBestand);
 
     }
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import Entities.Adresse;
 import Entities.Kunde;
 import Entities.Mitarbeiter;
 import Entities.User;
@@ -11,8 +12,8 @@ import Entities.User;
 public class PersonenVerwaltung {
 
     private List<User> users = new ArrayList<>();
-    List<Kunde> kundenList = new ArrayList<>();
-    List<Mitarbeiter> mitarbeiterList = new ArrayList<>();
+    private  List<Kunde> kundenList = new ArrayList<>();
+    private List<Mitarbeiter> mitarbeiterList = new ArrayList<>();
     private int letzteBenutzernummer = 5000;
 
     public PersonenVerwaltung() {
@@ -26,8 +27,9 @@ public class PersonenVerwaltung {
 
     }
 
-    public void registriereKunde(String name, String benutzerkennung, String passwort, String adresse) {
+    public void registriereKunde(String name, String benutzerkennung, String passwort, String straße, String stadt, String bundesland, int postleitzahl, String land) {
         int nummer = EindeutigeBenutzernummer();
+        Adresse adresse = new Adresse(straße, stadt, bundesland, postleitzahl, land);
         Kunde kunde = new Kunde(nummer, name, benutzerkennung, passwort, adresse);
         users.add(kunde);
     }

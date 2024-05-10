@@ -1,11 +1,6 @@
 package ui;
 
-import Entities.Artikel;
-import Entities.Kunde;
-import Entities.Mitarbeiter;
-import Entities.User;
-import domain.PersonenVerwaltung;
-import domain.ArtikelVerwaltung;
+import Entities.*;
 
 
 import java.util.ArrayList;
@@ -14,23 +9,19 @@ import java.util.Scanner;
 
 public class Cui {
     private Scanner scanner;
-    private PersonenVerwaltung userManagement;   // TODO: löschen (-> ui.EShop)
     private EShop shop;
-    private ArtikelVerwaltung Produkte;
-    private boolean isFirstTime = true;
+
 
     private List<Kunde> kundenList = new ArrayList<>();
     private List<Mitarbeiter> mitarbeiterlist = new ArrayList<>();
-
+    private List<Event> ShopVerlauf = new ArrayList<>();
+    private List<Artikel> artikelListe = new ArrayList<>();
 
     private User authuser ;
 
-    public Cui(PersonenVerwaltung userManagement) {
+    public Cui(EShop shop) {
         scanner = new Scanner(System.in);
-
-        this.userManagement = userManagement;
-        shop = new EShop();
-        Produkte = new ArtikelVerwaltung();
+        this.shop = new EShop();
         actions();
     }
 
@@ -68,25 +59,41 @@ public class Cui {
 
 
     private void registerUser() {
-
-        // es muss noch eine UserExistiertBereitsException gemacht werden
-        System.out.println("Geben sie ihre Informationen ein");
-
+        // Es muss noch eine UserExistiertBereitsException gemacht werden
+        System.out.println("Geben Sie Ihre Informationen ein");
 
         System.out.print("Name: ");
         String name = scanner.nextLine();
-        System.out.print("Adresse: ");
-        String Adresse = scanner.nextLine();
         System.out.print("Benutzerkennung: ");
         String benutzerkennung = scanner.nextLine();
+
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
-        userManagement.registriereKunde(name, benutzerkennung, passwort,Adresse);
-        System.out.println("Sie wurden erfolgreich registriert. Sie können sich nun einloggen. ");
 
-//        actions();
+        System.out.println("Geben Sie Ihre Adresse:");
+        System.out.print("Straße: ");
+        String straße = scanner.nextLine();
+        System.out.print("Stadt: ");
+        String stadt = scanner.nextLine();
+        System.out.print("Bundesland: ");
+        String bundesland = scanner.nextLine();
+
+        System.out.print("PLZ: ");
+        int postleitzahl = Integer.parseInt(scanner.nextLine());
+        System.out.print("Land: ");
+        String land = scanner.nextLine();
+
+
+
+
+
+        shop.registriereKunde(name, benutzerkennung, passwort, straße, stadt, bundesland, postleitzahl, land);
+
+
+        // actions();
     }
+
 
     private void loginUser() {
         System.out.println("Geben sie ihre Login Informationen ein.");
@@ -95,7 +102,7 @@ public class Cui {
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
-        User user = userManagement.login(benutzerkennung, passwort);
+        User user = shop.login(benutzerkennung, passwort);
 
         if (user != null) {
             authuser = user;
@@ -116,7 +123,7 @@ public class Cui {
     }
 
     private void showeshop() {
-        List<Artikel> artikelListe = Produkte.getArtikelListe();
+        artikelListe = shop.getArtikelListe();
         System.out.println("-------- Artikel: ----------");
 
         for (Artikel artikel : artikelListe) {
@@ -132,16 +139,6 @@ public class Cui {
             Mitarbeitermenu();
         }
     }
-
-
-    //--------------------- Kunde functions --------------------------------------------------
-
-
-
-
-
-
-
 
 
 
@@ -183,7 +180,8 @@ public class Cui {
         scanner.nextLine();
 
         Artikel art = new Artikel(Bezeichnung, Bestand, Preis);
-        Produkte.ArtikelHinzufuegen(art);
+        shop.ArtikelHinzufuegen(art,authuser);
+        shop.Ereignisfesthalten("neuer Artikel",art,art.getBestand(), authuser);
         System.out.println("Artikel wurde hinzugefügt");
         Mitarbeitermenu();
         actions();
@@ -228,7 +226,7 @@ public class Cui {
                                 isValid = true;
                                 break;
                             case "7":
-                                //ShopVerlaufAnzeigen();
+                                ShopVerlaufAnzeigen();
                                 isValid = true;
                                 break;
                 case "8":
@@ -242,6 +240,7 @@ public class Cui {
 
     }
 
+
     private void registriereMitarbeiter() {
         System.out.println("Geben sie die Informationen ein");
 
@@ -254,14 +253,14 @@ public class Cui {
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
-        userManagement.registriereMitarbeiter(name, benutzerkennung, passwort);
+        shop.registriereMitarbeiter(name, benutzerkennung, passwort);
         System.out.println("Mitarbeiter  wird erfolgreich registriert");
         Mitarbeitermenu();
 
     }
 
     private void ZeigeMitarbeiterListe() {
-        mitarbeiterlist = userManagement.getMitarbeiterlist();
+        mitarbeiterlist = shop.getMitarbeiterlist();
         for (Mitarbeiter mitarbeiter : mitarbeiterlist) {
             System.out.println(mitarbeiter);
         }
@@ -269,46 +268,52 @@ public class Cui {
     }
 
     private void ZeigeKundenListe() {
-        kundenList = userManagement.getKundenList();
+        kundenList = shop.getKundenList();
         for (Kunde kunde : kundenList) {
             System.out.println(kunde);
         }
         Mitarbeitermenu ();
     }
 
-    private void HinzufuegenZumWarenkorb(){
-
-
-
-
+    private void ShopVerlaufAnzeigen() {
+        ShopVerlauf =shop.ShopVerlaufAnzeigen();
+        for (Event event : ShopVerlauf) {
+            System.out.println(event);
+        }
+        Mitarbeitermenu ();
     }
 
-    private void WarenkorbAnsehen(){
-
-
-    }
 
     private void aendereBestand() {
         System.out.print("Geben Sie die Artikelnummer ein: ");
         int artikelnummer = Integer.parseInt(scanner.nextLine());
-        for (Artikel artikel : Produkte.getArtikelListe()) {
+        for (Artikel artikel : shop.getArtikelListe()) {
             if (artikel.getArtikelnummer() == artikelnummer) {
-                    System.out.print("Geben Sie den neue bestand ein: ");
+                    System.out.print("wie viele Artikel möchten Sie hinzufügen ? : ");
                     String newBestandInput = scanner.nextLine();
                     int newBestand = Integer.parseInt(newBestandInput);
-                    Produkte.BestandAendern(artikelnummer, newBestand);
-                    System.out.println("Lagerbestand für Artikel " + artikelnummer + " auf " + newBestand + " aktualisiert.");
+                    shop.BestandAendern(artikelnummer, newBestand);
+                    System.out.println("Lagerbestand für Artikel " + artikelnummer + " auf " + artikel.getBestand() + " aktualisiert.");
+                    shop.Ereignisfesthalten("Einlagerung",artikel,newBestand, authuser);
                     Mitarbeitermenu ();
                     return;
 
             }
         }
-        System.out.println("Artikel mit Artikelnummer  nicht gefunden.");
+        System.out.println("Artikel nicht gefunden.");
         Mitarbeitermenu ();
     }
 
 
-private void KundenMenu () {
+
+
+
+
+
+//--------------------- Kunde functions --------------------------------------------------
+
+
+    private void KundenMenu () {
     boolean isValid = false;
     while (!isValid) {
         System.out.println(" 1. Artikelliste ausgeben");
@@ -345,8 +350,45 @@ private void KundenMenu () {
 
 
 }
+
+
+    private void HinzufuegenZumWarenkorb(){
+
+
+
+
+    }
+
+    private void WarenkorbAnsehen(){
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
-
-
-
 

@@ -3,29 +3,29 @@ package Entities;
 public class Kunde extends User
 {
 
-    private String Adresse;
+    private Adresse adresse;
 
 
 
 
 
 
-    public Kunde(int usernummer, String name, String benutzerkennung, String passwort,String Adresse) {
+    public Kunde(int usernummer, String name, String benutzerkennung, String passwort, Adresse adresse) {
         super(usernummer, name, benutzerkennung, passwort);
-        this.Adresse=Adresse;
-
+        this.adresse = adresse;
     }
 
-    public String getAdresse() {
-        return Adresse;
+    public Adresse getAdresse() {
+        return adresse;
     }
 
-    public void setAdresse(String adresse) {
-        Adresse = adresse;
+    public void setAdresse(Adresse adresse) {
+        this.adresse = adresse;
     }
+
 
     @Override
     public String toString() {
-        return "Kunde: nummer=" + getUsernummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung()+ ", adresse=" + getAdresse();
+        return "Kunde: nummer=" + getUsernummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung() + ", Adresse :" + adresse;
     }
 }

@@ -8,9 +8,11 @@ import java.util.List;
 public class  Main {
     public static void main(String[] args) {
         PersonenVerwaltung user = new PersonenVerwaltung();
-        user.registriereMitarbeiter( "admin", "admin", "admin");
-        user.registriereKunde( "user", "user", "user", "address");
 
-        Cui cui = new Cui(user);
+        EShop shop = new EShop();
+
+
+
+        Cui cui = new Cui(shop);
     }
 }
