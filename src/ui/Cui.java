@@ -66,7 +66,6 @@ public class Cui {
     }
 
 
-
     private void registerUser() {
 
         // es muss noch eine UserExistiertBereitsException gemacht werden
@@ -116,6 +115,15 @@ public class Cui {
     }
 
     private void showeshop() {
+
+        if (authuser instanceof Kunde) {
+            KundenMenu();
+        } else {
+            Mitarbeitermenu();
+        }
+    }
+
+    private void artikelListeAusgeben(){
         List<Artikel> artikelListe = Produkte.getArtikelListe();
         System.out.println("-------- Artikel: ----------");
 
@@ -125,11 +133,6 @@ public class Cui {
             System.out.println("Bestand: " + artikel.getBestand());
             System.out.println("Preis: " + artikel.getPreis());
             System.out.println("----------------------");
-        }
-        if (authuser instanceof Kunde) {
-            KundenMenu();
-        } else {
-            Mitarbeitermenu();
         }
     }
 
@@ -204,6 +207,7 @@ public class Cui {
             String input1 = scanner.nextLine();
             switch (input1) {
                 case "1":
+                    artikelListeAusgeben();
                     showeshop();
                     isValid = true;
                     break;
@@ -311,6 +315,8 @@ public class Cui {
 private void KundenMenu () {
     boolean isValid = false;
     while (!isValid) {
+
+        System.out.println(" ");
         System.out.println(" 1. Artikelliste ausgeben");
         System.out.println(" 2. Artikel suchen");
         System.out.println(" 3. Artikel zum Warenkorb hinzufuegen");
@@ -320,6 +326,7 @@ private void KundenMenu () {
         String input1 = scanner.nextLine();
         switch (input1) {
             case "1":
+                artikelListeAusgeben();
                 showeshop();
                 isValid = true;
                 break;

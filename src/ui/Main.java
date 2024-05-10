@@ -12,5 +12,6 @@ public class  Main {
         user.registriereKunde( "user", "user", "user", "address");
 
         Cui cui = new Cui(user);
+
     }
 }
