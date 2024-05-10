@@ -15,11 +15,15 @@ public class ArtikelVerwaltung {
 
 
     public ArtikelVerwaltung() {
-
+        ArtikelHinzufuegen(new Artikel("tisch",123, 39.99F));// Fügt den neuen Artikel hinzu
+        ArtikelHinzufuegen(new Artikel("lampe,", 21, 19.99F));
+        ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
+        ArtikelHinzufuegen(new Artikel("Tacker",21,  4.99F));
+        ArtikelHinzufuegen(new Artikel("Laptop",32,  1119.99F));
 
     }
 
-    public void ArtikelHinzufuegen(Artikel artikel ,User authuser) {
+    public void ArtikelHinzufuegen(Artikel artikel) {
 
         artikelListe.add(artikel);
 

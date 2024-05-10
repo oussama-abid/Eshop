@@ -180,7 +180,7 @@ public class Cui {
         scanner.nextLine();
 
         Artikel art = new Artikel(Bezeichnung, Bestand, Preis);
-        shop.ArtikelHinzufuegen(art,authuser);
+        shop.ArtikelHinzufuegen(art);
         shop.Ereignisfesthalten("neuer Artikel",art,art.getBestand(), authuser);
         System.out.println("Artikel wurde hinzugefügt");
         Mitarbeitermenu();

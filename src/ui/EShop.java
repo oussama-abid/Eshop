@@ -50,9 +50,9 @@ public class EShop {
    Produkte.BestandAendern(artikelnummer,newBestand);
     }
 
-    public void ArtikelHinzufuegen(Artikel art , User authuser) {
+    public void ArtikelHinzufuegen(Artikel art) {
 
-        Produkte.ArtikelHinzufuegen(art,authuser);
+        Produkte.ArtikelHinzufuegen(art);
     }
 
     public List<Artikel>  getArtikelListe(){
