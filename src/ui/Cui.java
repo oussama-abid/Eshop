@@ -123,6 +123,15 @@ public class Cui {
     }
 
     private void showeshop() {
+
+        if (authuser instanceof Kunde) {
+            KundenMenu();
+        } else {
+            Mitarbeitermenu();
+        }
+    }
+
+    private void artikellisteAusgeben(){
         artikelListe = shop.getArtikelListe();
         System.out.println("-------- Artikel: ----------");
 
@@ -130,13 +139,8 @@ public class Cui {
             System.out.println("Artikel Nummer: " + artikel.getArtikelnummer());
             System.out.println("Bezeichnung: " + artikel.getBezeichnung());
             System.out.println("Bestand: " + artikel.getBestand());
-            System.out.println("Preis: " + artikel.getPreis());
+            System.out.println("Preis: " + artikel.getPreis() + "€");
             System.out.println("----------------------");
-        }
-        if (authuser instanceof Kunde) {
-            KundenMenu();
-        } else {
-            Mitarbeitermenu();
         }
     }
 
@@ -202,6 +206,7 @@ public class Cui {
             String input1 = scanner.nextLine();
             switch (input1) {
                 case "1":
+                    artikellisteAusgeben();
                     showeshop();
                     isValid = true;
                     break;
@@ -325,6 +330,7 @@ public class Cui {
         String input1 = scanner.nextLine();
         switch (input1) {
             case "1":
+                artikellisteAusgeben();
                 showeshop();
                 isValid = true;
                 break;
