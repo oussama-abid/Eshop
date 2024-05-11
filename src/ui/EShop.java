@@ -80,10 +80,15 @@ public class EShop {
 
 
     public void inWarenKorbLegen(Artikel artikel, int anzahl, User authuser) {
-warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
+    warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
     }
 
     public Warenkorb getWarenkorb(User authuser) {
       return  warenkorbVerwaltung.getWarenkorb(authuser);
     }
+public void artikelMengeändern(){
+
+}
+
+
 }

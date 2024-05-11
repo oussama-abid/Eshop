@@ -15,7 +15,7 @@ public class ArtikelVerwaltung {
 
 
     public ArtikelVerwaltung() {
-        ArtikelHinzufuegen(new Artikel("tisch",123, 39.99F));// Fügt den neuen Artikel hinzu
+        ArtikelHinzufuegen(new Artikel("tisch",12, 39.99F));// Fügt den neuen Artikel hinzu
         ArtikelHinzufuegen(new Artikel("lampe,", 21, 19.99F));
         ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
         ArtikelHinzufuegen(new Artikel("Tacker",21,  4.99F));

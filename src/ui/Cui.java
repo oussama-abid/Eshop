@@ -351,10 +351,13 @@ public class Cui {
                     if (authuser != null) {
                         WarenkorbAnsehen();
                     }
-
                     isValid = true;
                     break;
                 case "5":
+                        //WarenkorBearbeiten();
+                    isValid = true;
+                    break;
+                case "6":
                     isValid = true; // Allow exit to break the loop
                     authuser = null;
                     break;
@@ -388,21 +391,45 @@ public class Cui {
             }
 
 
-                try {
-                    shop.inWarenKorbLegen(artikel, anzahl,authuser);
-                    System.out.println("Artikel erfolgreich zum Warenkorb hinzugefügt.");
-                } catch (Exception e) {  // Catch general exceptions if necessary
-                    System.out.println("Ein Fehler ist aufgetreten: " + e.getMessage());
-                }
-                KundenMenu();
+            try {
+                shop.inWarenKorbLegen(artikel, anzahl, authuser);
+
+            } catch (Exception e) {
+                System.out.println("Ein Fehler ist aufgetreten: " + e.getMessage());
             }
+            KundenMenu();
+
+        }
     }
 
 
     public void WarenkorbAnsehen() {
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
         System.out.println(warenkorb);
-        KundenMenu();
+        System.out.println("--------------------------------------");
+        System.out.println("Was möchten sie machen?");
+        System.out.println(" 1. Artikel Menge ändern");
+        System.out.println(" 2. Warenkorb leeren");
+        System.out.println(" 3. Zur HomePage zurück");
+
+        boolean isValid = false;
+        String input1 = scanner.nextLine();
+        switch (input1) {
+            case "1":
+                //ArtikelMengeändern();
+                isValid = true;
+                break;
+            case "2":
+                //Warenkorbleeren();
+                isValid = true;
+                break;
+            case "3":
+                ;KundenMenu();
+                isValid = true;
+                break;
+            default:
+                System.out.println("Was möchten sie machen?");
+        }
     }
 
 
@@ -436,6 +463,25 @@ public class Cui {
         KundenMenu();
     }
 
+
+    /*
+    private void ArtikelMengeändern() {
+        System.out.print("Geben Sie die Artikelnummer des zu ändernden Artikels ein: ");
+        int artikelnummer = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Geben Sie die neue Anzahl ein: ");
+        int neueAnzahl = Integer.parseInt(scanner.nextLine());
+
+        try {
+            shop.artikelMengeaendern(artikelnummer, neueAnzahl, authuser);
+            System.out.println("Artikelmenge erfolgreich geändert.");
+        } catch (Exception e) {
+            System.out.println("Fehler beim Ändern der Artikelmenge: " + e.getMessage());
+        }
+
+        WarenkorbAnsehen(); // Anzeigen des aktualisierten Warenkorbs
+    }
+*/
 
 }
 

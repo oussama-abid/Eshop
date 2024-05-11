@@ -6,11 +6,13 @@ import java.util.List;
 public class WarenkorbArtikel {
     private Artikel Artikel;
     private int Anzahl;
+    private double Preis;
 
 
     public WarenkorbArtikel(Artikel artikel, int anzahl) {
         this.Artikel = artikel;
         this.Anzahl = anzahl;
+        this.Preis = artikel.getPreis();
     }
 
     public Entities.Artikel getArtikel() {
@@ -29,11 +31,24 @@ public class WarenkorbArtikel {
         Anzahl = anzahl;
     }
 
+    public void setPreis(double preis) {
+        Preis = preis;
+    }
+
+    public double getPreis() {
+        return Preis;
+    }
+
+    public double getGesamtPreis() {
+        double gesamtPreis = Artikel.getPreis() * Anzahl;
+        return Math.round(gesamtPreis * 100.0) / 100.0;
+    }
     @Override
     public String toString() {
         return
                 "artikel=" + Artikel +
                 ", quantity=" + Anzahl +
+                        ", preis=" + Preis +
                 '}';
     }
 }

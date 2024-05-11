@@ -25,16 +25,19 @@ public class Warenkorb    {
         WarenkorbListe.add(artikel);
     }
 
+    public void removeItem(WarenkorbArtikel artikel) {
+        WarenkorbListe.remove(artikel);
+    }
     @Override
     public String toString() {
         if (WarenkorbListe.isEmpty()) {
             return "Der Warenkorb ist leer.";
         } else {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%-20s %-10s%n", "Artikel", "Anzahl"));
+            sb.append(String.format("%-20s %-10s%n", "Artikel", "Anzahl", "Preis"));
             sb.append("--------------------\n");
             for (WarenkorbArtikel artikel : WarenkorbListe) {
-                sb.append(String.format("%-20s %-10d%n", artikel.getArtikel().getBezeichnung(), artikel.getAnzahl()));
+                sb.append(String.format("%-20s %-10d%n", artikel.getArtikel().getBezeichnung(), artikel.getAnzahl(), artikel.getArtikel().getPreis()));
             }
             sb.append("--------------------\n");
             return sb.toString();
