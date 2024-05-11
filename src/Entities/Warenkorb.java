@@ -6,32 +6,39 @@ import Entities.Kunde;
 
 public class Warenkorb    {
 
-     private List<WarenkorbArtikel> WarenkorbListe = new ArrayList<>();
-    private Kunde kunde;
+    private List<WarenkorbArtikel> WarenkorbListe;
 
 
-    public Warenkorb(Kunde kunde) {
-                                             //spezifisch für jeden Kunden einen Warenkorb
-        WarenkorbListe = new ArrayList<>();   //eigene Liste für jeden Kunden
+    public Warenkorb() {
+        WarenkorbListe = new ArrayList<>();
     }
-    public List<WarenkorbArtikel> getWarenKorbArtikel(){
+
+    public List<WarenkorbArtikel> getWarenkorbListe() {
         return WarenkorbListe;
     }
 
-    public void WarenkorbLeeren(){
-        WarenkorbListe.clear();
+    public void setWarenkorbListe(List<WarenkorbArtikel> warenkorbListe) {
+        WarenkorbListe = warenkorbListe;
     }
 
-    public Kunde getKunde() {
-        return kunde;
+    public void addItem(WarenkorbArtikel artikel) {
+        WarenkorbListe.add(artikel);
     }
 
-    public int getGesamtAnzahl(){
-       int GesamteAnzahl = 0;
-        for (WarenkorbArtikel warenkorbArtikel : WarenkorbListe) {
-            GesamteAnzahl += warenkorbArtikel.getAnzahl();
+    @Override
+    public String toString() {
+        if (WarenkorbListe.isEmpty()) {
+            return "Der Warenkorb ist leer.";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("%-20s %-10s%n", "Artikel", "Anzahl"));
+            sb.append("--------------------\n");
+            for (WarenkorbArtikel artikel : WarenkorbListe) {
+                sb.append(String.format("%-20s %-10d%n", artikel.getArtikel().getBezeichnung(), artikel.getAnzahl()));
+            }
+            sb.append("--------------------\n");
+            return sb.toString();
         }
-        return GesamteAnzahl;
-}
+    }
 
 }

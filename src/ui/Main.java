@@ -12,7 +12,6 @@ public class  Main {
         EShop shop = new EShop();
 
 
-
         Cui cui = new Cui(shop);
     }
 }

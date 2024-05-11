@@ -77,7 +77,13 @@ public class EShop {
         return Produkte.SucheArtikelPerID(artikelnummer);
     }
 
-    public WarenkorbVerwaltung getWarenkorbVerwaltung() {
-        return this.warenkorbVerwaltung;
+
+
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, User authuser) {
+warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
+    }
+
+    public Warenkorb getWarenkorb(User authuser) {
+      return  warenkorbVerwaltung.getWarenkorb(authuser);
     }
 }

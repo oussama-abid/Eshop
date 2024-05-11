@@ -12,44 +12,33 @@ import Entities.*;
 public class WarenkorbVerwaltung {
 
 
-    private List<Warenkorb> warenkorbList = new ArrayList<>();
-    private User aktuellerUser;
+    public WarenkorbVerwaltung() {
 
-
-
-    public Warenkorb getWarenkorb() {
-        if (aktuellerUser == null) {
-            System.out.println("No user is currently logged in.");
-            return null;
-        }
-        for (Warenkorb warenkorb : warenkorbList) {
-            if (warenkorb.getKunde().getUsernummer() == aktuellerUser.getUsernummer()) {
-                return warenkorb;
-            }
-        }
-        System.out.println("No cart found for the current user.");
-        return null;
     }
 
-    public void addWarenkorb(Warenkorb warenkorb) {
-        warenkorbList.add(warenkorb);
+
+
+
+    public Warenkorb getWarenkorb(User authuser) {
+
+            Kunde kunde = (Kunde) authuser;
+            return kunde.getWarenkorb();
+
     }
 
-    public List<Warenkorb> getWarenkorbList() {
-        return warenkorbList;
-    }
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, User authuser) {
 
-    public void fuegeArtikelHinzu(Artikel artikel, int anzahl) {
-        Warenkorb kundenWarenkorb = getWarenkorb();
-        if (kundenWarenkorb == null) {
-            kundenWarenkorb = new Warenkorb((Kunde) aktuellerUser);
-            addWarenkorb(kundenWarenkorb);
-            System.out.println("Neuer Warenkorb wurde erstellt für den Benutzer.");
-        }
-        WarenkorbArtikel neuerArtikel = new WarenkorbArtikel(artikel, anzahl);
-        kundenWarenkorb.getWarenKorbArtikel().add(neuerArtikel);
+            Kunde kunde = (Kunde) authuser;
+            Warenkorb warenkorb = kunde.getWarenkorb();
+
+            WarenkorbArtikel warenkorbArtikel = new WarenkorbArtikel(artikel, anzahl);
+
+            warenkorb.addItem(warenkorbArtikel);
+
+
     }
 
 }
+
 
 

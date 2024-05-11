@@ -389,7 +389,7 @@ public class Cui {
 
 
                 try {
-                    inWarenKorbLegen(artikel, anzahl);
+                    shop.inWarenKorbLegen(artikel, anzahl,authuser);
                     System.out.println("Artikel erfolgreich zum Warenkorb hinzugefügt.");
                 } catch (Exception e) {  // Catch general exceptions if necessary
                     System.out.println("Ein Fehler ist aufgetreten: " + e.getMessage());
@@ -398,36 +398,16 @@ public class Cui {
             }
     }
 
-    public void inWarenKorbLegen(Artikel artikel, int anzahl) {
-        if (authuser == null) {
-            System.out.println("No user is currently logged in. Cannot add items to the cart.");
-            return;
-        }
-        {
-            Warenkorb warenkorb = shop.getWarenkorbVerwaltung().getWarenkorb();
-            if (warenkorb == null) {
-                System.out.println("Creating new cart for the user.");
-                warenkorb = new Warenkorb((Kunde) authuser);
-                shop.getWarenkorbVerwaltung().addWarenkorb(warenkorb);
-            }
-            WarenkorbArtikel newArtikel = new WarenkorbArtikel(artikel, anzahl);
-            warenkorb.getWarenKorbArtikel().add(newArtikel);
-            System.out.println("Added " + anzahl + " of " + artikel.getBezeichnung() + " to the cart.");
-        }
-    }
 
     public void WarenkorbAnsehen() {
-        Warenkorb warenkorb = shop.getWarenkorbVerwaltung().getWarenkorb();
-        if (warenkorb == null || warenkorb.getWarenKorbArtikel().isEmpty()) {
-            System.out.println("Ihr Warenkorb ist leer.");
-        } else {
-            System.out.println("Artikel in Ihrem Warenkorb:");
-            for (WarenkorbArtikel artikel : warenkorb.getWarenKorbArtikel()) {
-                System.out.println(artikel.getArtikel().getBezeichnung() + " - Menge: " + artikel.getAnzahl() + " - Einzelpreis: " + artikel.getArtikel().getPreis());
-            }
-            KundenMenu();
-        }
+        Warenkorb warenkorb = shop.getWarenkorb(authuser);
+        System.out.println(warenkorb);
+        KundenMenu();
     }
+
+
+    // Oussama : keine direkt funktionen hier (in cui nur die prints und der aufurf von funktionen aus shop), mach das in Artikel verwaltung , und ruf die funktion aus shop wie hier  Warenkorb warenkorb = shop.getWarenkorb(authuser);
+
     public void  SucheArtikelMitName() {
         System.out.print("Geben Sie den Suchbegriff ein: ");
         String suchbegriff = scanner.nextLine().toLowerCase(); // Konvertieren Sie den Suchbegriff in Kleinbuchstaben für einen Fall-unabhängigen Vergleich
