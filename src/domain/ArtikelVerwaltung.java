@@ -20,7 +20,6 @@ public class ArtikelVerwaltung {
         ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
         ArtikelHinzufuegen(new Artikel("Tacker",21,  4.99F));
         ArtikelHinzufuegen(new Artikel("Laptop",32,  1119.99F));
-
     }
 
     public void ArtikelHinzufuegen(Artikel artikel) {
@@ -61,7 +60,5 @@ public class ArtikelVerwaltung {
                                             //Um die Artikelliste auszugeben
         return artikelListe;
     }
-
-
 }
 
