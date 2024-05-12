@@ -25,6 +25,20 @@ public class WarenkorbVerwaltung {
 
     }
 
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) {
+
+        Kunde kunde = (Kunde) authuser;
+        Warenkorb warenkorb = kunde.getWarenkorb();
+        boolean artikelImWarenkorb = istArtikelImWarenkorb(warenkorb, artikel);
+
+        WarenkorbArtikel warenkorbArtikel = new WarenkorbArtikel(artikel, anzahl);
+        if (artikelImWarenkorb) {
+            aktualisiereArtikelImWarenkorb(warenkorb, artikel, anzahl);
+        } else {
+            fuegeNeuenArtikelZumWarenkorbHinzu(warenkorb, artikel, anzahl);
+        }
+    }
+
     private boolean istArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel) {
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
             if (warenkorbArtikel.getArtikel().equals(artikel)) {
@@ -34,48 +48,26 @@ public class WarenkorbVerwaltung {
         return false;
     }
 
-
-    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) {
-        Kunde kunde = (Kunde) authuser;
-        Warenkorb warenkorb = kunde.getWarenkorb();
-
-        boolean artikelImWarenkorb = istArtikelImWarenkorb(warenkorb, artikel);
-
-        if (artikelImWarenkorb) {
-            System.out.println("Dieser Artikel befindet sich bereits im Warenkorb");
-        } else {
-            fuegeNeuenArtikelZumWarenkorbHinzu(warenkorb, artikel, anzahl);
+    private void aktualisiereArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel, int anzahl) {
+        for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
+            if (warenkorbArtikel.getArtikel().equals(artikel)) {
+                int gesamtAnzahl = warenkorbArtikel.getAnzahl() + anzahl;
+                if (artikel.getBestand() >= gesamtAnzahl) {
+                    warenkorbArtikel.setAnzahl(gesamtAnzahl);
+                } else {
+                    System.out.println("Unzureichender Bestand für " + artikel.getBezeichnung() +  ",bitte überprüfen sie den Bestand im Shop" );
+                }
+                break;
+            }
         }
     }
-
 
     private void fuegeNeuenArtikelZumWarenkorbHinzu(Warenkorb warenkorb, Artikel artikel, int anzahl) {
         if (artikel.getBestand() >= anzahl) {
             WarenkorbArtikel warenkorbArtikel = new WarenkorbArtikel(artikel, anzahl);
             warenkorb.addItem(warenkorbArtikel);
         } else {
-            System.out.println("Nicht genügend Bestand für " + artikel.getBezeichnung());
-        }
-    }
-
-
-    public void ArtikelAusWarenkorbEntfernen(Artikel artikel, int anzahl, Warenkorb warenkorb) {
-        for (WarenkorbArtikel warenkorbArtikel : new ArrayList<>(warenkorb.getWarenkorbListe())) {
-            if (warenkorbArtikel.getArtikel().equals(artikel)) {
-                // Wenn die Anzahl größer oder gleich der zu entfernenden Anzahl ist
-                if (warenkorbArtikel.getAnzahl() >= anzahl) {
-                    warenkorbArtikel.setAnzahl(warenkorbArtikel.getAnzahl() - anzahl);
-                    // Wenn die Anzahl 0 ist, entferne den Artikel vollständig aus dem Warenkorb
-                    if (warenkorbArtikel.getAnzahl() == 0) {
-                        warenkorb.removeItem(warenkorbArtikel);
-                    }
-                } else {
-                    // Wenn die Anzahl kleiner ist als die zu entfernende Anzahl, entferne den Artikel vollständig
-                    warenkorb.removeItem(warenkorbArtikel);
-                }
-                // Sobald der Artikel gefunden und bearbeitet wurde, breche die Schleife ab
-                break;
-            }
+            System.out.println("Unzureichender Bestand für " + artikel.getBezeichnung() +  ",bitte überprüfen sie den Bestand im Shop");
         }
     }
 
@@ -99,15 +91,21 @@ public class WarenkorbVerwaltung {
     public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
-
             if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(Artikelname)) {
-                warenkorbArtikel.setAnzahl(neueAnzahl);
+                Artikel artikel = warenkorbArtikel.getArtikel();
+                if (artikel.getBestand() >= neueAnzahl) {
+                    warenkorbArtikel.setAnzahl(neueAnzahl);
+                    if (neueAnzahl == 0) {
+                        warenkorb.removeItem(warenkorbArtikel);
+                    }
+                } else {
+                    System.out.println("Unzureichender Bestand für " + artikel.getBezeichnung() +  ",bitte überprüfen sie den Bestand im Shop");
+                }
+                break;
             }
-
-
         }
-
     }
+
 
     public boolean checkArtikelwarenkorb(String artikelname, Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
@@ -116,8 +114,6 @@ public class WarenkorbVerwaltung {
             if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(artikelname)) {
                 return true;
             }
-
-
         }
         return false;
     }

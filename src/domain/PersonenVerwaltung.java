@@ -32,7 +32,9 @@ public class PersonenVerwaltung {
         Adresse adresse = new Adresse(straße, stadt, bundesland, postleitzahl, land);
         Kunde kunde = new Kunde(nummer, name, benutzerkennung, passwort, adresse);
         nutzers.add(kunde);
+        System.out.println(" Kunde registriert: "+" Benutzernummer: " + nummer + " Name: " + name);
     }
+
     private int EindeutigeBenutzernummer() {
         return ++letzteBenutzernummer;
     }
