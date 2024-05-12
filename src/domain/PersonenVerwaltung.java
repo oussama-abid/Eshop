@@ -64,4 +64,13 @@ public class PersonenVerwaltung {
         }
         return mitarbeiterList;
     }
+
+    public boolean checkUniqueUsername(String benutzerkennung) {
+        for (Nutzer nutzer : nutzers) {
+            if (nutzer.getBenutzerkennung().equals(benutzerkennung)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

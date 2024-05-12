@@ -63,8 +63,8 @@ public class Cui {
 
 
 
-    private void registriereNutzer() {  // Umbenannt wegen english-purge >:)
-        boolean istValideEingabe = false; // nicht die schönste Art, Programm stürzt aber nicht ab
+    private void registriereNutzer() {
+        boolean istValideEingabe = false;
         Scanner scanner = new Scanner(System.in);
 
         while (!istValideEingabe) {
@@ -72,9 +72,19 @@ public class Cui {
 
             System.out.print("Name: ");
             String name = scanner.nextLine();
-            System.out.print("Benutzerkennung: ");
-            String benutzerkennung = scanner.nextLine();
 
+
+            boolean uniquebenutzerkennung = false;
+            String benutzerkennung = "";
+            while (!uniquebenutzerkennung) {
+                System.out.print("Benutzerkennung: ");
+                benutzerkennung = scanner.nextLine();
+                if (shop.checkUniqueUsername(benutzerkennung)) {
+                    uniquebenutzerkennung = true;
+                } else {
+                    System.out.println("Benutzerkennung ist bereits vergeben.");
+                }
+            }
             System.out.print("Passwort: ");
             String passwort = scanner.nextLine();
 
@@ -166,19 +176,23 @@ public class Cui {
         System.out.print("Bezeichnung: ");
         String Bezeichnung = scanner.nextLine();
 
-        int Bestand = 0;
+        int bestand = 0;
         boolean validBestand = false;
         while (!validBestand) {
             System.out.print("Bestand: ");
             if (scanner.hasNextInt()) {
-                Bestand = scanner.nextInt();
-                validBestand = true;
+                bestand = scanner.nextInt();
+                if (bestand > 0) {
+                    validBestand = true;
+                } else {
+                    System.out.println("Fehler: Bitte geben Sie eine >0  Zahl ein.");
+                }
             } else {
                 System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
-                scanner.next(); // Verbrauche ungültige Eingabe
+                scanner.next();
             }
         }
-        scanner.nextLine();
+
         float Preis = 0;
         boolean validPreis = false;
         while (!validPreis) {
@@ -191,14 +205,14 @@ public class Cui {
                 scanner.next();
             }
         }
-        scanner.nextLine();
 
-        Artikel art = new Artikel(Bezeichnung, Bestand, Preis);
+
+        Artikel art = new Artikel(Bezeichnung, bestand, Preis);
         shop.ArtikelHinzufuegen(art);
         shop.Ereignisfesthalten("neuer Artikel",art,art.getBestand(), authuser);
         System.out.println("Artikel wurde hinzugefügt");
-        Mitarbeitermenu();
-        loginMenue();
+
+
     }
 
     private void Mitarbeitermenu (){
@@ -262,9 +276,17 @@ public class Cui {
 
         System.out.print("Name: ");
         String name = scanner.nextLine();
-
-        System.out.print("Benutzerkennung: ");
-        String benutzerkennung = scanner.nextLine();
+        boolean uniquebenutzerkennung = false;
+        String benutzerkennung = "";
+        while (!uniquebenutzerkennung) {
+            System.out.print("Benutzerkennung: ");
+            benutzerkennung = scanner.nextLine();
+            if (shop.checkUniqueUsername(benutzerkennung)) {
+                uniquebenutzerkennung = true;
+            } else {
+                System.out.println("Benutzerkennung ist bereits vergeben.");
+            }
+        }
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
@@ -291,32 +313,64 @@ public class Cui {
     }
 
     private void ShopVerlaufAnzeigen() {
-        ShopVerlauf =shop.ShopVerlaufAnzeigen();
-        for (Event event : ShopVerlauf) {
-            System.out.println(event);
+        ShopVerlauf = shop.ShopVerlaufAnzeigen();
+        if (ShopVerlauf.size() == 0) {
+            System.out.println("Keine Ereignisse bisher aufgezeichnet.");
+        } else {
+            for (Event event : ShopVerlauf) {
+                System.out.println(event);
+            }
         }
-        Mitarbeitermenu ();
+        Mitarbeitermenu();
     }
 
 
     private void aendereBestand() {
-        System.out.print("Geben Sie die Artikelnummer ein: ");
-        int artikelnummer = Integer.parseInt(scanner.nextLine());
-        for (Artikel artikel : shop.getArtikelListe()) {
-            if (artikel.getArtikelnummer() == artikelnummer) {
-                    System.out.print("wie viele Artikel möchten Sie hinzufügen ? : ");
-                    String newBestandInput = scanner.nextLine();
-                    int newBestand = Integer.parseInt(newBestandInput);
-                    shop.BestandAendern(artikelnummer, newBestand);
-                    System.out.println("Lagerbestand für Artikel " + artikelnummer + " auf " + artikel.getBestand() + " aktualisiert.");
-                    shop.Ereignisfesthalten("Einlagerung",artikel,newBestand, authuser);
-                    Mitarbeitermenu ();
-                    return;
 
+        int artikelnummer = 0;
+
+        boolean validInput = false;
+        while (!validInput) {
+            System.out.print("Geben Sie die Artikelnummer ein: ");
+            try {
+                artikelnummer = Integer.parseInt(scanner.nextLine());
+                validInput = true;
+            } catch (NumberFormatException e) {
+
+                System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
             }
         }
-        System.out.println("Artikel nicht gefunden.");
-        Mitarbeitermenu ();
+
+        Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
+        if (artikel == null) {
+            System.out.println("Artikel nicht gefunden.");
+            Mitarbeitermenu();
+        } else {
+            System.out.print("Wie viele Artikel möchten Sie hinzufügen? : ");
+            int newBestand = 0;
+            boolean validBestand = false;
+            while (!validBestand) {
+                System.out.print("Bestand: ");
+                if (scanner.hasNextInt()) {
+                    newBestand = scanner.nextInt();
+                    if (newBestand > 0) {
+                        validBestand = true;
+                    } else {
+                        System.out.println("Fehler: Bitte geben Sie eine Zahl größer als 0 ein.");
+                    }
+                } else {
+                    System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
+                    scanner.next();
+                }
+            }
+            shop.BestandAendern(artikelnummer, newBestand);
+            System.out.println("Lagerbestand für Artikel " + artikelnummer + " auf " + artikel.getBestand() + " aktualisiert.");
+            shop.Ereignisfesthalten("Einlagerung", artikel, newBestand, authuser);
+            Mitarbeitermenu();
+
+        }
+
+
     }
 
 
@@ -380,18 +434,27 @@ public class Cui {
             artikelnummer = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
             System.out.println("Bitte geben Sie eine gültige Artikelnummer ein.");
-            return; // Return to prevent further processing
+            return;
         }
-
         Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
         if (artikel != null) {
             System.out.print("Geben Sie die Anzahl ein: ");
+
             int anzahl = 0;
-            try {
-                anzahl = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Bitte geben Sie eine gültige Anzahl ein.");
-                return; // Return to prevent further processing
+            boolean validBestand = false;
+            while (!validBestand) {
+                System.out.print("Anzahl: ");
+                if (scanner.hasNextInt()) {
+                    anzahl = scanner.nextInt();
+                    if (anzahl > 0) {
+                        validBestand = true;
+                    } else {
+                        System.out.println("Fehler: Bitte geben Sie eine >0  Zahl ein.");
+                    }
+                } else {
+                    System.out.println("Bitte geben Sie eine gültige Anzahl ein.");
+                    scanner.next();
+                }
             }
 
 
@@ -404,14 +467,26 @@ public class Cui {
             KundenMenu();
 
         }
+        else {
+            System.out.println("Artikel nicht gefunden.");
+            KundenMenu();
+        }
     }
 
 
     public void WarenkorbAnsehen() {
 
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
-        System.out.println(warenkorb);
-        warenkorbmenu();
+
+        if (warenkorb.getWarenkorbListe().size() == 0) {
+            System.out.println("Der Warenkorb ist leer");
+            KundenMenu();
+        } else {
+            System.out.println(warenkorb);
+            warenkorbmenu();
+        }
+
+
     }
 public void warenkorbmenu(){
     System.out.println("--------------------------------------");

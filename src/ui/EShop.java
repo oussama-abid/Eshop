@@ -109,4 +109,10 @@ public class EShop {
     }
 
 
+    public boolean checkUniqueUsername(String benutzerkennung) {
+        return PersonenVerwaltung.checkUniqueUsername(benutzerkennung);
+    }
+
+
+
 }
