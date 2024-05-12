@@ -411,11 +411,8 @@ public class Cui {
                     }
                     isValid = true;
                     break;
+
                 case "5":
-                        //WarenkorBearbeiten();
-                    isValid = true;
-                    break;
-                case "6":
                     isValid = true; // Allow exit to break the loop
                     authuser = null;
                     break;
@@ -473,7 +470,6 @@ public class Cui {
         }
     }
 
-
     public void WarenkorbAnsehen() {
 
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
@@ -500,7 +496,7 @@ public void warenkorbmenu(){
     String input1 = scanner.nextLine();
     switch (input1) {
         case "1":
-            //ArtikelMengeändern();
+            ArtikelMengeändern();
             isValid = true;
             break;
         case "2":
@@ -519,7 +515,10 @@ public void warenkorbmenu(){
             System.out.println("Was möchten sie machen?");
     }
 }
-    private void Warenkorbleeren() {
+
+
+
+private void Warenkorbleeren() {
         shop.Warenkorbleeren(authuser);
     }
 
@@ -551,24 +550,52 @@ public void warenkorbmenu(){
     }
 
 
-    /*
+
     private void ArtikelMengeändern() {
-        System.out.print("Geben Sie die Artikelnummer des zu ändernden Artikels ein: ");
-        int artikelnummer = Integer.parseInt(scanner.nextLine());
+        System.out.print("Geben Sie den Artikelname ein: ");
+        String Artikelname = scanner.nextLine().toLowerCase();
+        if(shop.checkArtikelwarenkorb(Artikelname,authuser)){
+            System.out.print("Geben Sie die neue Anzahl ein: ");
 
-        System.out.print("Geben Sie die neue Anzahl ein: ");
-        int neueAnzahl = Integer.parseInt(scanner.nextLine());
 
-        try {
-            shop.artikelMengeaendern(artikelnummer, neueAnzahl, authuser);
-            System.out.println("Artikelmenge erfolgreich geändert.");
-        } catch (Exception e) {
-            System.out.println("Fehler beim Ändern der Artikelmenge: " + e.getMessage());
+            int neueAnzahl = 0;
+            boolean validBestand = false;
+            while (!validBestand) {
+                System.out.print("Anzahl: ");
+                if (scanner.hasNextInt()) {
+                    neueAnzahl = scanner.nextInt();
+                    if (neueAnzahl > 0) {
+                        validBestand = true;
+                    } else {
+                        System.out.println("Fehler: Bitte geben Sie eine Zahl größer als 0 ein.");
+                    }
+                } else {
+                    System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
+                    scanner.next();
+                }
+            }
+
+
+
+            try {
+                shop.artikelMengeaendern(Artikelname, neueAnzahl, authuser);
+                System.out.println("Artikelmenge erfolgreich geändert.");
+                WarenkorbAnsehen();
+            } catch (Exception e) {
+                System.out.println("Fehler beim Ändern der Artikelmenge: " + e.getMessage());
+                WarenkorbAnsehen();
+            }
+
+        }
+        else {
+            System.out.println("Artikel nicht gefunden");
+            WarenkorbAnsehen();
         }
 
-        WarenkorbAnsehen(); // Anzeigen des aktualisierten Warenkorbs
+
+
     }
-*/
+
 
 }
 

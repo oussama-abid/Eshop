@@ -20,8 +20,8 @@ public class WarenkorbVerwaltung {
 
     public Warenkorb getWarenkorb(Nutzer authuser) {
 
-            Kunde kunde = (Kunde) authuser;
-            return kunde.getWarenkorb();
+        Kunde kunde = (Kunde) authuser;
+        return kunde.getWarenkorb();
 
     }
 
@@ -42,25 +42,12 @@ public class WarenkorbVerwaltung {
         boolean artikelImWarenkorb = istArtikelImWarenkorb(warenkorb, artikel);
 
         if (artikelImWarenkorb) {
-            aktualisiereArtikelImWarenkorb(warenkorb, artikel, anzahl);
+            System.out.println("Dieser Artikel befindet sich bereits im Warenkorb");
         } else {
             fuegeNeuenArtikelZumWarenkorbHinzu(warenkorb, artikel, anzahl);
         }
     }
 
-    private void aktualisiereArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel, int anzahl) {
-        for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
-            if (warenkorbArtikel.getArtikel().equals(artikel)) {
-                int gesamtAnzahl = warenkorbArtikel.getAnzahl() + anzahl;
-                if (artikel.getBestand() >= gesamtAnzahl) {
-                    warenkorbArtikel.setAnzahl(gesamtAnzahl);
-                } else {
-                    System.out.println("Nicht genügend Bestand für " + artikel.getBezeichnung());
-                }
-                break;
-            }
-        }
-    }
 
     private void fuegeNeuenArtikelZumWarenkorbHinzu(Warenkorb warenkorb, Artikel artikel, int anzahl) {
         if (artikel.getBestand() >= anzahl) {
@@ -70,7 +57,6 @@ public class WarenkorbVerwaltung {
             System.out.println("Nicht genügend Bestand für " + artikel.getBezeichnung());
         }
     }
-
 
 
     public void ArtikelAusWarenkorbEntfernen(Artikel artikel, int anzahl, Warenkorb warenkorb) {
@@ -98,7 +84,7 @@ public class WarenkorbVerwaltung {
         Warenkorb warenkorb = getWarenkorb(authuser);
         Kunde kunde = (Kunde) authuser;
         date = new Date();
-        Rechnung=new Rechnung(date,warenkorb.calculateTotalPrice(),kunde);
+        Rechnung = new Rechnung(date, warenkorb.calculateTotalPrice(), kunde);
 
         System.out.println(Rechnung);
         warenkorb.Warenkorbleeren();
@@ -108,6 +94,32 @@ public class WarenkorbVerwaltung {
     public void Warenkorbleeren(Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
         warenkorb.Warenkorbleeren();
+    }
+
+    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) {
+        Warenkorb warenkorb = getWarenkorb(authuser);
+        for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
+
+            if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(Artikelname)) {
+                warenkorbArtikel.setAnzahl(neueAnzahl);
+            }
+
+
+        }
+
+    }
+
+    public boolean checkArtikelwarenkorb(String artikelname, Nutzer authuser) {
+        Warenkorb warenkorb = getWarenkorb(authuser);
+        for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
+
+            if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(artikelname)) {
+                return true;
+            }
+
+
+        }
+        return false;
     }
 }
 

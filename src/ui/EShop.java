@@ -117,4 +117,13 @@ public class EShop {
     public Artikel sucheartiklemitname(String suchbegriff) {
         return Produkte.sucheartiklemitname(suchbegriff);
     }
+
+    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) {
+        warenkorbVerwaltung.artikelMengeaendern(Artikelname,neueAnzahl,authuser);
+
+    }
+
+    public boolean checkArtikelwarenkorb(String artikelname, Nutzer authuser) {
+        return warenkorbVerwaltung.checkArtikelwarenkorb(artikelname,authuser);
+    }
 }
