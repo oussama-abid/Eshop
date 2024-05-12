@@ -404,32 +404,50 @@ public class Cui {
 
 
     public void WarenkorbAnsehen() {
+
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
         System.out.println(warenkorb);
-        System.out.println("--------------------------------------");
-        System.out.println("Was möchten sie machen?");
-        System.out.println(" 1. Artikel Menge ändern");
-        System.out.println(" 2. Warenkorb leeren");
-        System.out.println(" 3. Zur HomePage zurück");
+        warenkorbmenu();
+    }
+public void warenkorbmenu(){
+    System.out.println("--------------------------------------");
+    System.out.println("Was möchten sie machen?");
+    System.out.println(" 1. Artikel Menge ändern");
+    System.out.println(" 2. Warenkorb leeren");
+    System.out.println(" 3. kaufen");
+    System.out.println(" 4. Zur HomePage zurück");
 
-        boolean isValid = false;
-        String input1 = scanner.nextLine();
-        switch (input1) {
-            case "1":
-                //ArtikelMengeändern();
-                isValid = true;
-                break;
-            case "2":
-                //Warenkorbleeren();
-                isValid = true;
-                break;
-            case "3":
-                ;KundenMenu();
-                isValid = true;
-                break;
-            default:
-                System.out.println("Was möchten sie machen?");
-        }
+    boolean isValid = false;
+    String input1 = scanner.nextLine();
+    switch (input1) {
+        case "1":
+            //ArtikelMengeändern();
+            isValid = true;
+            break;
+        case "2":
+            Warenkorbleeren();
+            isValid = true;
+            break;
+        case "3":
+            kaufen();
+            isValid = true;
+            break;
+        case "4":
+            KundenMenu();
+            isValid = true;
+            break;
+        default:
+            System.out.println("Was möchten sie machen?");
+    }
+}
+    private void Warenkorbleeren() {
+        shop.Warenkorbleeren(authuser);
+    }
+
+    private void kaufen() {
+       shop.articlebestandanderen(authuser);
+        shop.kaufen(authuser);
+
     }
 
 

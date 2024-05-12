@@ -23,6 +23,16 @@ public class WarenkorbVerwaltung {
 
     }
 
+    private boolean istArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel) {
+        for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
+            if (warenkorbArtikel.getArtikel().equals(artikel)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public void inWarenKorbLegen(Artikel artikel, int anzahl, User authuser) {
         Kunde kunde = (Kunde) authuser;
         Warenkorb warenkorb = kunde.getWarenkorb();
@@ -34,15 +44,6 @@ public class WarenkorbVerwaltung {
         } else {
             fuegeNeuenArtikelZumWarenkorbHinzu(warenkorb, artikel, anzahl);
         }
-    }
-
-    private boolean istArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel) {
-        for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
-            if (warenkorbArtikel.getArtikel().equals(artikel)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void aktualisiereArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel, int anzahl) {
@@ -91,7 +92,18 @@ public class WarenkorbVerwaltung {
     }
 
 
+    public void kaufen(User authuser) {
+        Warenkorb warenkorb = getWarenkorb(authuser);
 
+
+        warenkorb.Warenkorbleeren();
+
+    }
+
+    public void Warenkorbleeren(User authuser) {
+        Warenkorb warenkorb = getWarenkorb(authuser);
+        warenkorb.Warenkorbleeren();
+    }
 }
 
 

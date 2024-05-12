@@ -86,9 +86,22 @@ public class EShop {
     public Warenkorb getWarenkorb(User authuser) {
       return  warenkorbVerwaltung.getWarenkorb(authuser);
     }
-public void artikelMengeändern(){
+
+
+    public void artikelMengeändern(){
 
 }
 
 
+    public void kaufen(User authuser) {
+        warenkorbVerwaltung.kaufen(authuser);
+    }
+
+    public void Warenkorbleeren(User authuser) {
+        warenkorbVerwaltung.Warenkorbleeren(authuser);
+    }
+
+    public void articlebestandanderen(User authuser) {
+        Produkte.articlebestandanderen(authuser);
+    }
 }

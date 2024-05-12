@@ -1,7 +1,6 @@
 package domain;
 
-import Entities.Artikel;
-import Entities.User;
+import Entities.*;
 import ui.EShop;
 
 import java.util.ArrayList;
@@ -59,6 +58,21 @@ public class ArtikelVerwaltung {
     public List<Artikel> getArtikelListe() {
                                             //Um die Artikelliste auszugeben
         return artikelListe;
+    }
+
+    public void articlebestandanderen(User authuser) {
+        Kunde kunde = (Kunde) authuser;
+        Warenkorb warenkorb = kunde.getWarenkorb();
+        List<WarenkorbArtikel> WarenkorbListe=warenkorb.getWarenkorbListe();
+        for (Artikel artikel : artikelListe) {
+            for (WarenkorbArtikel item : WarenkorbListe) {
+                if (artikel.getArtikelnummer() == item.getArtikel().getArtikelnummer()) {
+                    artikel.setBestand(artikel.getBestand()- item.getAnzahl());
+
+                }
+            }
+            }
+
     }
 }
 
