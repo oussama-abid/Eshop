@@ -21,7 +21,8 @@ public class Cui {
 
     public Cui(EShop shop) {
         scanner = new Scanner(System.in);
-        this.shop = new EShop();
+        this.shop = shop; // Use the passed EShop object
+        this.authuser = null;
         actions();
     }
 
@@ -33,24 +34,31 @@ public class Cui {
         boolean shouldExit = false;
         boolean isValid = false;
         while (!shouldExit) {
-            System.out.print("Wollen sie sich registrieren (R) oder einloggen (L)? : ");
-            String input1 = scanner.nextLine();
-            switch (input1) {
-                case "L":
-                case "l":
-                    loginUser();
-                    isValid = true;
-                    break;
-                case "R"  :
-                case "r"  :
-                    registerUser();
-                    isValid = true;
-                    break;
-                case "exit":
-                    shouldExit = true; // Allow exit to break the loop
-                    break;
-                default:
-                    System.out.println("----------------------");
+            // Überprüfen, ob der Benutzer bereits angemeldet ist
+            if (authuser == null) {
+                System.out.print("Wollen Sie sich registrieren (R) oder einloggen (L)? : ");
+                String input1 = scanner.nextLine();
+                switch (input1) {
+                    case "L":
+                    case "l":
+                        loginUser();
+                        isValid = true;
+                        break;
+                    case "R":
+                    case "r":
+                        registerUser();
+                        isValid = true;
+                        break;
+                    case "exit":
+                        shouldExit = true; // Allow exit to break the loop
+                        break;
+                    default:
+                        System.out.println("----------------------");
+                }
+            } else {
+                // Der Benutzer ist bereits angemeldet, daher zeigen wir das Hauptmenü an
+                showMainMenu();
+                shouldExit = true; // Beenden Sie die Schleife nach dem Anzeigen des Hauptmenüs
             }
         }
         scanner.close();
@@ -96,7 +104,7 @@ public class Cui {
 
 
     private void loginUser() {
-        System.out.println("Geben sie ihre Login Informationen ein.");
+        System.out.println("Geben Sie Ihre Login-Informationen ein:");
         System.out.print("Benutzerkennung: ");
         String benutzerkennung = scanner.nextLine();
         System.out.print("Passwort: ");
@@ -105,33 +113,25 @@ public class Cui {
         User user = shop.login(benutzerkennung, passwort);
 
         if (user != null) {
-            authuser = user;
-            if(user instanceof Kunde) {
-
-                System.out.println("Herzlich Willkommen bei unserem E-shop, Viel Spaß!");
-                showeshop();
-            }
-            else {
-                Mitarbeitermenu();
-
-            }
-
+            authuser = user; // Update authuser after successful login
+            System.out.println("Login erfolgreich.");
+            // Proceed to the main menu
+            showMainMenu();
         } else {
-            System.out.println("Falscher Benutzername oder Passwort");
+            System.out.println("Falscher Benutzername oder Passwort.");
+            actions(); // Prompt user to log in again
         }
-
     }
 
-    private void showeshop() {
-
+    private void showMainMenu() {
+        // Display main menu options based on user's role
         if (authuser instanceof Kunde) {
             KundenMenu();
-        } else {
+        } else if (authuser instanceof Mitarbeiter) {
             Mitarbeitermenu();
         }
     }
-
-    private void artikellisteAusgeben(){
+    private void showeshop() {
         artikelListe = shop.getArtikelListe();
         System.out.println("-------- Artikel: ----------");
 
@@ -139,8 +139,13 @@ public class Cui {
             System.out.println("Artikel Nummer: " + artikel.getArtikelnummer());
             System.out.println("Bezeichnung: " + artikel.getBezeichnung());
             System.out.println("Bestand: " + artikel.getBestand());
-            System.out.println("Preis: " + artikel.getPreis() + "€");
+            System.out.println("Preis: " + artikel.getPreis());
             System.out.println("----------------------");
+        }
+        if (authuser instanceof Kunde) {
+            KundenMenu();
+        } else {
+            Mitarbeitermenu();
         }
     }
 
@@ -206,7 +211,6 @@ public class Cui {
             String input1 = scanner.nextLine();
             switch (input1) {
                 case "1":
-                    artikellisteAusgeben();
                     showeshop();
                     isValid = true;
                     break;
@@ -236,9 +240,11 @@ public class Cui {
                                 break;
                 case "8":
                     isValid = true; // Allow exit to break the loop
+                    authuser = null;
                     break;
                 default:
                     System.out.println("Was möchten sie machen?");
+
             }
         }
 
@@ -318,83 +324,185 @@ public class Cui {
 //--------------------- Kunde functions --------------------------------------------------
 
 
-    private void KundenMenu () {
-    boolean isValid = false;
-    while (!isValid) {
-        System.out.println(" 1. Artikelliste ausgeben");
-        System.out.println(" 2. Artikel suchen");
-        System.out.println(" 3. Artikel zum Warenkorb hinzufuegen");
-        System.out.println(" 4. Warenkorb ansehen");
-        System.out.println(" 5. Logout");
+    private void KundenMenu() {
+        boolean isValid = false;
+        while (!isValid) {
+            System.out.println(" 1. Artikelliste ausgeben");
+            System.out.println(" 2. Artikel suchen");
+            System.out.println(" 3. Artikel zum Warenkorb hinzufuegen");
+            System.out.println(" 4. Warenkorb ansehen");
+            System.out.println(" 5. Logout");
 
-        String input1 = scanner.nextLine();
-        switch (input1) {
-            case "1":
-                artikellisteAusgeben();
-                showeshop();
-                isValid = true;
-                break;
-            case "2":
-                //ArtikelSuchen
-                isValid = true;
-                break;
-            case "3":
-                HinzufuegenZumWarenkorb();
-                isValid = true;
-                break;
-            case "4":
-                WarenkorbAnsehen();
-                isValid = true;
-                break;
-            case "5":
-                isValid = true; // Allow exit to break the loop
-                break;
-            default:
-                System.out.println("Was möchten sie machen?");
+            String input1 = scanner.nextLine();
+            switch (input1) {
+                case "1":
+                    showeshop();
+                    isValid = true;
+                    break;
+                case "2":
+                    SucheArtikelMitName();
+                    isValid = true;
+                    break;
+                case "3":
+                    HinzufuegenZumWarenkorb();
+                    isValid = true;
+                    break;
+                case "4":
+                    if (authuser != null) {
+                        WarenkorbAnsehen();
+                    }
+                    isValid = true;
+                    break;
+                case "5":
+                        //WarenkorBearbeiten();
+                    isValid = true;
+                    break;
+                case "6":
+                    isValid = true; // Allow exit to break the loop
+                    authuser = null;
+                    break;
+                default:
+                    System.out.println("Was möchten sie machen?");
+            }
         }
     }
 
 
+
+    private void HinzufuegenZumWarenkorb() {
+        System.out.print("Geben Sie die Artikelnummer des zu hinzufügenden Artikels ein: ");
+        int artikelnummer = 0;
+        try {
+            artikelnummer = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Bitte geben Sie eine gültige Artikelnummer ein.");
+            return; // Return to prevent further processing
+        }
+
+        Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
+        if (artikel != null) {
+            System.out.print("Geben Sie die Anzahl ein: ");
+            int anzahl = 0;
+            try {
+                anzahl = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Bitte geben Sie eine gültige Anzahl ein.");
+                return; // Return to prevent further processing
+            }
+
+
+            try {
+                shop.inWarenKorbLegen(artikel, anzahl, authuser);
+
+            } catch (Exception e) {
+                System.out.println("Ein Fehler ist aufgetreten: " + e.getMessage());
+            }
+            KundenMenu();
+
+        }
+    }
+
+
+    public void WarenkorbAnsehen() {
+
+        Warenkorb warenkorb = shop.getWarenkorb(authuser);
+        System.out.println(warenkorb);
+        warenkorbmenu();
+    }
+public void warenkorbmenu(){
+    System.out.println("--------------------------------------");
+    System.out.println("Was möchten sie machen?");
+    System.out.println(" 1. Artikel Menge ändern");
+    System.out.println(" 2. Warenkorb leeren");
+    System.out.println(" 3. kaufen");
+    System.out.println(" 4. Zur HomePage zurück");
+
+    boolean isValid = false;
+    String input1 = scanner.nextLine();
+    switch (input1) {
+        case "1":
+            //ArtikelMengeändern();
+            isValid = true;
+            break;
+        case "2":
+            Warenkorbleeren();
+            isValid = true;
+            break;
+        case "3":
+            kaufen();
+            isValid = true;
+            break;
+        case "4":
+            KundenMenu();
+            isValid = true;
+            break;
+        default:
+            System.out.println("Was möchten sie machen?");
+    }
 }
+    private void Warenkorbleeren() {
+        shop.Warenkorbleeren(authuser);
+    }
 
-
-    private void HinzufuegenZumWarenkorb(){
-
-
-
+    private void kaufen() {
+       shop.articlebestandanderen(authuser);
+       shop.kundeEreignisfesthalten("Auslagerung", authuser);
+       shop.kaufen(authuser);
+       KundenMenu();
 
     }
 
-    private void WarenkorbAnsehen(){
 
+    // Oussama : keine direkt funktionen hier (in cui nur die prints und der aufurf von funktionen aus shop), mach das in Artikel verwaltung , und ruf die funktion aus shop wie hier  Warenkorb warenkorb = shop.getWarenkorb(authuser);
 
+    public void  SucheArtikelMitName() {
+        System.out.print("Geben Sie den Suchbegriff ein: ");
+        String suchbegriff = scanner.nextLine().toLowerCase(); // Konvertieren Sie den Suchbegriff in Kleinbuchstaben für einen Fall-unabhängigen Vergleich
+
+        List<Artikel> gefundeneArtikel = new ArrayList<>();
+
+        // Durchsuchen Sie die Artikel nach Übereinstimmungen mit dem Suchbegriff
+        for (Artikel artikel : shop.getArtikelListe()) {
+            if (artikel.getBezeichnung().toLowerCase().contains(suchbegriff)) {
+                gefundeneArtikel.add(artikel);
+            }
+        }
+
+        if (!gefundeneArtikel.isEmpty()) {
+            System.out.println("Gefundene Artikel:");
+            for (Artikel artikel : gefundeneArtikel) {
+                System.out.println("Artikelnummer: " + artikel.getArtikelnummer());
+                System.out.println("Bezeichnung: " + artikel.getBezeichnung());
+                System.out.println("Bestand: " + artikel.getBestand());
+                System.out.println("Preis: " + artikel.getPreis());
+                System.out.println("-------------------");
+            }
+        } else {
+            System.out.println("Keine Artikel gefunden, die \"" + suchbegriff + "\" enthalten.");
+        }
+        KundenMenu();
     }
 
 
+    /*
+    private void ArtikelMengeändern() {
+        System.out.print("Geben Sie die Artikelnummer des zu ändernden Artikels ein: ");
+        int artikelnummer = Integer.parseInt(scanner.nextLine());
 
+        System.out.print("Geben Sie die neue Anzahl ein: ");
+        int neueAnzahl = Integer.parseInt(scanner.nextLine());
 
+        try {
+            shop.artikelMengeaendern(artikelnummer, neueAnzahl, authuser);
+            System.out.println("Artikelmenge erfolgreich geändert.");
+        } catch (Exception e) {
+            System.out.println("Fehler beim Ändern der Artikelmenge: " + e.getMessage());
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        WarenkorbAnsehen(); // Anzeigen des aktualisierten Warenkorbs
+    }
+*/
 
 }
+
 

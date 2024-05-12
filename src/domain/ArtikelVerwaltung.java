@@ -1,7 +1,6 @@
 package domain;
 
-import Entities.Artikel;
-import Entities.User;
+import Entities.*;
 import ui.EShop;
 
 import java.util.ArrayList;
@@ -15,12 +14,11 @@ public class ArtikelVerwaltung {
 
 
     public ArtikelVerwaltung() {
-        ArtikelHinzufuegen(new Artikel("tisch",123, 39.99F));// Fügt den neuen Artikel hinzu
+        ArtikelHinzufuegen(new Artikel("tisch",12, 39.99F));// Fügt den neuen Artikel hinzu
         ArtikelHinzufuegen(new Artikel("lampe,", 21, 19.99F));
         ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
         ArtikelHinzufuegen(new Artikel("Tacker",21,  4.99F));
         ArtikelHinzufuegen(new Artikel("Laptop",32,  1119.99F));
-
     }
 
     public void ArtikelHinzufuegen(Artikel artikel) {
@@ -62,6 +60,19 @@ public class ArtikelVerwaltung {
         return artikelListe;
     }
 
+    public void articlebestandanderen(User authuser) {
+        Kunde kunde = (Kunde) authuser;
+        Warenkorb warenkorb = kunde.getWarenkorb();
+        List<WarenkorbArtikel> WarenkorbListe=warenkorb.getWarenkorbListe();
+        for (Artikel artikel : artikelListe) {
+            for (WarenkorbArtikel item : WarenkorbListe) {
+                if (artikel.getArtikelnummer() == item.getArtikel().getArtikelnummer()) {
+                    artikel.setBestand(artikel.getBestand()- item.getAnzahl());
 
+                }
+            }
+            }
+
+    }
 }
 

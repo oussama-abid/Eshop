@@ -6,32 +6,53 @@ import Entities.Kunde;
 
 public class Warenkorb    {
 
-     private List<WarenkorbArtikel> WarenkorbListe = new ArrayList<>();
-    private Kunde kunde;
+    private List<WarenkorbArtikel> WarenkorbListe;
 
 
-    public Warenkorb(Kunde kunde) {
-                                             //spezifisch für jeden Kunden einen Warenkorb
-        WarenkorbListe = new ArrayList<>();   //eigene Liste für jeden Kunden
+    public Warenkorb() {
+        WarenkorbListe = new ArrayList<>();
     }
-    public List<WarenkorbArtikel> getWarenKorbArtikel(){
+
+    public List<WarenkorbArtikel> getWarenkorbListe() {
         return WarenkorbListe;
     }
 
-    public void WarenkorbLeeren(){
-        WarenkorbListe.clear();
+    public void setWarenkorbListe(List<WarenkorbArtikel> warenkorbListe) {
+        WarenkorbListe = warenkorbListe;
     }
 
-    public Kunde getKunde() {
-        return kunde;
+    public void addItem(WarenkorbArtikel artikel) {
+        WarenkorbListe.add(artikel);
     }
-
-    public int getGesamtAnzahl(){
-       int GesamteAnzahl = 0;
-        for (WarenkorbArtikel warenkorbArtikel : WarenkorbListe) {
-            GesamteAnzahl += warenkorbArtikel.getAnzahl();
+    public double calculateTotalPrice() {
+        double totalPrice = 0.0;
+        for (WarenkorbArtikel artikel : WarenkorbListe) {
+            totalPrice += artikel.getAnzahl() * artikel.getArtikel().getPreis();
         }
-        return GesamteAnzahl;
-}
+        return totalPrice;
+    }
+    public void removeItem(WarenkorbArtikel artikel) {
+        WarenkorbListe.remove(artikel);
+    }
+    @Override
+    public String toString() {
+        if (WarenkorbListe.isEmpty()) {
+            return "Der Warenkorb ist leer.";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("%-20s %-10s %-10s%n", "Artikel", "Anzahl", "Preis"));
+            sb.append("------------------------------------\n");
+            for (WarenkorbArtikel artikel : WarenkorbListe) {
+                sb.append(String.format("%-20s %-10d %-15s%n", artikel.getArtikel().getBezeichnung(), artikel.getAnzahl(), (artikel.getArtikel().getPreis() + " * " + artikel.getAnzahl())));
+            }
+            sb.append("------------------------------------\n");
+            sb.append(String.format("Gesamtpreis: %.2f%n", calculateTotalPrice()));
+            return sb.toString();
+        }
+    }
 
+    public void Warenkorbleeren() {
+        WarenkorbListe.clear();
+        System.out.println("Warenkorb geleert.");
+    }
 }

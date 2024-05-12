@@ -4,6 +4,7 @@ import Entities.*;
 import domain.*;
 
 
+import javax.xml.namespace.QName;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,10 +13,13 @@ public class EShop {
     private PersonenVerwaltung PersonenVerwaltung;
     private ArtikelVerwaltung Produkte;
     private  VerlaufVerwaltung VerlaufVerwaltung;
+    private WarenkorbVerwaltung warenkorbVerwaltung;
+
     public EShop() {
         this.PersonenVerwaltung = new PersonenVerwaltung();
         this.Produkte = new ArtikelVerwaltung();
         this.VerlaufVerwaltung = new VerlaufVerwaltung();
+        this.warenkorbVerwaltung = new WarenkorbVerwaltung();
         registriereMitarbeiter( "admin", "admin", "admin");
         registriereKunde( "user", "user", "user", "str","stdt","xx",55555,"de");
     }
@@ -69,4 +73,42 @@ public class EShop {
     public void Ereignisfesthalten(String operation, Artikel artikel, int quantity, User user) {
         VerlaufVerwaltung.Ereignisfesthalten(operation,artikel,quantity,user);
     }
+    public void kundeEreignisfesthalten(String operation, User authuser) {
+        VerlaufVerwaltung.kundeEreignisfesthalten(operation,authuser);
+    }
+
+
+    public Artikel findeArtikelDurchID(int artikelnummer) {
+        return Produkte.SucheArtikelPerID(artikelnummer);
+    }
+
+
+
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, User authuser) {
+    warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
+    }
+
+    public Warenkorb getWarenkorb(User authuser) {
+      return  warenkorbVerwaltung.getWarenkorb(authuser);
+    }
+
+
+    public void artikelMengeändern(){
+
+}
+
+
+    public void kaufen(User authuser) {
+        warenkorbVerwaltung.kaufen(authuser);
+    }
+
+    public void Warenkorbleeren(User authuser) {
+        warenkorbVerwaltung.Warenkorbleeren(authuser);
+    }
+
+    public void articlebestandanderen(User authuser) {
+        Produkte.articlebestandanderen(authuser);
+    }
+
+
 }
