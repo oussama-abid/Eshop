@@ -1,12 +1,11 @@
 package Entities;
 
-public class Kunde extends User
+public class Kunde extends Nutzer
 {
 
     private Adresse adresse;
 
     private Warenkorb warenkorb;
-
 
 
 
@@ -35,6 +34,6 @@ public class Kunde extends User
 
     @Override
     public String toString() {
-        return "Kunde: nummer=" + getUsernummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung() + ", Adresse :" + adresse;
+        return "Kunde: nummer=" + getNutzerNummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung() + ", Adresse :" + adresse;
     }
 }

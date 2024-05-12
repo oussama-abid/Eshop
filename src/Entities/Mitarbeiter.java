@@ -1,10 +1,10 @@
 package Entities;
 
-public class Mitarbeiter extends User
+public class Mitarbeiter extends Nutzer
 {
 
-    public Mitarbeiter(int usernummer, String name, String benutzerkennung, String passwort) {
-        super(usernummer, name, benutzerkennung, passwort);
+    public Mitarbeiter(int nutzerNummer, String name, String benutzerkennung, String passwort) {
+        super(nutzerNummer, name, benutzerkennung, passwort);
 
 
 
@@ -12,7 +12,7 @@ public class Mitarbeiter extends User
 
     @Override
     public String toString() {
-        return "Mitarbeiter: nummer=" + getUsernummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung();
+        return "Mitarbeiter: nummer=" + getNutzerNummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung();
     }
 
 }

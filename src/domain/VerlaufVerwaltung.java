@@ -21,15 +21,15 @@ public class VerlaufVerwaltung
     }
 
 
-    public void Ereignisfesthalten(String operation, Artikel artikel, int quantity, User user) {
+    public void Ereignisfesthalten(String operation, Artikel artikel, int quantity, Nutzer nutzer) {
         LocalDate date = LocalDate.now();
 
-        Event event = new Event(operation,date, artikel, quantity,user);
+        Event event = new Event(operation,date, artikel, quantity, nutzer);
 
         eventList.add(event);
     }
 
-    public void kundeEreignisfesthalten(String operation, User authuser) {
+    public void kundeEreignisfesthalten(String operation, Nutzer authuser) {
         LocalDate date = LocalDate.now();
         Kunde kunde = (Kunde) authuser;
         Warenkorb warenkorb = kunde.getWarenkorb();

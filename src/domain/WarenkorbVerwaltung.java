@@ -3,7 +3,7 @@ package domain;
 
 
 import java.util.ArrayList;
-import java.util.List;
+
 import Entities.*;
 
 import java.util.Date;
@@ -18,7 +18,7 @@ public class WarenkorbVerwaltung {
 
     }
 
-    public Warenkorb getWarenkorb(User authuser) {
+    public Warenkorb getWarenkorb(Nutzer authuser) {
 
             Kunde kunde = (Kunde) authuser;
             return kunde.getWarenkorb();
@@ -35,7 +35,7 @@ public class WarenkorbVerwaltung {
     }
 
 
-    public void inWarenKorbLegen(Artikel artikel, int anzahl, User authuser) {
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) {
         Kunde kunde = (Kunde) authuser;
         Warenkorb warenkorb = kunde.getWarenkorb();
 
@@ -94,7 +94,7 @@ public class WarenkorbVerwaltung {
     }
 
 
-    public void kaufen(User authuser) {
+    public void kaufen(Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
         Kunde kunde = (Kunde) authuser;
         date = new Date();
@@ -105,7 +105,7 @@ public class WarenkorbVerwaltung {
 
     }
 
-    public void Warenkorbleeren(User authuser) {
+    public void Warenkorbleeren(Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
         warenkorb.Warenkorbleeren();
     }

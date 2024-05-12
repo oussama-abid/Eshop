@@ -4,8 +4,6 @@ import Entities.*;
 import domain.*;
 
 
-import javax.xml.namespace.QName;
-import java.time.LocalDate;
 import java.util.List;
 
 public class EShop {
@@ -18,6 +16,7 @@ public class EShop {
     public EShop() {
         this.PersonenVerwaltung = new PersonenVerwaltung();
         this.Produkte = new ArtikelVerwaltung();
+        Produkte.ersteArtikel(); // Hier neue Methode eingebaut da ArtikelVerwaltung-Konstruktor gelöscht
         this.VerlaufVerwaltung = new VerlaufVerwaltung();
         this.warenkorbVerwaltung = new WarenkorbVerwaltung();
         registriereMitarbeiter( "admin", "admin", "admin");
@@ -27,7 +26,7 @@ public class EShop {
     // Mitarbeiter funktionen
 
 
-    public User login(String benutzerkennung, String passwort) {
+    public Nutzer login(String benutzerkennung, String passwort) {
         return PersonenVerwaltung.login(benutzerkennung, passwort);
     }
 
@@ -69,11 +68,10 @@ public class EShop {
     }
 
 
-
-    public void Ereignisfesthalten(String operation, Artikel artikel, int quantity, User user) {
-        VerlaufVerwaltung.Ereignisfesthalten(operation,artikel,quantity,user);
+    public void Ereignisfesthalten(String operation, Artikel artikel, int quantity, Nutzer nutzer) {
+        VerlaufVerwaltung.Ereignisfesthalten(operation,artikel,quantity, nutzer);
     }
-    public void kundeEreignisfesthalten(String operation, User authuser) {
+    public void kundeEreignisfesthalten(String operation, Nutzer authuser) {
         VerlaufVerwaltung.kundeEreignisfesthalten(operation,authuser);
     }
 
@@ -84,11 +82,11 @@ public class EShop {
 
 
 
-    public void inWarenKorbLegen(Artikel artikel, int anzahl, User authuser) {
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) {
     warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
     }
 
-    public Warenkorb getWarenkorb(User authuser) {
+    public Warenkorb getWarenkorb(Nutzer authuser) {
       return  warenkorbVerwaltung.getWarenkorb(authuser);
     }
 
@@ -98,15 +96,15 @@ public class EShop {
 }
 
 
-    public void kaufen(User authuser) {
+    public void kaufen(Nutzer authuser) {
         warenkorbVerwaltung.kaufen(authuser);
     }
 
-    public void Warenkorbleeren(User authuser) {
+    public void Warenkorbleeren(Nutzer authuser) {
         warenkorbVerwaltung.Warenkorbleeren(authuser);
     }
 
-    public void articlebestandanderen(User authuser) {
+    public void articlebestandanderen(Nutzer authuser) {
         Produkte.articlebestandanderen(authuser);
     }
 

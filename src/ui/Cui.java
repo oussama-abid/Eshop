@@ -17,23 +17,22 @@ public class Cui {
     private List<Event> ShopVerlauf = new ArrayList<>();
     private List<Artikel> artikelListe = new ArrayList<>();
 
-    private User authuser ;
+    private Nutzer authuser ;
 
     public Cui(EShop shop) {
         scanner = new Scanner(System.in);
         this.shop = shop; // Use the passed EShop object
         this.authuser = null;
-        actions();
+        loginMenue();
     }
 
 
     //-----------------------------------------------for both ---------------------------------------------------
 
 
-    private void actions() {
-        boolean shouldExit = false;
-        boolean isValid = false;
-        while (!shouldExit) {
+    private void loginMenue() {
+        boolean menueVerlassen = false;
+        while (!menueVerlassen) {
             // Überprüfen, ob der Benutzer bereits angemeldet ist
             if (authuser == null) {
                 System.out.print("Wollen Sie sich registrieren (R) oder einloggen (L)? : ");
@@ -41,16 +40,14 @@ public class Cui {
                 switch (input1) {
                     case "L":
                     case "l":
-                        loginUser();
-                        isValid = true;
+                        loginNutzer();
                         break;
                     case "R":
                     case "r":
-                        registerUser();
-                        isValid = true;
+                        registriereNutzer();
                         break;
                     case "exit":
-                        shouldExit = true; // Allow exit to break the loop
+                        menueVerlassen = true; // Allow exit to break the loop
                         break;
                     default:
                         System.out.println("----------------------");
@@ -58,7 +55,7 @@ public class Cui {
             } else {
                 // Der Benutzer ist bereits angemeldet, daher zeigen wir das Hauptmenü an
                 showMainMenu();
-                shouldExit = true; // Beenden Sie die Schleife nach dem Anzeigen des Hauptmenüs
+                menueVerlassen = true; // Beenden Sie die Schleife nach dem Anzeigen des Hauptmenüs
             }
         }
         scanner.close();
@@ -66,60 +63,70 @@ public class Cui {
 
 
 
-    private void registerUser() {
-        // Es muss noch eine UserExistiertBereitsException gemacht werden
-        System.out.println("Geben Sie Ihre Informationen ein");
+    private void registriereNutzer() {  // Umbenannt wegen english-purge >:)
+        boolean istValideEingabe = false; // nicht die schönste Art, Programm stürzt aber nicht ab
+        Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Name: ");
-        String name = scanner.nextLine();
-        System.out.print("Benutzerkennung: ");
-        String benutzerkennung = scanner.nextLine();
+        while (!istValideEingabe) {
+            System.out.println("Geben Sie Ihre Informationen ein");
 
-        System.out.print("Passwort: ");
-        String passwort = scanner.nextLine();
+            System.out.print("Name: ");
+            String name = scanner.nextLine();
+            System.out.print("Benutzerkennung: ");
+            String benutzerkennung = scanner.nextLine();
 
+            System.out.print("Passwort: ");
+            String passwort = scanner.nextLine();
 
-        System.out.println("Geben Sie Ihre Adresse:");
-        System.out.print("Straße: ");
-        String straße = scanner.nextLine();
-        System.out.print("Stadt: ");
-        String stadt = scanner.nextLine();
-        System.out.print("Bundesland: ");
-        String bundesland = scanner.nextLine();
+            System.out.println("Geben Sie Ihre Adresse:");
+            System.out.print("Straße: ");
+            String straße = scanner.nextLine();
+            System.out.print("Stadt: ");
+            String stadt = scanner.nextLine();
+            System.out.print("Bundesland: ");
+            String bundesland = scanner.nextLine();
 
-        System.out.print("PLZ: ");
-        int postleitzahl = Integer.parseInt(scanner.nextLine());
-        System.out.print("Land: ");
-        String land = scanner.nextLine();
+            int postleitzahl = 0;      // Wie Eyup das mit anderen Cui-Sachen auch gemacht hat
+            boolean validPostleitzahl = false;
+            while (!validPostleitzahl) {
+                System.out.print("PLZ: ");
+                if (scanner.hasNextInt()) {
+                    postleitzahl = scanner.nextInt();
+                    scanner.nextLine(); // Verbrauche das Zeilenendezeichen
+                    validPostleitzahl = true;
+                } else {
+                    System.out.println("Fehler: Bitte geben Sie eine ganze Zahl für die PLZ ein.");
+                    scanner.next(); // Verbrauche ungültige Eingabe
+                }
+            }
 
+            System.out.print("Land: ");
+            String land = scanner.nextLine();
 
-
-
-
-        shop.registriereKunde(name, benutzerkennung, passwort, straße, stadt, bundesland, postleitzahl, land);
-
-
-        // actions();
+            shop.registriereKunde(name, benutzerkennung, passwort, straße, stadt, bundesland, postleitzahl, land);
+            System.out.println("Registrierung erfolgreich, Sie können sich nun einloggen!");
+            istValideEingabe = true; // Falls alle Eingabe OK, Schleife beenden
+        }
     }
 
 
-    private void loginUser() {
+    private void loginNutzer() {
         System.out.println("Geben Sie Ihre Login-Informationen ein:");
         System.out.print("Benutzerkennung: ");
         String benutzerkennung = scanner.nextLine();
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
-        User user = shop.login(benutzerkennung, passwort);
+        Nutzer nutzer = shop.login(benutzerkennung, passwort);
 
-        if (user != null) {
-            authuser = user; // Update authuser after successful login
+        if (nutzer != null) {
+            authuser = nutzer; // Update authuser after successful login
             System.out.println("Login erfolgreich.");
             // Proceed to the main menu
             showMainMenu();
         } else {
             System.out.println("Falscher Benutzername oder Passwort.");
-            actions(); // Prompt user to log in again
+            loginMenue(); // Prompt user to log in again
         }
     }
 
@@ -148,8 +155,6 @@ public class Cui {
             Mitarbeitermenu();
         }
     }
-
-
 
 
     //--------------------- Mitarbeiter functions --------------------------------------------------
@@ -193,7 +198,7 @@ public class Cui {
         shop.Ereignisfesthalten("neuer Artikel",art,art.getBestand(), authuser);
         System.out.println("Artikel wurde hinzugefügt");
         Mitarbeitermenu();
-        actions();
+        loginMenue();
     }
 
     private void Mitarbeitermenu (){
@@ -218,26 +223,26 @@ public class Cui {
                     FuegeArtikelHinzu();
                     isValid = true;
                     break;
-                            case "3":
-                                aendereBestand();
-                                isValid = true;
-                                break;
-                               case "4":
-                                ZeigeKundenListe();
-                                isValid = true;
-                                break;
-                            case "5":
-                                ZeigeMitarbeiterListe();
-                                isValid = true;
-                                break;
-                              case "6":
-                               registriereMitarbeiter();
-                                isValid = true;
-                                break;
-                            case "7":
-                                ShopVerlaufAnzeigen();
-                                isValid = true;
-                                break;
+                case "3":
+                    aendereBestand();
+                    isValid = true;
+                    break;
+                case "4":
+                    ZeigeKundenListe();
+                isValid = true;
+                    break;
+                case "5":
+                    ZeigeMitarbeiterListe();
+                    isValid = true;
+                    break;
+                case "6":
+                    registriereMitarbeiter();
+                    isValid = true;
+                    break;
+                case "7":
+                    ShopVerlaufAnzeigen();
+                    isValid = true;
+                    break;
                 case "8":
                     isValid = true; // Allow exit to break the loop
                     authuser = null;
@@ -250,7 +255,6 @@ public class Cui {
 
 
     }
-
 
     private void registriereMitarbeiter() {
         System.out.println("Geben sie die Informationen ein");

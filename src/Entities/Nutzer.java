@@ -1,8 +1,8 @@
 package Entities;
 
-public class User
+public class Nutzer
 {
-    private int usernummer;
+    private int nutzerNummer;
     private String name;
     private String Benutzerkennung;
     private String Passwort;
@@ -10,10 +10,9 @@ public class User
 
 
 
-
-    public User (int usernummer, String name, String benutzerkennung, String passwort) {
+    public Nutzer(int nutzerNummer, String name, String benutzerkennung, String passwort) {
         super();
-        this.usernummer = usernummer;
+        this.nutzerNummer = nutzerNummer;
         this.name = name;
         Benutzerkennung = benutzerkennung;
         Passwort = passwort;
@@ -21,11 +20,11 @@ public class User
 
 
 
-    public int getUsernummer() {
-        return usernummer;
+    public int getNutzerNummer() {
+        return nutzerNummer;
     }
-    public void setUsernummer(int usernummer) {
-        this.usernummer = usernummer;
+    public void setNutzerNummer(int nutzerNummer) {
+        this.nutzerNummer = nutzerNummer;
     }
 
 

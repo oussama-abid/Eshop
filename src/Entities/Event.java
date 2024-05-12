@@ -10,15 +10,15 @@ public class Event {
     private LocalDate date;
     private Artikel article;
     private int quantity;
-    private User user;
+    private Nutzer nutzer;
 
 
-    public Event(String operation, LocalDate date, Artikel article, int quantity, User user) {
+    public Event(String operation, LocalDate date, Artikel article, int quantity, Nutzer nutzer) {
         this.operation = operation;
         this.date = date;
         this.article = article;
         this.quantity = quantity;
-        this.user = user;
+        this.nutzer = nutzer;
     }
 
     public String getOperation() {
@@ -53,12 +53,12 @@ public class Event {
         this.quantity = quantity;
     }
 
-    public User getUser() {
-        return user;
+    public Nutzer getUser() {
+        return nutzer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Nutzer nutzer) {
+        this.nutzer = nutzer;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Event {
                 ", date=" + date +
                 ", article=" + article.getArtikelnummer() +
                 ", quantity=" + quantity +
-                ", user=" + user.getName()
+                ", user=" + nutzer.getName()
                 ;
     }
 }
