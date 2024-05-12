@@ -446,6 +446,7 @@ public void warenkorbmenu(){
 
     private void kaufen() {
        shop.articlebestandanderen(authuser);
+       shop.kundeEreignisfesthalten("Auslagerung", authuser);
        shop.kaufen(authuser);
        KundenMenu();
 

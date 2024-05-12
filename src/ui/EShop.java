@@ -73,6 +73,11 @@ public class EShop {
     public void Ereignisfesthalten(String operation, Artikel artikel, int quantity, User user) {
         VerlaufVerwaltung.Ereignisfesthalten(operation,artikel,quantity,user);
     }
+    public void kundeEreignisfesthalten(String operation, User authuser) {
+        VerlaufVerwaltung.kundeEreignisfesthalten(operation,authuser);
+    }
+
+
     public Artikel findeArtikelDurchID(int artikelnummer) {
         return Produkte.SucheArtikelPerID(artikelnummer);
     }
@@ -104,4 +109,6 @@ public class EShop {
     public void articlebestandanderen(User authuser) {
         Produkte.articlebestandanderen(authuser);
     }
+
+
 }
