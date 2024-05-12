@@ -38,4 +38,12 @@ public class Artikel
     public float getPreis() { return Preis;}
     public void setPreis(float preis) { this.Preis = preis;}
 
+    @Override
+    public String toString() {
+        return
+                "Artikelnummer=" + Artikelnummer +
+                ", Bezeichnung='" + Bezeichnung + '\'' +
+                ", Bestand=" + Bestand +
+                ", Preis=" + Preis ;
+    }
 }

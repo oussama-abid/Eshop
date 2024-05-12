@@ -89,5 +89,14 @@ public class ArtikelVerwaltung {
     }
 
 
+    public Artikel sucheartiklemitname(String suchbegriff) {
+        for (Artikel artikel : artikelListe) {
+            if (artikel.getBezeichnung().toLowerCase().equals(suchbegriff)) {
+                return artikel;
+            }
+        }
+        return null;
+
+    }
 }
 

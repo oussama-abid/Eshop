@@ -532,34 +532,22 @@ public void warenkorbmenu(){
     }
 
 
-    // Oussama : keine direkt funktionen hier (in cui nur die prints und der aufurf von funktionen aus shop), mach das in Artikel verwaltung , und ruf die funktion aus shop wie hier  Warenkorb warenkorb = shop.getWarenkorb(authuser);
 
     public void  SucheArtikelMitName() {
         System.out.print("Geben Sie den Suchbegriff ein: ");
-        String suchbegriff = scanner.nextLine().toLowerCase(); // Konvertieren Sie den Suchbegriff in Kleinbuchstaben für einen Fall-unabhängigen Vergleich
+        String suchbegriff = scanner.nextLine().toLowerCase();
 
-        List<Artikel> gefundeneArtikel = new ArrayList<>();
+       Artikel artikel =  shop.sucheartiklemitname(suchbegriff);
 
-        // Durchsuchen Sie die Artikel nach Übereinstimmungen mit dem Suchbegriff
-        for (Artikel artikel : shop.getArtikelListe()) {
-            if (artikel.getBezeichnung().toLowerCase().contains(suchbegriff)) {
-                gefundeneArtikel.add(artikel);
-            }
-        }
-
-        if (!gefundeneArtikel.isEmpty()) {
+        if (artikel != null) {
             System.out.println("Gefundene Artikel:");
-            for (Artikel artikel : gefundeneArtikel) {
-                System.out.println("Artikelnummer: " + artikel.getArtikelnummer());
-                System.out.println("Bezeichnung: " + artikel.getBezeichnung());
-                System.out.println("Bestand: " + artikel.getBestand());
-                System.out.println("Preis: " + artikel.getPreis());
-                System.out.println("-------------------");
-            }
+            System.out.println(artikel);
+            KundenMenu();
         } else {
             System.out.println("Keine Artikel gefunden, die \"" + suchbegriff + "\" enthalten.");
+            KundenMenu();
         }
-        KundenMenu();
+
     }
 
 

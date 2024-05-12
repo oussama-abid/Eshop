@@ -114,5 +114,7 @@ public class EShop {
     }
 
 
-
+    public Artikel sucheartiklemitname(String suchbegriff) {
+        return Produkte.sucheartiklemitname(suchbegriff);
+    }
 }
