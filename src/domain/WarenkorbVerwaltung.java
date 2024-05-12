@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import Entities.*;
 
-
+import java.util.Date;
 
 
 public class WarenkorbVerwaltung {
 
+    private Rechnung Rechnung;
+    private Date date;
 
     public WarenkorbVerwaltung() {
 
@@ -94,8 +96,11 @@ public class WarenkorbVerwaltung {
 
     public void kaufen(User authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
+        Kunde kunde = (Kunde) authuser;
+        date = new Date();
+        Rechnung=new Rechnung(date,warenkorb.calculateTotalPrice(),kunde);
 
-
+        System.out.println(Rechnung);
         warenkorb.Warenkorbleeren();
 
     }

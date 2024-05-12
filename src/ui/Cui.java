@@ -446,7 +446,8 @@ public void warenkorbmenu(){
 
     private void kaufen() {
        shop.articlebestandanderen(authuser);
-        shop.kaufen(authuser);
+       shop.kaufen(authuser);
+       KundenMenu();
 
     }
 
