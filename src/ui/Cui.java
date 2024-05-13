@@ -172,7 +172,6 @@ public class Cui {
 
     private void FuegeArtikelHinzu() {
         System.out.println("Artikelbeschreibung: ");
-
         System.out.print("Bezeichnung: ");
         String Bezeichnung = scanner.nextLine();
 
@@ -264,15 +263,12 @@ public class Cui {
 
             }
         }
-
-
     }
 
     private void registriereMitarbeiter() {
         System.out.println("Geben sie die Informationen ein");
-
-
         System.out.print("Name: ");
+
         String name = scanner.nextLine();
         boolean uniquebenutzerkennung = false;
         String benutzerkennung = "";
@@ -321,7 +317,6 @@ public class Cui {
         }
         Mitarbeitermenu();
     }
-
 
     private void aendereBestand() {
         int artikelnummer = 0;
@@ -410,7 +405,6 @@ public class Cui {
         }
     }
 
-
     private void HinzufuegenZumWarenkorb() {
         System.out.print("Geben Sie die Artikelnummer des zu hinzufügenden Artikels ein: ");
         int artikelnummer = 0;
@@ -492,8 +486,6 @@ public class Cui {
         }
     }
 
-
-
 private void Warenkorbleeren() {
         shop.Warenkorbleeren(authuser);
         KundenMenu();
@@ -520,7 +512,6 @@ private void Warenkorbleeren() {
         String suchbegriff = scanner.nextLine().toLowerCase();
 
         List<Artikel> gefundeneArtikel = new ArrayList<>();
-
 
         for (Artikel artikel : shop.getArtikelListe()) {
             if (artikel.getBezeichnung().toLowerCase().startsWith(suchbegriff)) {
@@ -572,8 +563,6 @@ private void Warenkorbleeren() {
         }
         WarenkorbAnsehen();
     }
-
-
 
     }
 

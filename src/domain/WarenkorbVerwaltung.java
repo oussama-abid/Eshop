@@ -71,7 +71,6 @@ public class WarenkorbVerwaltung {
         }
     }
 
-
     public void kaufen(Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
         Kunde kunde = (Kunde) authuser;
@@ -105,7 +104,6 @@ public class WarenkorbVerwaltung {
             }
         }
     }
-
 
     public boolean checkArtikelwarenkorb(String artikelname, Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);

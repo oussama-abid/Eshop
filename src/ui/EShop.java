@@ -23,7 +23,9 @@ public class EShop {
         registriereKunde( "user", "user", "user", "str","stdt","xx",55555,"de");
     }
 
-    // Mitarbeiter funktionen
+
+
+                                                 // Mitarbeiter funktionen
 
 
     public Nutzer login(String benutzerkennung, String passwort) {
@@ -47,7 +49,10 @@ public class EShop {
     }
 
 
-    // artikel funktionen
+
+
+                                             // artikel funktionen
+
 
     public void BestandAendern(int artikelnummer, int newBestand) {
    Produkte.BestandAendern(artikelnummer,newBestand);
@@ -67,7 +72,6 @@ public class EShop {
         return VerlaufVerwaltung.getEventList();
     }
 
-
     public void Ereignisfesthalten(String operation, Artikel artikel, int quantity, Nutzer nutzer) {
         VerlaufVerwaltung.Ereignisfesthalten(operation,artikel,quantity, nutzer);
     }
@@ -75,12 +79,9 @@ public class EShop {
         VerlaufVerwaltung.kundeEreignisfesthalten(operation,authuser);
     }
 
-
     public Artikel findeArtikelDurchID(int artikelnummer) {
         return Produkte.SucheArtikelPerID(artikelnummer);
     }
-
-
 
     public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) {
     warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
@@ -89,12 +90,6 @@ public class EShop {
     public Warenkorb getWarenkorb(Nutzer authuser) {
       return  warenkorbVerwaltung.getWarenkorb(authuser);
     }
-
-
-    public void artikelMengeändern(){
-
-}
-
 
     public void kaufen(Nutzer authuser) {
         warenkorbVerwaltung.kaufen(authuser);
@@ -108,11 +103,9 @@ public class EShop {
         Produkte.articlebestandanderen(authuser);
     }
 
-
     public boolean checkUniqueUsername(String benutzerkennung) {
         return PersonenVerwaltung.checkUniqueUsername(benutzerkennung);
     }
-
 
     public Artikel sucheartiklemitname(String suchbegriff) {
         return Produkte.sucheartiklemitname(suchbegriff);

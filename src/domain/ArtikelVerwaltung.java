@@ -23,17 +23,6 @@ public class ArtikelVerwaltung {
         artikelListe.add(artikel5);
     }
 
-
-
- /**   Artikelverwaltung-Konstruktor gelöscht, ersteArtikel() als Ersatz eingefügt
-  * public ArtikelVerwaltung() {
-        ArtikelHinzufuegen(new Artikel("Tisch",12, 39.99F));// Fügt den neuen Artikel hinzu
-        ArtikelHinzufuegen(new Artikel("Lampe", 21, 19.99F));
-        ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
-        ArtikelHinzufuegen(new Artikel("Stift",31,  5.99F));
-        ArtikelHinzufuegen(new Artikel("Laptop",32,  1119.99F));
-    }
-**/
     public void ArtikelHinzufuegen(Artikel artikel) {
 
         artikelListe.add(artikel);
@@ -42,7 +31,6 @@ public class ArtikelVerwaltung {
     }
 
     public void EntferneArtikel(Artikel artikel) {
-
         artikelListe.remove(artikel);
     }
 
@@ -55,8 +43,13 @@ public class ArtikelVerwaltung {
             }
         }
 
-        veraenderterArtikel.setBestand(veraenderterArtikel.getBestand() + newBestand);
+        int aktualisierterBestand = veraenderterArtikel.getBestand() + newBestand;
+        veraenderterArtikel.setBestand(aktualisierterBestand);
 
+        if (aktualisierterBestand <= 0) {
+            EntferneArtikel(veraenderterArtikel);
+
+        }
     }
 
     public Artikel SucheArtikelPerID(int artikelnummer) {
@@ -87,7 +80,6 @@ public class ArtikelVerwaltung {
             }
 
     }
-
 
     public Artikel sucheartiklemitname(String suchbegriff) {
         for (Artikel artikel : artikelListe) {
