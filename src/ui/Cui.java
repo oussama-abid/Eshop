@@ -205,11 +205,8 @@ public class Cui {
         }
 
         Artikel art = new Artikel(Bezeichnung, bestand, Preis);
-        System.out.println("Artikel wurde hinzugefügt");
         shop.ArtikelHinzufuegen(art);
-        System.out.println("Artikel wurde hinzugefügt");
         shop.Ereignisfesthalten("neuer Artikel",art,art.getBestand(), authuser);
-        System.out.println("Artikel wurde hinzugefügt");
 
     }
 
