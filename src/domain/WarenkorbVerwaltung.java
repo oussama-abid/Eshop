@@ -31,7 +31,6 @@ public class WarenkorbVerwaltung {
         Warenkorb warenkorb = kunde.getWarenkorb();
         boolean artikelImWarenkorb = istArtikelImWarenkorb(warenkorb, artikel);
 
-        WarenkorbArtikel warenkorbArtikel = new WarenkorbArtikel(artikel, anzahl);
         if (artikelImWarenkorb) {
             aktualisiereArtikelImWarenkorb(warenkorb, artikel, anzahl);
         } else {

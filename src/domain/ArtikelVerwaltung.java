@@ -77,8 +77,7 @@ public class ArtikelVerwaltung {
 
                 }
             }
-            }
-
+        }
     }
 
     public Artikel sucheartiklemitname(String suchbegriff) {

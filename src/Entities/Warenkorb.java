@@ -6,12 +6,8 @@ import Entities.Kunde;
 
 public class Warenkorb    {
 
-    private List<WarenkorbArtikel> WarenkorbListe;
+    private List<WarenkorbArtikel> WarenkorbListe = new ArrayList<>();
 
-
-    public Warenkorb() {
-        WarenkorbListe = new ArrayList<>();
-    }
 
     public List<WarenkorbArtikel> getWarenkorbListe() {
         return WarenkorbListe;
