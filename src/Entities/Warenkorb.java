@@ -36,12 +36,12 @@ public class Warenkorb    {
             return "Der Warenkorb ist leer.";
         } else {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("%-20s %-10s %-10s%n", "Artikel", "Anzahl", "Preis"));
-            sb.append("------------------------------------\n");
+            sb.append(String.format("%-20s %-10s %-10s %-10s%n", "Artikel", "Anzahl", "Preis", "Insgesamt"));
+            sb.append("----------------------------------------------------\n");
             for (WarenkorbArtikel artikel : WarenkorbListe) {
-                sb.append(String.format("%-20s %-10d %-15s%n", artikel.getArtikel().getBezeichnung(), artikel.getAnzahl(), (artikel.getArtikel().getPreis() + " * " + artikel.getAnzahl())));
+                sb.append(String.format("%-20s %-10d $%-9.2f $%-10.2f%n", artikel.getArtikel().getBezeichnung(), artikel.getAnzahl(),(artikel.getArtikel().getPreis()), (artikel.getArtikel().getPreis() * artikel.getAnzahl() )));
             }
-            sb.append("------------------------------------\n");
+            sb.append("-----------------------------------------------------\n");
             sb.append(String.format("Gesamtpreis: %.2f%n", calculateTotalPrice()));
             return sb.toString();
         }

@@ -60,23 +60,25 @@ public class Rechnung
             sb.append("Der Warenkorb ist leer.\n");
         } else {
             sb.append("Gekaufte Artikel:\n");
+            sb.append(String.format("%-20s %-10s %-10s %-10s%n", "Artikel", "Anzahl", "Einzelpreis", "Gesamtpreis"));
             for (WarenkorbArtikel item : warenkorbListe) {
                 Artikel artikel = item.getArtikel();
 
                 if (artikel != null) {
-                    sb.append(artikel.getBezeichnung()+ " * " + item.getAnzahl()).append("\n");
 
+                    double einzelpreis = artikel.getPreis();
+                    int anzahl = item.getAnzahl();
+                    double gesamtpreis = einzelpreis * anzahl;
+                    // Append each line item in formatted manner
+                    sb.append(String.format("%-20s %-10d $%-9.2f $%-10.2f%n", artikel.getBezeichnung(), anzahl, einzelpreis, gesamtpreis));
                 } else {
                     sb.append("null\n");
                 }
             }
-        }
 
-        sb.append(String.format("Gesamtpreis: %.2f EUR%n", gesamtpreis));
+            sb.append(String.format("Gesamtpreis: %.2f EUR%n", gesamtpreis));
+
+        }
         return sb.toString();
     }
-
-
-
-
-}
+    }

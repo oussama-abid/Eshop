@@ -429,7 +429,7 @@ public class Cui {
     private void WarenkorbAnsehen() {
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
         System.out.println(warenkorb);
-        System.out.println("--------------------------------------");
+        System.out.println("-----------------------------------------------------");
 
         boolean isValidInput = false;
         while (!isValidInput) {
