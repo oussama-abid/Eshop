@@ -47,24 +47,28 @@ public class PersonenVerwaltung {
         }
         return null;
     }
-    public List<Kunde> getKundenList() {
 
+    public List<Kunde> getKundenList() {
+        // // macht eine neue temporäre liste um Kunden anzuzeigen
+        List<Kunde> tempKundenListe = new ArrayList<>();
         for (Nutzer nutzer : nutzers) {
             if (nutzer instanceof Kunde) {
-                kundenList.add((Kunde) nutzer);
+                tempKundenListe.add((Kunde) nutzer);
             }
         }
-        return kundenList;
+        return tempKundenListe;
     }
 
-    public List<Mitarbeiter> getMitarbeiterlist() {
 
+    public List<Mitarbeiter> getMitarbeiterlist() {
+        // macht eine neue temporäre liste um mitarbeiter anzuzeigen
+        List<Mitarbeiter> tempMitarbeiterListe = new ArrayList<>();
         for (Nutzer nutzer : nutzers) {
             if (nutzer instanceof Mitarbeiter) {
-                mitarbeiterList.add((Mitarbeiter) nutzer);
+                tempMitarbeiterListe.add((Mitarbeiter) nutzer);
             }
         }
-        return mitarbeiterList;
+        return tempMitarbeiterListe;
     }
 
     public boolean checkUniqueUsername(String benutzerkennung) {

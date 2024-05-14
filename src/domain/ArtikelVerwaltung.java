@@ -47,7 +47,7 @@ public class ArtikelVerwaltung {
         veraenderterArtikel.setBestand(aktualisierterBestand);
 
         if (aktualisierterBestand <= 0) {
-            EntferneArtikel(veraenderterArtikel);
+            veraenderterArtikel.setBestand(0);
 
         }
     }
