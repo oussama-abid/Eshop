@@ -8,6 +8,7 @@ import Entities.Adresse;
 import Entities.Kunde;
 import Entities.Mitarbeiter;
 import Entities.Nutzer;
+import Exceptions.NutzernameExistiertBereits;
 
 public class PersonenVerwaltung {
 
@@ -17,6 +18,16 @@ public class PersonenVerwaltung {
     private int letzteBenutzernummer = 5000;
 
     public PersonenVerwaltung() {
+    }
+
+    public void ersteNutzer(){
+        Mitarbeiter ersterMitarbeiter = new Mitarbeiter( letzteBenutzernummer,"admin", "admin", "admin");
+        nutzers.add(ersterMitarbeiter);
+        letzteBenutzernummer ++;
+        Kunde ersterKunde = new Kunde(letzteBenutzernummer, "user", "user", "user", new Adresse("str","Bremen", "Bremen", 28217, "DE"));
+        nutzers.add(ersterKunde);
+        letzteBenutzernummer ++;
+
     }
 
     public void registriereMitarbeiter( String name, String benutzerkennung, String passwort) {
@@ -71,12 +82,14 @@ public class PersonenVerwaltung {
         return tempMitarbeiterListe;
     }
 
-    public boolean checkUniqueUsername(String benutzerkennung) {
+    public boolean checkUniqueUsername(String benutzerkennung) throws NutzernameExistiertBereits {
         for (Nutzer nutzer : nutzers) {
             if (nutzer.getBenutzerkennung().equals(benutzerkennung)) {
-                return false;
+                throw new NutzernameExistiertBereits();
             }
         }
         return true;
     }
+
+
 }

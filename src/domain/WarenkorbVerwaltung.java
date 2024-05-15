@@ -89,7 +89,7 @@ public class WarenkorbVerwaltung {
     public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
-            if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(Artikelname)) {
+            if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(Artikelname.toLowerCase())) {
                 Artikel artikel = warenkorbArtikel.getArtikel();
                 if (artikel.getBestand() >= neueAnzahl) {
                     warenkorbArtikel.setAnzahl(neueAnzahl);

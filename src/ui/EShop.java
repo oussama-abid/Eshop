@@ -1,6 +1,7 @@
 package ui;
 
 import Entities.*;
+import Exceptions.NutzernameExistiertBereits;
 import domain.*;
 
 
@@ -15,12 +16,11 @@ public class EShop {
 
     public EShop() {
         this.PersonenVerwaltung = new PersonenVerwaltung();
+        PersonenVerwaltung.ersteNutzer();
         this.Produkte = new ArtikelVerwaltung();
         Produkte.ersteArtikel(); // Hier neue Methode eingebaut da ArtikelVerwaltung-Konstruktor gelöscht
         this.VerlaufVerwaltung = new VerlaufVerwaltung();
         this.warenkorbVerwaltung = new WarenkorbVerwaltung();
-        registriereMitarbeiter( "admin", "admin", "admin");
-        registriereKunde( "user", "user", "user", "str","stdt","xx",55555,"de");
     }
 
 
@@ -103,7 +103,7 @@ public class EShop {
         Produkte.articlebestandanderen(authuser);
     }
 
-    public boolean checkUniqueUsername(String benutzerkennung) {
+    public boolean checkUniqueUsername(String benutzerkennung) throws NutzernameExistiertBereits {
         return PersonenVerwaltung.checkUniqueUsername(benutzerkennung);
     }
 

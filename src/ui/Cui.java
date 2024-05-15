@@ -1,6 +1,7 @@
 package ui;
 
 import Entities.*;
+import Exceptions.NutzernameExistiertBereits;
 
 
 import java.util.ArrayList;
@@ -63,26 +64,24 @@ public class Cui {
 
 
 
-    private void registriereNutzer() {
+    private void registriereNutzer()  {
         boolean istValideEingabe = false;
         Scanner scanner = new Scanner(System.in);
 
         while (!istValideEingabe) {
             System.out.println("Geben Sie Ihre Informationen ein");
-
             System.out.print("Name: ");
             String name = scanner.nextLine();
-
-
             boolean uniquebenutzerkennung = false;
             String benutzerkennung = "";
             while (!uniquebenutzerkennung) {
                 System.out.print("Benutzerkennung: ");
                 benutzerkennung = scanner.nextLine();
-                if (shop.checkUniqueUsername(benutzerkennung)) {
-                    uniquebenutzerkennung = true;
-                } else {
-                    System.out.println("Benutzerkennung ist bereits vergeben.");
+                try {
+                    shop.checkUniqueUsername(benutzerkennung);
+                    uniquebenutzerkennung = true; // Username is unique
+                } catch (NutzernameExistiertBereits e) {
+                    System.out.println(e.getMessage());
                 }
             }
             System.out.print("Passwort: ");
@@ -96,17 +95,22 @@ public class Cui {
             System.out.print("Bundesland: ");
             String bundesland = scanner.nextLine();
 
-            int postleitzahl = 0;      // Wie Eyup das mit anderen Cui-Sachen auch gemacht hat
+            int postleitzahl = 0;
             boolean validPostleitzahl = false;
             while (!validPostleitzahl) {
                 System.out.print("PLZ: ");
+
                 if (scanner.hasNextInt()) {
                     postleitzahl = scanner.nextInt();
-                    scanner.nextLine(); // Verbrauche das Zeilenendezeichen
-                    validPostleitzahl = true;
+                    scanner.nextLine();
+                    if (postleitzahl > 0) {
+                        validPostleitzahl = true;
+                    } else {
+                        System.out.println("Fehler: Bitte geben Sie eine positive Zahl ein.");
+                    }
                 } else {
-                    System.out.println("Fehler: Bitte geben Sie eine ganze Zahl für die PLZ ein.");
-                    scanner.next(); // Verbrauche ungültige Eingabe
+                    System.out.println("Bitte geben Sie eine gültige plz ein.");
+                    scanner.nextLine();
                 }
             }
 
@@ -263,10 +267,11 @@ public class Cui {
         while (!uniquebenutzerkennung) {
             System.out.print("Benutzerkennung: ");
             benutzerkennung = scanner.nextLine();
-            if (shop.checkUniqueUsername(benutzerkennung)) {
-                uniquebenutzerkennung = true;
-            } else {
-                System.out.println("Benutzerkennung ist bereits vergeben.");
+            try {
+                shop.checkUniqueUsername(benutzerkennung);
+                uniquebenutzerkennung = true; // Username is unique
+            } catch (NutzernameExistiertBereits e) {
+                System.out.println(e);
             }
         }
         System.out.print("Passwort: ");
@@ -328,6 +333,7 @@ public class Cui {
                 System.out.print("Bestand: ");
                 if (scanner.hasNextInt()) {
                     newBestand = scanner.nextInt();
+                    scanner.nextLine();
                     validBestand = true;
                 } else {
                     System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
