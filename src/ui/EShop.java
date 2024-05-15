@@ -15,12 +15,11 @@ public class EShop {
 
     public EShop() {
         this.PersonenVerwaltung = new PersonenVerwaltung();
+        PersonenVerwaltung.ersteNutzer();
         this.Produkte = new ArtikelVerwaltung();
         Produkte.ersteArtikel(); // Hier neue Methode eingebaut da ArtikelVerwaltung-Konstruktor gelöscht
         this.VerlaufVerwaltung = new VerlaufVerwaltung();
         this.warenkorbVerwaltung = new WarenkorbVerwaltung();
-        registriereMitarbeiter( "admin", "admin", "admin");
-        registriereKunde( "user", "user", "user", "str","stdt","xx",55555,"de");
     }
 
 

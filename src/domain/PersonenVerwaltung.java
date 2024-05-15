@@ -19,6 +19,16 @@ public class PersonenVerwaltung {
     public PersonenVerwaltung() {
     }
 
+    public void ersteNutzer(){
+        Mitarbeiter ersterMitarbeiter = new Mitarbeiter( letzteBenutzernummer,"admin", "admin", "admin");
+        nutzers.add(ersterMitarbeiter);
+        letzteBenutzernummer ++;
+        Kunde ersterKunde = new Kunde(letzteBenutzernummer, "user", "user", "user", new Adresse("str","Bremen", "Bremen", 28217, "DE"));
+        nutzers.add(ersterKunde);
+        letzteBenutzernummer ++;
+
+    }
+
     public void registriereMitarbeiter( String name, String benutzerkennung, String passwort) {
         int nummer = EindeutigeBenutzernummer();
         Mitarbeiter mitarbeiter = new Mitarbeiter(nummer, name, benutzerkennung, passwort);

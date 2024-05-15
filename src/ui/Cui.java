@@ -96,17 +96,22 @@ public class Cui {
             System.out.print("Bundesland: ");
             String bundesland = scanner.nextLine();
 
-            int postleitzahl = 0;      // Wie Eyup das mit anderen Cui-Sachen auch gemacht hat
+            int postleitzahl = 0;
             boolean validPostleitzahl = false;
             while (!validPostleitzahl) {
                 System.out.print("PLZ: ");
+
                 if (scanner.hasNextInt()) {
                     postleitzahl = scanner.nextInt();
-                    scanner.nextLine(); // Verbrauche das Zeilenendezeichen
-                    validPostleitzahl = true;
+                    scanner.nextLine();
+                    if (postleitzahl > 0) {
+                        validPostleitzahl = true;
+                    } else {
+                        System.out.println("Fehler: Bitte geben Sie eine positive Zahl ein.");
+                    }
                 } else {
-                    System.out.println("Fehler: Bitte geben Sie eine ganze Zahl für die PLZ ein.");
-                    scanner.next(); // Verbrauche ungültige Eingabe
+                    System.out.println("Bitte geben Sie eine gültige plz ein.");
+                    scanner.nextLine();
                 }
             }
 
@@ -328,6 +333,7 @@ public class Cui {
                 System.out.print("Bestand: ");
                 if (scanner.hasNextInt()) {
                     newBestand = scanner.nextInt();
+                    scanner.nextLine();
                     validBestand = true;
                 } else {
                     System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
