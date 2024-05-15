@@ -89,5 +89,16 @@ public class ArtikelVerwaltung {
         return null;
 
     }
+
+    public List<Artikel> suchemitname(String suchbegriff) {
+        List<Artikel> gefundeneArtikel = new ArrayList<>();
+
+        for (Artikel artikel : getArtikelListe()) {
+            if (artikel.getBezeichnung().toLowerCase().startsWith(suchbegriff) || String.valueOf(artikel.getArtikelnummer()).startsWith(suchbegriff) ) {
+                gefundeneArtikel.add(artikel);
+            }
+        }
+        return gefundeneArtikel;
+    }
 }
 

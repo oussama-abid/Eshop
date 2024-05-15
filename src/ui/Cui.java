@@ -370,9 +370,9 @@ public class Cui {
                     HinzufuegenZumWarenkorb();
                     break;
                 case "4":
-                    if (authuser != null) {
+
                         WarenkorbAnsehen();
-                    }
+
                     break;
                 case "5":
                     isValid = true;
@@ -431,36 +431,40 @@ public class Cui {
         System.out.println(warenkorb);
         System.out.println("-----------------------------------------------------");
 
-        boolean isValidInput = false;
-        while (!isValidInput) {
-            System.out.println("Was möchten Sie machen?");
-            System.out.println(" 1. Artikel Menge ändern");
-            System.out.println(" 2. Warenkorb leeren");
-            System.out.println(" 3. kaufen");
-            System.out.println(" 4. Zur HomePage zurück");
+        if(!warenkorb.getWarenkorbListe().isEmpty()){
+            boolean isValidInput = false;
+            while (!isValidInput) {
+                System.out.println("Was möchten Sie machen?");
+                System.out.println(" 1. Artikel Menge ändern");
+                System.out.println(" 2. Warenkorb leeren");
+                System.out.println(" 3. kaufen");
+                System.out.println(" 4. Zur HomePage zurück");
 
-            String input1 = scanner.nextLine();
-            switch (input1) {
-                case "1":
-                    ArtikelMengeändern();
-                    isValidInput = true;
-                    break;
-                case "2":
-                    Warenkorbleeren();
-                    isValidInput = true;
-                    break;
-                case "3":
-                    kaufen();
-                    isValidInput = true;
-                    break;
-                case "4":
-                    isValidInput = true;
-                    break;
-                default:
-                    System.out.println("Ungültige Eingabe. Bitte geben Sie eine Nummer zwischen 1 und 4 ein.");
-                    break;
+                String input1 = scanner.nextLine();
+                switch (input1) {
+                    case "1":
+                        ArtikelMengeändern();
+                        isValidInput = true;
+                        break;
+                    case "2":
+                        Warenkorbleeren();
+                        isValidInput = true;
+                        break;
+                    case "3":
+                        kaufen();
+                        isValidInput = true;
+                        break;
+                    case "4":
+                        isValidInput = true;
+                        break;
+                    default:
+                        System.out.println("Ungültige Eingabe. Bitte geben Sie eine Nummer zwischen 1 und 4 ein.");
+                        break;
+                }
             }
+
         }
+
     }
 
 private void Warenkorbleeren() {
@@ -487,13 +491,8 @@ private void Warenkorbleeren() {
 
         List<Artikel> gefundeneArtikel = new ArrayList<>();
 
-        for (Artikel artikel : shop.getArtikelListe()) {
-            if (artikel.getBezeichnung().toLowerCase().startsWith(suchbegriff)) {
-                gefundeneArtikel.add(artikel);
-            } else if (String.valueOf(artikel.getArtikelnummer()).startsWith(suchbegriff)) {
-                gefundeneArtikel.add(artikel);
-            }
-        }
+
+        gefundeneArtikel=shop.suchemitname(suchbegriff);
 
         if (!gefundeneArtikel.isEmpty()) {
             System.out.println("Gefundene Artikel:");
@@ -504,9 +503,12 @@ private void Warenkorbleeren() {
                 System.out.println("Preis: " + artikel.getPreis());
                 System.out.println("-------------------");
             }
-        } else {
+        }else {
             System.out.println("Keine Artikel gefunden, die mit \"" + suchbegriff + "\" beginnen.");
         }
+
+
+
     }
 
     private void ArtikelMengeändern() {

@@ -119,4 +119,9 @@ public class EShop {
     public boolean checkArtikelwarenkorb(String artikelname, Nutzer authuser) {
         return warenkorbVerwaltung.checkArtikelwarenkorb(artikelname,authuser);
     }
+
+    public List<Artikel> suchemitname(String suchbegriff) {
+        return  Produkte.suchemitname(suchbegriff);
+
+    }
 }
