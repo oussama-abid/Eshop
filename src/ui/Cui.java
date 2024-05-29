@@ -2,7 +2,7 @@ package ui;
 
 import Entities.*;
 import Exceptions.NutzernameExistiertBereits;
-
+import Exceptions.Plzexception;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +94,6 @@ public class Cui {
             String stadt = scanner.nextLine();
             System.out.print("Bundesland: ");
             String bundesland = scanner.nextLine();
-
             int postleitzahl = 0;
             boolean validPostleitzahl = false;
             while (!validPostleitzahl) {
@@ -113,6 +112,7 @@ public class Cui {
                     scanner.nextLine();
                 }
             }
+
 
             System.out.print("Land: ");
             String land = scanner.nextLine();

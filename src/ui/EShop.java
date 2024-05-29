@@ -2,6 +2,7 @@ package ui;
 
 import Entities.*;
 import Exceptions.NutzernameExistiertBereits;
+import Exceptions.Plzexception;
 import domain.*;
 
 
@@ -123,5 +124,9 @@ public class EShop {
     public List<Artikel> suchemitname(String suchbegriff) {
         return  Produkte.suchemitname(suchbegriff);
 
+    }
+
+    public boolean validatePlz(int postleitzahl) throws Plzexception {
+        return PersonenVerwaltung.validatePlz(postleitzahl);
     }
 }

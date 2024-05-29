@@ -9,6 +9,7 @@ import Entities.Kunde;
 import Entities.Mitarbeiter;
 import Entities.Nutzer;
 import Exceptions.NutzernameExistiertBereits;
+import Exceptions.Plzexception;
 
 public class PersonenVerwaltung {
 
@@ -92,4 +93,10 @@ public class PersonenVerwaltung {
     }
 
 
+    public boolean validatePlz(int postleitzahl)  throws Plzexception {
+        if (postleitzahl <= 0 || !String.valueOf(postleitzahl).matches("\\d+")) {
+            throw new Plzexception();
+        }
+        return true;
+    }
 }
