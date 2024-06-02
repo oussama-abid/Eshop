@@ -31,10 +31,10 @@ public class VerlaufVerwaltung {
     }
 
     public List<Event> getEventList() {
-        return sortEventsByDate(eventList);
+        return eventList;
     }
 
-    public List<Event> sortEventsByDate(List<Event> eventList) {
+    public List<Artikelhistory> sortEventsByDate(List<Artikelhistory> eventList) {
         Collections.sort(eventList, (event1, event2) -> event2.getDate().compareTo(event1.getDate()));
         return eventList;
     }
@@ -47,8 +47,16 @@ public class VerlaufVerwaltung {
         for (Event event : eventList) {
             LocalDate date = event.getDate();
             Artikel artikel = event.getArticle();
-
-            int quantityChange = event.getOperation().equals("Auslagerung") ? -event.getQuantity() : event.getQuantity();
+            int quantityChange ;
+            if (event.getOperation().equals("Auslagerung")){
+                quantityChange = -event.getQuantity();
+            }
+           else  if (event.getOperation().equals("Einlagerung")){
+                 quantityChange = event.getQuantity();
+            }
+            else {
+                 quantityChange = 0;
+            }
 
             Artikelhistory existingEntry = null;
 
@@ -68,7 +76,8 @@ public class VerlaufVerwaltung {
             }
         }
 
-        return dailyQuantities;
+
+        return sortEventsByDate(dailyQuantities);
     }
 
 
