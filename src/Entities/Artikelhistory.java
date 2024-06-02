@@ -30,6 +30,6 @@ public class Artikelhistory {
     }
     @Override
     public String toString() {
-        return "Date=" + date + ", Artikel=" + article + ", TotalQuantity=" + totalQuantity;
+        return "Date=" + date + ", Artikel=" + article.getArtikelnummer() + ", TotalQuantity=" + totalQuantity;
     }
 }

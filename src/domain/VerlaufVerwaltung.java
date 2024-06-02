@@ -47,12 +47,14 @@ public class VerlaufVerwaltung {
         for (Event event : eventList) {
             LocalDate date = event.getDate();
             Artikel artikel = event.getArticle();
+
             int quantityChange = event.getOperation().equals("Auslagerung") ? -event.getQuantity() : event.getQuantity();
 
-            // Find existing DailyArticleQuantity for the same date and artikel
             Artikelhistory existingEntry = null;
+
+
             for (Artikelhistory dailyQuantity : dailyQuantities) {
-                if (dailyQuantity.getDate().equals(date) && dailyQuantity.getArticle().equals(artikel)) {
+                if (dailyQuantity.getDate().equals(date) && dailyQuantity.getArticle().getArtikelnummer()==artikel.getArtikelnummer()) {
                     existingEntry = dailyQuantity;
                     break;
                 }
