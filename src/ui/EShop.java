@@ -17,9 +17,9 @@ public class EShop {
 
     public EShop() {
         this.PersonenVerwaltung = new PersonenVerwaltung();
-        PersonenVerwaltung.ersteNutzer();
+        PersonenVerwaltung.loadUsers("benutzers.txt");
         this.Produkte = new ArtikelVerwaltung();
-        Produkte.ersteArtikel(); // Hier neue Methode eingebaut da ArtikelVerwaltung-Konstruktor gelöscht
+        Produkte.loadartikel("artikel.txt");
         this.VerlaufVerwaltung = new VerlaufVerwaltung();
         this.warenkorbVerwaltung = new WarenkorbVerwaltung();
     }
@@ -59,9 +59,9 @@ public class EShop {
    Produkte.BestandAendern(artikelnummer,newBestand);
     }
 
-    public void ArtikelHinzufuegen(Artikel art) {
+    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis) {
 
-        Produkte.ArtikelHinzufuegen(art);
+       return Produkte.ArtikelHinzufuegen(Bezeichnung, bestand, Preis);
     }
 
     public List<Artikel>  getArtikelListe(){

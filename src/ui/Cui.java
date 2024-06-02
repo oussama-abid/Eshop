@@ -208,8 +208,10 @@ public class Cui {
             }
         }
 
-        Artikel art = new Artikel(Bezeichnung, bestand, Preis);
-        shop.ArtikelHinzufuegen(art);
+
+       Artikel art =  shop.ArtikelHinzufuegen(Bezeichnung, bestand, Preis);
+        System.out.println("Neuer Artikel hinzugefügt: " + art);
+
         shop.Ereignisfesthalten("neuer Artikel",art,art.getBestand(), authuser);
 
     }

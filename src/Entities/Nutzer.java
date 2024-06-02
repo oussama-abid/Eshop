@@ -52,6 +52,9 @@ public class Nutzer
         Passwort = passwort;
     }
 
-
+    @Override
+    public String toString() {
+        return nutzerNummer + "," + name + "," + Benutzerkennung + "," + Passwort;
+    }
 
 }

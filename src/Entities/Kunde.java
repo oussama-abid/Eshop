@@ -32,8 +32,9 @@ public class Kunde extends Nutzer
         this.warenkorb = warenkorb;
     }
 
+
     @Override
     public String toString() {
-        return "Kunde: nummer=" + getNutzerNummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung() + ", Adresse :" + adresse;
+        return "Kunde," + super.toString() + "," + adresse.toString();
     }
 }

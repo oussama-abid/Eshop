@@ -10,9 +10,10 @@ public class Mitarbeiter extends Nutzer
 
     }
 
+
     @Override
     public String toString() {
-        return "Mitarbeiter: nummer=" + getNutzerNummer() + ", Name=" + getName() + ", Benutzerkennung=" + getBenutzerkennung();
+        return "Mitarbeiter," + super.toString();
     }
 
 }

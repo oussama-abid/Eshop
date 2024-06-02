@@ -1,7 +1,10 @@
 package domain;
 
 import Entities.*;
+import Persistence.FilePersistenceManager;
+import ui.EShop;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,25 +12,40 @@ import java.util.List;
 public class ArtikelVerwaltung {
 
     private List<Artikel> artikelListe= new ArrayList<>();
+    private FilePersistenceManager fileManager= new FilePersistenceManager();
+    private EShop shop;
+    private static int letzteArtikelnummer = 1000;
 
-    public void ersteArtikel() {
-        Artikel artikel1 = new Artikel("Tisch", 12, 139.99F);
-        Artikel artikel2 = new Artikel("Lampe", 21, 29.99F);
-        Artikel artikel3 = new Artikel("Stift",31,  5.99F);
-        Artikel artikel4 = new Artikel("Regenschirm",15,  19.99F);
-        Artikel artikel5 = new Artikel("Laptop",11,  1119.99F);
-        artikelListe.add(artikel1);
-        artikelListe.add(artikel2);
-        artikelListe.add(artikel3);
-        artikelListe.add(artikel4);
-        artikelListe.add(artikel5);
+    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis) {
+        int nummer = Eindeutigenummer();
+        Artikel artikel = new Artikel(nummer,Bezeichnung,bestand,Preis);
+        artikelListe.add(artikel);
+        speicherArtikel(artikel);
+        return  artikel;
+
     }
 
-    public void ArtikelHinzufuegen(Artikel artikel) {
+    private int Eindeutigenummer() {
+        int lastNummer = letzteArtikelnummer;
 
-        artikelListe.add(artikel);
+        for (Artikel artikel : artikelListe) {
+            int nummer = artikel.getArtikelnummer();
+            if (nummer > lastNummer) {
+                lastNummer = nummer;
+            }
+        }
 
-        System.out.println("Neuer Artikel hinzugefügt: " + artikel.getBezeichnung() + ", Artikelnummer: " + artikel.getArtikelnummer());
+        return lastNummer + 1;
+    }
+
+    private void speicherArtikel(Artikel artikel) {
+        try {
+            fileManager.openForWriting("artikel.txt");
+            fileManager.speichereArtikel(artikel);
+            fileManager.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void EntferneArtikel(Artikel artikel) {
@@ -99,6 +117,19 @@ public class ArtikelVerwaltung {
             }
         }
         return gefundeneArtikel;
+    }
+
+    public void loadartikel(String file) {
+        try {
+            fileManager.openForReading(file);
+            Artikel artikel;
+            while ((artikel = fileManager.ladeArtikel()) != null) {
+                artikelListe.add(artikel);
+            }
+            fileManager.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

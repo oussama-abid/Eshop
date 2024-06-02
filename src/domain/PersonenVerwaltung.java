@@ -1,5 +1,6 @@
 package domain;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,33 +11,55 @@ import Entities.Mitarbeiter;
 import Entities.Nutzer;
 import Exceptions.NutzernameExistiertBereits;
 import Exceptions.Plzexception;
+import Persistence.FilePersistenceManager;
 
 public class PersonenVerwaltung {
 
     private List<Nutzer> nutzers = new ArrayList<>();
     private  List<Kunde> kundenList = new ArrayList<>();
     private List<Mitarbeiter> mitarbeiterList = new ArrayList<>();
+
+    private FilePersistenceManager fileManager= new FilePersistenceManager();
+
+
+
     private int letzteBenutzernummer = 5000;
 
     public PersonenVerwaltung() {
-    }
-
-    public void ersteNutzer(){
-        Mitarbeiter ersterMitarbeiter = new Mitarbeiter( letzteBenutzernummer,"admin", "admin", "admin");
-        nutzers.add(ersterMitarbeiter);
-        letzteBenutzernummer ++;
-        Kunde ersterKunde = new Kunde(letzteBenutzernummer, "user", "user", "user", new Adresse("str","Bremen", "Bremen", 28217, "DE"));
-        nutzers.add(ersterKunde);
-        letzteBenutzernummer ++;
 
     }
 
-    public void registriereMitarbeiter( String name, String benutzerkennung, String passwort) {
+    public void loadUsers(String filePath) {
+        try {
+            fileManager.openForReading(filePath);
+            Nutzer nutzer;
+            while ((nutzer = fileManager.ladeNutzer()) != null) {
+                nutzers.add(nutzer);
+            }
+            fileManager.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void registriereMitarbeiter(String name, String benutzerkennung, String passwort) {
         int nummer = EindeutigeBenutzernummer();
         Mitarbeiter mitarbeiter = new Mitarbeiter(nummer, name, benutzerkennung, passwort);
         nutzers.add(mitarbeiter);
-        System.out.println(" Mitarbeiter registriert: "+" Benutzernummer: " + nummer + " Name: " + name);
+       speichernutzer(mitarbeiter);
+        System.out.println("Mitarbeiter registriert: Benutzernummer: " + nummer + " Name: " + name);
+    }
 
+    private void speichernutzer(Nutzer nutzer) {
+        try {
+            fileManager.openForWriting("benutzers.txt");
+            fileManager.speichereNutzer(nutzer);
+            fileManager.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void registriereKunde(String name, String benutzerkennung, String passwort, String straße, String stadt, String bundesland, int postleitzahl, String land) {
@@ -44,11 +67,21 @@ public class PersonenVerwaltung {
         Adresse adresse = new Adresse(straße, stadt, bundesland, postleitzahl, land);
         Kunde kunde = new Kunde(nummer, name, benutzerkennung, passwort, adresse);
         nutzers.add(kunde);
-        System.out.println(" Kunde registriert: "+" Benutzernummer: " + nummer + " Name: " + name);
+        speichernutzer(kunde);
+        System.out.println("Kunde registriert: Benutzernummer: " + nummer + " Name: " + name);
     }
 
     private int EindeutigeBenutzernummer() {
-        return ++letzteBenutzernummer;
+        int lastNummer = letzteBenutzernummer;
+
+        for (Nutzer nutzer : nutzers) {
+            int nummer = nutzer.getNutzerNummer();
+            if (nummer > lastNummer) {
+                lastNummer = nummer;
+            }
+        }
+
+        return lastNummer + 1;
     }
 
     public Nutzer login(String benutzerkennung, String passwort) {
