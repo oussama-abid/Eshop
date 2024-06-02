@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import Entities.*;
@@ -125,7 +126,29 @@ public class FilePersistenceManager implements PersistenceManager {
 
 
 
+    public Event ladeEvent() throws IOException {
+        String operation = liesZeile();
+        if (operation == null) {
+            return null;
+        }
 
+        LocalDate date = LocalDate.parse(liesZeile()); // Assuming date is stored in ISO_LOCAL_DATE format
+        Artikel article = ladeArtikel();
+        int quantity = Integer.parseInt(liesZeile());
+        Nutzer nutzer = ladeNutzer();
+
+        return new Event(operation, date, article, quantity, nutzer);
+    }
+
+    public boolean speichereevent(Event event) {
+        schreibeZeile(event.getOperation());
+        schreibeZeile(event.getDate().toString());
+        speichereArtikel(event.getArticle());
+        schreibeZeile(String.valueOf(event.getQuantity()));
+        speichereNutzer(event.getUser());
+
+        return true;
+    }
 
 
 

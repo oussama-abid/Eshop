@@ -4,9 +4,8 @@ import Entities.*;
 import Exceptions.NutzernameExistiertBereits;
 import Exceptions.Plzexception;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Cui {
     private Scanner scanner;
@@ -16,6 +15,7 @@ public class Cui {
     private List<Kunde> kundenList = new ArrayList<>();
     private List<Mitarbeiter> mitarbeiterlist = new ArrayList<>();
     private List<Event> ShopVerlauf = new ArrayList<>();
+    private Map<LocalDate, Map<Artikel, Integer>> history = new HashMap<>();
     private List<Artikel> artikelListe = new ArrayList<>();
 
     private Nutzer authuser ;
@@ -226,7 +226,8 @@ public class Cui {
             System.out.println(" 5. Mitarbeiterliste ausgeben");
             System.out.println(" 6. Mitarbeiter hinzufuegen");
             System.out.println(" 7. Shop Verlauf Ansehen");
-            System.out.println(" 8. Logout");
+            System.out.println(" 8. Shop history Ansehen");
+            System.out.println(" 9. Logout");
 
             String input1 = scanner.nextLine();
             switch (input1) {
@@ -252,10 +253,20 @@ public class Cui {
                     ShopVerlaufAnzeigen();
                     break;
                 case "8":
+                    ShophistoryAnzeigen();
+                    break;
+                case "9":
                     isValid = true; // Allow exit to break the loop
                     authuser = null;
                     break;
             }
+        }
+    }
+
+    private void ShophistoryAnzeigen() {
+        List<Artikelhistory> quantities = shop.ShophistoryAnzeigen();
+        for (Artikelhistory dailyQuantity : quantities) {
+            System.out.println(dailyQuantity);
         }
     }
 

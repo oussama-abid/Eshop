@@ -17,11 +17,16 @@ public class EShop {
 
     public EShop() {
         this.PersonenVerwaltung = new PersonenVerwaltung();
-        PersonenVerwaltung.loadUsers("benutzers.txt");
         this.Produkte = new ArtikelVerwaltung();
-        Produkte.loadartikel("artikel.txt");
         this.VerlaufVerwaltung = new VerlaufVerwaltung();
         this.warenkorbVerwaltung = new WarenkorbVerwaltung();
+
+
+
+        PersonenVerwaltung.loadUsers("benutzers.txt");
+        Produkte.loadartikel("artikel.txt");
+        VerlaufVerwaltung.loadevents("events.txt");
+
     }
 
 
@@ -128,5 +133,9 @@ public class EShop {
 
     public boolean validatePlz(int postleitzahl) throws Plzexception {
         return PersonenVerwaltung.validatePlz(postleitzahl);
+    }
+
+    public List<Artikelhistory> ShophistoryAnzeigen() {
+       return VerlaufVerwaltung.getArticleQuantitiesPerDay();
     }
 }
