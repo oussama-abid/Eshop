@@ -2,7 +2,6 @@ package ui;
 
 import Entities.*;
 import Exceptions.NutzernameExistiertBereits;
-import Exceptions.Plzexception;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -22,7 +21,7 @@ public class Cui {
 
     public Cui(EShop shop) {
         scanner = new Scanner(System.in);
-        this.shop = shop; // Use the passed EShop object
+        this.shop = shop;
         this.authuser = null;
         loginMenue();
     }
