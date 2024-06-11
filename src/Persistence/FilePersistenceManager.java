@@ -98,30 +98,54 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
-
-
     public Artikel ladeArtikel() throws IOException {
-        String artikelnummerString = liesZeile();
-        if (artikelnummerString == null) {
+        String artikelTyp = liesZeile();
+        if (artikelTyp == null) {
             return null;
         }
 
-        int artikelnummer = Integer.parseInt(artikelnummerString);
-        String bezeichnung = liesZeile();
-        int bestand = Integer.parseInt(liesZeile());
-        float preis = Float.parseFloat(liesZeile());
+        try {
+            int artikelnummer = Integer.parseInt(liesZeile());
+            String bezeichnung = liesZeile();
+            int bestand = Integer.parseInt(liesZeile());
+            float preis = Float.parseFloat(liesZeile());
 
-        return new Artikel(artikelnummer, bezeichnung, bestand, preis);
+            if ("massenartikel".equalsIgnoreCase(artikelTyp)) {
+                int packungsGrosse = Integer.parseInt(liesZeile());
+                return new Massenartikel(artikelnummer, bezeichnung, bestand, preis, true, packungsGrosse);
+            } else if ("artikel".equalsIgnoreCase(artikelTyp)) {
+                return new Artikel(artikelnummer, bezeichnung, bestand, preis,false);
+            } else {
+                throw new IOException("Unbekannter Artikeltyp: " + artikelTyp);
+            }
+        } catch (NumberFormatException e) {
+            throw new IOException("Fehler beim Parsen der Artikelinformationen: " + e.getMessage(), e);
+        } catch (NullPointerException e) {
+            throw new IOException("Fehler beim Lesen der Artikelinformationen: Eine erforderliche Zeile fehlt", e);
+        }
     }
 
+
     public boolean speichereArtikel(Artikel artikel) {
-        schreibeZeile(String.valueOf(artikel.getArtikelnummer()));
-        schreibeZeile(artikel.getBezeichnung());
-        schreibeZeile(String.valueOf(artikel.getBestand()));
-        schreibeZeile(String.valueOf(artikel.getPreis()));
+        if (artikel instanceof Massenartikel) {
+            Massenartikel massenartikel = (Massenartikel) artikel;
+            writer.println("massenartikel");
+            schreibeZeile(String.valueOf(massenartikel.getArtikelnummer()));
+            schreibeZeile(massenartikel.getBezeichnung());
+            schreibeZeile(String.valueOf(massenartikel.getBestand()));
+            schreibeZeile(String.valueOf(massenartikel.getPreis()));
+            schreibeZeile(String.valueOf(massenartikel.getPackungsGrosse()));
+        } else {
+            writer.println("artikel");
+            schreibeZeile(String.valueOf(artikel.getArtikelnummer()));
+            schreibeZeile(artikel.getBezeichnung());
+            schreibeZeile(String.valueOf(artikel.getBestand()));
+            schreibeZeile(String.valueOf(artikel.getPreis()));
+        }
 
         return true;
     }
+
 
 
 

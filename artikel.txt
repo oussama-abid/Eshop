@@ -1,0 +1,17 @@
+artikel
+1003
+xxxxx
+10
+100.0
+massenartikel
+1004
+m
+100
+15.0
+6
+massenartikel
+1005
+xxx
+100
+10.0
+5

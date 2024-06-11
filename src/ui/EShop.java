@@ -64,10 +64,11 @@ public class EShop {
    Produkte.BestandAendern(artikelnummer,newBestand);
     }
 
-    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis) {
+    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis,boolean istMassenartikel, int packungsGrosse) {
 
-       return Produkte.ArtikelHinzufuegen(Bezeichnung, bestand, Preis);
+       return Produkte.ArtikelHinzufuegen(Bezeichnung, bestand, Preis,istMassenartikel,packungsGrosse);
     }
+
 
     public List<Artikel>  getArtikelListe(){
 
@@ -138,4 +139,6 @@ public class EShop {
     public List<Artikelhistory> ShophistoryAnzeigen() {
        return VerlaufVerwaltung.getArticleQuantitiesPerDay();
     }
+
+
 }

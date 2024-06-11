@@ -6,16 +6,26 @@ public class Artikel
     private String Bezeichnung;
     private int Bestand;
     private float Preis;
+    private boolean istMassenartikel;
 
 
-
-    public Artikel(int Artikelnummer,String bezeichnung,int bestand, float preis) {
+    public Artikel(int Artikelnummer,String bezeichnung,int bestand, float preis, boolean istMassenartikel) {
         super();
         this.Artikelnummer = Artikelnummer;
         this.Bezeichnung = bezeichnung;
+        this.istMassenartikel=istMassenartikel;
         this.Bestand = bestand;
         this.Preis = preis;
     }
+
+    public boolean isIstMassenartikel() {
+        return istMassenartikel;
+    }
+
+    public void setIstMassenartikel(boolean istMassenartikel) {
+        this.istMassenartikel = istMassenartikel;
+    }
+
     public int getArtikelnummer() {return Artikelnummer;}
     public void setArtikelnummer(int artikelnummer) {
         Artikelnummer = artikelnummer;

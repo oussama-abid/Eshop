@@ -16,14 +16,22 @@ public class ArtikelVerwaltung {
     private EShop shop;
     private static int letzteArtikelnummer = 1000;
 
-    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis) {
+    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis, boolean istMassenartikel, int packungsGrosse) {
         int nummer = Eindeutigenummer();
-        Artikel artikel = new Artikel(nummer,Bezeichnung,bestand,Preis);
+        Artikel artikel;
+
+        if(istMassenartikel){
+            artikel = new Massenartikel(nummer, Bezeichnung, bestand, Preis, true, packungsGrosse);
+        } else {
+            artikel = new Artikel(nummer, Bezeichnung, bestand, Preis,false);
+        }
+
         artikelListe.add(artikel);
         speicherArtikel(artikel);
-        return  artikel;
-
+        return artikel;
     }
+
+
 
     private int Eindeutigenummer() {
         int lastNummer = letzteArtikelnummer;
@@ -131,5 +139,7 @@ public class ArtikelVerwaltung {
             e.printStackTrace();
         }
     }
+
+
 }
 
