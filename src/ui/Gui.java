@@ -68,7 +68,6 @@ public class Gui extends Application {
         loginLayout.getChildren().addAll(new Label("Login"), loginUsernameField, loginPasswordField, loginButton, goToRegisterLink);
         loginScene = new Scene(loginLayout);
 
-// Create register scene
         VBox registerLayout = new VBox(10);
         registerLayout.setPadding(new Insets(20));
         registerLayout.setPrefSize(400, 400);
@@ -119,11 +118,9 @@ public class Gui extends Application {
 
         registerScene = new Scene(registerLayout);
 
-        // Create TableView for displaying articles
         artikelTableView = new TableView<>();
         artikelTableView.setPrefSize(600, 400);
 
-        // Create columns for TableView
         TableColumn<Artikel, String> artikelNummerColumn = new TableColumn<>("Artikel Nummer");
         artikelNummerColumn.setCellValueFactory(new PropertyValueFactory<>("artikelnummer"));
 
@@ -136,10 +133,9 @@ public class Gui extends Application {
         TableColumn<Artikel, Double> preisColumn = new TableColumn<>("Preis");
         preisColumn.setCellValueFactory(new PropertyValueFactory<>("preis"));
 
-        // Add columns to TableView
         artikelTableView.getColumns().addAll(artikelNummerColumn, bezeichnungColumn, bestandColumn, preisColumn);
 
-        // Create header for kundenmenu
+
         Button cartButton = new Button("Cart");
         cartButton.setOnAction(e -> handleCart());
         Button logoutButton = new Button("Logout");
@@ -147,14 +143,14 @@ public class Gui extends Application {
         HBox header = new HBox(10);
         header.getChildren().addAll(cartButton, logoutButton);
 
-        // Create layout for kundenmenu
+
         VBox kundenmenuLayout = new VBox(10);
         kundenmenuLayout.setPadding(new Insets(20));
         kundenmenuLayout.setPrefSize(400, 300);
         kundenmenuLayout.getChildren().addAll(header, artikelTableView);
         kundenmenu = new Scene(kundenmenuLayout);
 
-        // Set initial scene
+
         stage.setScene(loginScene);
         stage.setTitle("Eshop");
         stage.show();
@@ -227,7 +223,7 @@ public class Gui extends Application {
     }
 
     private void handleCart() {
-        // Handle cart button action
+
     }
 
     private void handleLogout() {
