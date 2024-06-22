@@ -4,6 +4,7 @@ import Entities.Adresse;
 import Entities.Kunde;
 import Entities.Mitarbeiter;
 import Entities.Nutzer;
+import Exceptions.FalscheLoginDaten;
 import Exceptions.NutzernameExistiertBereits;
 import Exceptions.Plzexception;
 import Persistence.FilePersistenceManager;
@@ -85,13 +86,13 @@ public class PersonenVerwaltung {
         return lastNummer + 1;
     }
 
-    public Nutzer login(String benutzerkennung, String passwort) {
+    public Nutzer login(String benutzerkennung, String passwort) throws FalscheLoginDaten {
         for (Nutzer nutzer : nutzers) {
             if (benutzerkennung.equals(nutzer.getBenutzerkennung()) && verifyPassword(passwort, nutzer.getPasswort())) {
                 return nutzer;
             }
         }
-        return null;
+        throw new FalscheLoginDaten();
     }
 
     public List<Kunde> getKundenList() {

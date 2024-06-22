@@ -1,6 +1,7 @@
 package ui;
 
 import Entities.*;
+import Exceptions.FalscheLoginDaten;
 import Exceptions.NutzernameExistiertBereits;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -187,17 +188,18 @@ public class Gui extends Application {
     private void loginNutzer() {
         String benutzerkennung = loginUsernameField.getText();
         String passwort = loginPasswordField.getText();
+        try {
+            Nutzer nutzer = shop.login(benutzerkennung, passwort);
 
-        Nutzer nutzer = shop.login(benutzerkennung, passwort);
-
-        if (nutzer != null) {
             authuser = nutzer;
             showAlert("Login erfolgreich.");
             showMainMenu();
-        } else {
-            showAlert("Falscher Benutzername oder Passwort.");
+        } catch (FalscheLoginDaten e) {
+            showAlert(e.getMessage());
         }
+
     }
+
 
     private void showMainMenu() {
         if (authuser instanceof Kunde) {

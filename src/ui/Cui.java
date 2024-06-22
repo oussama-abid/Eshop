@@ -1,6 +1,9 @@
 package ui;
 
 import Entities.*;
+import Exceptions.AnzahlException;
+import Exceptions.Artikelnichtgefunden;
+import Exceptions.FalscheLoginDaten;
 import Exceptions.NutzernameExistiertBereits;
 
 import java.time.LocalDate;
@@ -130,17 +133,17 @@ public class Cui {
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
-        Nutzer nutzer = shop.login(benutzerkennung, passwort);
 
-        if (nutzer != null) {
+        try {
+            Nutzer nutzer = shop.login(benutzerkennung, passwort);
             authuser = nutzer; // Update authuser after successful login
             System.out.println("Login erfolgreich.");
             // Proceed to the main menu
             showMainMenu();
-        } else {
-            System.out.println("Falscher Benutzername oder Passwort.");
-            loginMenue(); // Prompt user to log in again
+        } catch (FalscheLoginDaten e) {
+            System.out.println(e.getMessage());
         }
+
     }
 
     private void showMainMenu() {
@@ -377,11 +380,10 @@ public class Cui {
             }
         }
 
-        Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
-        if (artikel == null) {
-            System.out.println("Artikel nicht gefunden.");
 
-        } else {
+
+        try {
+            Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
             System.out.print("Geben Sie die Anzahl der hinzuzufügenden/abzuziehenden Artikel ein: ");
             int newBestand = 0;
             boolean validBestand = false;
@@ -400,8 +402,13 @@ public class Cui {
             System.out.println("Lagerbestand für Artikel " + artikelnummer + " aktualisiert. Neuer Bestand: " + artikel.getBestand());
             String ereignisTyp = newBestand >= 0 ? "Einlagerung" : "Auslagerung";
             shop.Ereignisfesthalten(ereignisTyp, artikel, Math.abs(newBestand), authuser);
-
+        } catch (Artikelnichtgefunden e) {
+            System.out.println(e.getMessage());
         }
+
+
+
+
     }
 
 
@@ -454,10 +461,9 @@ public class Cui {
             System.out.println("Bitte geben Sie eine gültige Artikelnummer ein.");
             return;
         }
-        Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
-        if (artikel != null) {
+        try {
+            Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
             System.out.print("Geben Sie die Anzahl ein: ");
-
             int anzahl = 0;
             boolean validBestand = false;
             while (!validBestand) {
@@ -490,13 +496,16 @@ public class Cui {
 
             try {
                 shop.inWarenKorbLegen(artikel, anzahl, authuser);
-            } catch (Exception e) {
-                System.out.println("Ein Fehler ist aufgetreten: " + e.getMessage());
+            } catch (AnzahlException e) {
+                System.out.println(e.getMessage());
             }
-        } else {
-            System.out.println("Artikel nicht gefunden.");
+
+        } catch (Artikelnichtgefunden e) {
+            System.out.println(e.getMessage());
         }
         System.out.println("Artikel erfolgreich hinzugefügt");
+
+
     }
 
 
@@ -609,7 +618,7 @@ private void Warenkorbleeren() {
                 shop.artikelMengeaendern(artikelBezeichnung, neueAnzahl, authuser);
             }
         } catch (Exception e) {
-            System.out.println("Fehler beim Ändern der Artikelmenge: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

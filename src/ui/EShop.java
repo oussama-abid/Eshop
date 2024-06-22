@@ -1,8 +1,7 @@
 package ui;
 
 import Entities.*;
-import Exceptions.NutzernameExistiertBereits;
-import Exceptions.Plzexception;
+import Exceptions.*;
 import domain.*;
 
 
@@ -34,7 +33,7 @@ public class EShop {
                                                  // Mitarbeiter funktionen
 
 
-    public Nutzer login(String benutzerkennung, String passwort) {
+    public Nutzer login(String benutzerkennung, String passwort) throws FalscheLoginDaten {
         return PersonenVerwaltung.login(benutzerkennung, passwort);
     }
 
@@ -86,11 +85,11 @@ public class EShop {
         VerlaufVerwaltung.kundeEreignisfesthalten(operation,authuser);
     }
 
-    public Artikel findeArtikelDurchID(int artikelnummer) {
+    public Artikel findeArtikelDurchID(int artikelnummer) throws Artikelnichtgefunden {
         return Produkte.SucheArtikelPerID(artikelnummer);
     }
 
-    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) {
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws AnzahlException {
     warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
     }
 
@@ -118,7 +117,7 @@ public class EShop {
         return Produkte.sucheartiklemitname(suchbegriff);
     }
 
-    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) {
+    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) throws AnzahlException, Artikelnamenichtgefunden {
         warenkorbVerwaltung.artikelMengeaendern(Artikelname,neueAnzahl,authuser);
 
     }

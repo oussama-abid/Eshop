@@ -1,6 +1,7 @@
 package domain;
 
 import Entities.*;
+import Exceptions.Artikelnichtgefunden;
 import Persistence.FilePersistenceManager;
 import ui.EShop;
 
@@ -78,13 +79,13 @@ public class ArtikelVerwaltung {
         }
     }
 
-    public Artikel SucheArtikelPerID(int artikelnummer) {
+    public Artikel SucheArtikelPerID(int artikelnummer) throws Artikelnichtgefunden {
         for (Artikel artikel : artikelListe) {
             if (artikel.getArtikelnummer() == artikelnummer) {
                 return artikel;
             }
         }
-        return null;
+        throw new Artikelnichtgefunden(artikelnummer);
     }
 
     public List<Artikel> getArtikelListe() {

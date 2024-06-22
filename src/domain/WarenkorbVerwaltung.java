@@ -1,10 +1,9 @@
 package domain;
 
 
-
-import java.util.ArrayList;
-
 import Entities.*;
+import Exceptions.AnzahlException;
+import Exceptions.Artikelnamenichtgefunden;
 
 import java.util.Date;
 
@@ -25,7 +24,7 @@ public class WarenkorbVerwaltung {
 
     }
 
-    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) {
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws AnzahlException {
 
         Kunde kunde = (Kunde) authuser;
         Warenkorb warenkorb = kunde.getWarenkorb();
@@ -47,26 +46,26 @@ public class WarenkorbVerwaltung {
         return false;
     }
 
-    private void aktualisiereArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel, int anzahl) {
+    private void aktualisiereArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel, int anzahl) throws AnzahlException {
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
             if (warenkorbArtikel.getArtikel().equals(artikel)) {
                 int gesamtAnzahl = warenkorbArtikel.getAnzahl() + anzahl;
                 if (artikel.getBestand() >= gesamtAnzahl) {
                     warenkorbArtikel.setAnzahl(gesamtAnzahl);
                 } else {
-                    System.out.println("Unzureichender Bestand für " + artikel.getBezeichnung() +  ",bitte überprüfen sie den Bestand im Shop" );
+                    throw new AnzahlException(artikel.getBezeichnung());
                 }
                 break;
             }
         }
     }
 
-    private void fuegeNeuenArtikelZumWarenkorbHinzu(Warenkorb warenkorb, Artikel artikel, int anzahl) {
+    private void fuegeNeuenArtikelZumWarenkorbHinzu(Warenkorb warenkorb, Artikel artikel, int anzahl) throws AnzahlException  {
         if (artikel.getBestand() >= anzahl) {
             WarenkorbArtikel warenkorbArtikel = new WarenkorbArtikel(artikel, anzahl);
             warenkorb.addItem(warenkorbArtikel);
         } else {
-            System.out.println("Unzureichender Bestand für " + artikel.getBezeichnung() +  ",bitte überprüfen sie den Bestand im Shop");
+            throw new AnzahlException(artikel.getBezeichnung());
         }
     }
 
@@ -86,7 +85,7 @@ public class WarenkorbVerwaltung {
         warenkorb.Warenkorbleeren();
     }
 
-    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) {
+    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) throws AnzahlException, Artikelnamenichtgefunden {
         Warenkorb warenkorb = getWarenkorb(authuser);
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
             if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(Artikelname.toLowerCase())) {
@@ -97,9 +96,12 @@ public class WarenkorbVerwaltung {
                         warenkorb.removeItem(warenkorbArtikel);
                     }
                 } else {
-                    System.out.println("Unzureichender Bestand für " + artikel.getBezeichnung() +  ",bitte überprüfen sie den Bestand im Shop");
+                    throw new AnzahlException(artikel.getBezeichnung());
                 }
                 break;
+            }
+            else {
+                throw new Artikelnamenichtgefunden(Artikelname);
             }
         }
     }
