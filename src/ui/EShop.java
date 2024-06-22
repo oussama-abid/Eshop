@@ -59,8 +59,8 @@ public class EShop {
                                              // artikel funktionen
 
 
-    public void BestandAendern(int artikelnummer, int newBestand) {
-   Produkte.BestandAendern(artikelnummer,newBestand);
+    public void BestandAendern(int artikelnummer, int newBestand) throws Exception {
+        Produkte.BestandAendern(artikelnummer, newBestand);
     }
 
     public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis,boolean istMassenartikel, int packungsGrosse) {
@@ -90,8 +90,9 @@ public class EShop {
     }
 
     public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws AnzahlException {
-    warenkorbVerwaltung.inWarenKorbLegen(artikel,anzahl,authuser);
+        warenkorbVerwaltung.inWarenKorbLegen(artikel, anzahl, authuser);
     }
+
 
     public Warenkorb getWarenkorb(Nutzer authuser) {
       return  warenkorbVerwaltung.getWarenkorb(authuser);
@@ -117,8 +118,8 @@ public class EShop {
         return Produkte.sucheartiklemitname(suchbegriff);
     }
 
-    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) throws AnzahlException, Artikelnamenichtgefunden {
-        warenkorbVerwaltung.artikelMengeaendern(Artikelname,neueAnzahl,authuser);
+    public void artikelMengeaendern(int ArtikelNummer, int neueAnzahl, Nutzer authuser) throws AnzahlException, Artikelnamenichtgefunden {
+        warenkorbVerwaltung.artikelMengeaendern(ArtikelNummer,neueAnzahl,authuser);
 
     }
 

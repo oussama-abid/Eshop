@@ -58,25 +58,25 @@ public class ArtikelVerwaltung {
     }
 
     public void EntferneArtikel(Artikel artikel) {
+
         artikelListe.remove(artikel);
     }
 
-    public void BestandAendern(int artikelnummer, int newBestand) {
-        Artikel veraenderterArtikel = null;
-        for (Artikel artikel : artikelListe) {
-            if (artikel.getArtikelnummer() == artikelnummer) {
-                veraenderterArtikel = artikel;
-                break;
+    public void BestandAendern(int artikelnummer, int newBestand) throws Exception {
+        Artikel veraenderterArtikel = SucheArtikelPerID(artikelnummer);
+
+        if (veraenderterArtikel instanceof Massenartikel) {
+            Massenartikel massenartikel = (Massenartikel) veraenderterArtikel;
+            if (newBestand % massenartikel.getPackungsGrosse() != 0) {
+                throw new Exception("Bestand muss ein Vielfaches der Packungsgröße sein");
             }
         }
 
         int aktualisierterBestand = veraenderterArtikel.getBestand() + newBestand;
-        veraenderterArtikel.setBestand(aktualisierterBestand);
-
-        if (aktualisierterBestand <= 0) {
-            veraenderterArtikel.setBestand(0);
-
+        if (aktualisierterBestand < 0) {
+            throw new Exception("Bestand kann nicht negativ sein");
         }
+        veraenderterArtikel.setBestand(aktualisierterBestand);
     }
 
     public Artikel SucheArtikelPerID(int artikelnummer) throws Artikelnichtgefunden {
@@ -96,16 +96,26 @@ public class ArtikelVerwaltung {
     public void articlebestandanderen(Nutzer authuser) {
         Kunde kunde = (Kunde) authuser;
         Warenkorb warenkorb = kunde.getWarenkorb();
-        List<WarenkorbArtikel> WarenkorbListe=warenkorb.getWarenkorbListe();
-        for (Artikel artikel : artikelListe) {
-            for (WarenkorbArtikel item : WarenkorbListe) {
-                if (artikel.getArtikelnummer() == item.getArtikel().getArtikelnummer()) {
-                    artikel.setBestand(artikel.getBestand()- item.getAnzahl());
+        List<WarenkorbArtikel> warenkorbListe = warenkorb.getWarenkorbListe();
 
+        for (Artikel artikel : artikelListe) {
+            for (WarenkorbArtikel item : warenkorbListe) {
+                if (artikel.getArtikelnummer() == item.getArtikel().getArtikelnummer()) {
+                    int anzahl = item.getAnzahl();
+
+                    if (artikel instanceof Massenartikel) {
+                        Massenartikel massenartikel = (Massenartikel) artikel;
+                        int packungsGrosse = massenartikel.getPackungsGrosse();
+                        int packungen = anzahl / packungsGrosse;  // Anzahl der gekauften Packungen
+                        artikel.setBestand(artikel.getBestand() - packungen); // Bestand um die gekaufte Anzahl reduzieren
+                    } else {
+                        artikel.setBestand(artikel.getBestand() - anzahl);
+                    }
                 }
             }
         }
     }
+
 
     public Artikel sucheartiklemitname(String suchbegriff) {
         for (Artikel artikel : artikelListe) {

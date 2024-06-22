@@ -1,11 +1,11 @@
 package Entities;
 
-public class Massenartikel extends Artikel{
+public class Massenartikel extends Artikel {
 
     private int packungsGrosse;
 
-    public Massenartikel(int Artikelnummer, String bezeichnung, int bestand, float preis, boolean istMassenartikel, int packungsGrosse) {
-        super(Artikelnummer, bezeichnung, bestand, preis, istMassenartikel);
+    public Massenartikel(int artikelnummer, String bezeichnung, int bestand, float preis, boolean istMassenartikel, int packungsGrosse) {
+        super(artikelnummer, bezeichnung, bestand, preis, istMassenartikel);
         this.packungsGrosse = packungsGrosse;
     }
 
@@ -19,6 +19,6 @@ public class Massenartikel extends Artikel{
 
     @Override
     public String toString() {
-        return  super.toString()+"packungsGrosse=" + packungsGrosse ;
+        return super.toString() + ", Packungsgröße=" + packungsGrosse;
     }
 }
