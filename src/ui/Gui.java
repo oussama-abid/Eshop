@@ -53,10 +53,10 @@ public class Gui extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
 
-        // Create login scene
+        //  login scene
         VBox loginLayout = new VBox(10);
         loginLayout.setPadding(new Insets(20));
-        loginLayout.setPrefSize(400, 300);
+        loginLayout.setPrefSize(400, 400);
         loginUsernameField = new TextField();
         loginUsernameField.setPromptText("Username");
         loginPasswordField = new TextField();
@@ -119,9 +119,9 @@ public class Gui extends Application {
         registerScene = new Scene(registerLayout);
 
         artikelTableView = new TableView<>();
-        artikelTableView.setPrefSize(600, 400);
+        artikelTableView.setPrefSize(900, 900);
 
-        TableColumn<Artikel, String> artikelNummerColumn = new TableColumn<>("Artikel Nummer");
+        TableColumn<Artikel, Integer> artikelNummerColumn = new TableColumn<>("Artikel Nummer");
         artikelNummerColumn.setCellValueFactory(new PropertyValueFactory<>("artikelnummer"));
 
         TableColumn<Artikel, String> bezeichnungColumn = new TableColumn<>("Bezeichnung");
@@ -136,7 +136,7 @@ public class Gui extends Application {
         artikelTableView.getColumns().addAll(artikelNummerColumn, bezeichnungColumn, bestandColumn, preisColumn);
 
 
-        Button cartButton = new Button("Cart");
+        Button cartButton = new Button("Warenkorb");
         cartButton.setOnAction(e -> handleCart());
         Button logoutButton = new Button("Logout");
         logoutButton.setOnAction(e -> handleLogout());
@@ -146,7 +146,7 @@ public class Gui extends Application {
 
         VBox kundenmenuLayout = new VBox(10);
         kundenmenuLayout.setPadding(new Insets(20));
-        kundenmenuLayout.setPrefSize(400, 300);
+        kundenmenuLayout.setPrefSize(500, 500);
         kundenmenuLayout.getChildren().addAll(header, artikelTableView);
         kundenmenu = new Scene(kundenmenuLayout);
 
@@ -232,7 +232,5 @@ public class Gui extends Application {
         stage.setScene(loginScene);
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+
 }

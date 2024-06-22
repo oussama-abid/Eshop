@@ -1,10 +1,5 @@
 package domain;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-
 import Entities.Adresse;
 import Entities.Kunde;
 import Entities.Mitarbeiter;
@@ -12,6 +7,12 @@ import Entities.Nutzer;
 import Exceptions.NutzernameExistiertBereits;
 import Exceptions.Plzexception;
 import Persistence.FilePersistenceManager;
+
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PersonenVerwaltung {
 
@@ -46,7 +47,7 @@ public class PersonenVerwaltung {
 
     public void registriereMitarbeiter(String name, String benutzerkennung, String passwort) {
         int nummer = EindeutigeBenutzernummer();
-        Mitarbeiter mitarbeiter = new Mitarbeiter(nummer, name, benutzerkennung, passwort);
+        Mitarbeiter mitarbeiter = new Mitarbeiter(nummer, name, benutzerkennung, hashPassword(passwort));
         nutzers.add(mitarbeiter);
        speichernutzer(mitarbeiter);
         System.out.println("Mitarbeiter registriert: Benutzernummer: " + nummer + " Name: " + name);
@@ -65,7 +66,7 @@ public class PersonenVerwaltung {
     public void registriereKunde(String name, String benutzerkennung, String passwort, String straße, String stadt, String bundesland, int postleitzahl, String land) {
         int nummer = EindeutigeBenutzernummer();
         Adresse adresse = new Adresse(straße, stadt, bundesland, postleitzahl, land);
-        Kunde kunde = new Kunde(nummer, name, benutzerkennung, passwort, adresse);
+        Kunde kunde = new Kunde(nummer, name, benutzerkennung, hashPassword(passwort), adresse);
         nutzers.add(kunde);
         speichernutzer(kunde);
         System.out.println("Kunde registriert: Benutzernummer: " + nummer + " Name: " + name);
@@ -86,7 +87,7 @@ public class PersonenVerwaltung {
 
     public Nutzer login(String benutzerkennung, String passwort) {
         for (Nutzer nutzer : nutzers) {
-            if (benutzerkennung.equals(nutzer.getBenutzerkennung()) && passwort.equals(nutzer.getPasswort())) {
+            if (benutzerkennung.equals(nutzer.getBenutzerkennung()) && verifyPassword(passwort, nutzer.getPasswort())) {
                 return nutzer;
             }
         }
@@ -119,7 +120,7 @@ public class PersonenVerwaltung {
     public boolean checkUniqueUsername(String benutzerkennung) throws NutzernameExistiertBereits {
         for (Nutzer nutzer : nutzers) {
             if (nutzer.getBenutzerkennung().equals(benutzerkennung)) {
-                throw new NutzernameExistiertBereits();
+                throw new NutzernameExistiertBereits(benutzerkennung);
             }
         }
         return true;
@@ -132,4 +133,31 @@ public class PersonenVerwaltung {
         }
         return true;
     }
+
+    public static String hashPassword(String password) {
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean verifyPassword(String inputPassword, String storedHash) {
+        String hashedInput = hashPassword(inputPassword);
+        return hashedInput.equals(storedHash);
+    }
+
+
 }

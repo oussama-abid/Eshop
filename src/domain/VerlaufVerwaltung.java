@@ -1,10 +1,13 @@
 package domain;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.*;
 
 import Entities.*;
 import Persistence.FilePersistenceManager;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class VerlaufVerwaltung {
 
@@ -68,7 +71,7 @@ public class VerlaufVerwaltung {
                 }
             }
 
-            // If found, update the total quantity; if not, create a new entry
+
             if (existingEntry != null) {
                 existingEntry.addQuantity(quantityChange);
             } else {

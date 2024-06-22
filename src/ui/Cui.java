@@ -188,7 +188,7 @@ public class Cui {
             System.out.print("Bestand: ");
             if (scanner.hasNextInt()) {
                 bestand = scanner.nextInt();
-                scanner.nextLine(); // newline character konsumieren
+                scanner.nextLine();
                 if (bestand > 0) {
                     validBestand = true;
                 } else {
@@ -196,7 +196,7 @@ public class Cui {
                 }
             } else {
                 System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
-                scanner.nextLine(); // falls keine ganze Zahl eingegeben wurde, den Input konsumieren
+                scanner.nextLine();
             }
         }
 
@@ -228,7 +228,7 @@ public class Cui {
                     validInput = true;
                     break;
                 default:
-                    System.out.println("Fehler: Bitte geben Sie 'ja' oder 'nein' ein.");
+                    System.out.println("Fehler: Bitte geben Sie 'ja' oder 'nein'.");
             }
         }
 

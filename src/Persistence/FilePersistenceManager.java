@@ -1,20 +1,9 @@
 package Persistence;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+
+import Entities.*;
+
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import Entities.*;
 
 
 public class FilePersistenceManager implements PersistenceManager {
@@ -110,10 +99,10 @@ public class FilePersistenceManager implements PersistenceManager {
             int bestand = Integer.parseInt(liesZeile());
             float preis = Float.parseFloat(liesZeile());
 
-            if ("massenartikel".equalsIgnoreCase(artikelTyp)) {
+            if (artikelTyp.equals("massenartikel")) {
                 int packungsGrosse = Integer.parseInt(liesZeile());
                 return new Massenartikel(artikelnummer, bezeichnung, bestand, preis, true, packungsGrosse);
-            } else if ("artikel".equalsIgnoreCase(artikelTyp)) {
+            } else if (artikelTyp.equals("artikel")) {
                 return new Artikel(artikelnummer, bezeichnung, bestand, preis,false);
             } else {
                 throw new IOException("Unbekannter Artikeltyp: " + artikelTyp);
@@ -156,7 +145,7 @@ public class FilePersistenceManager implements PersistenceManager {
             return null;
         }
 
-        LocalDate date = LocalDate.parse(liesZeile()); // Assuming date is stored in ISO_LOCAL_DATE format
+        LocalDate date = LocalDate.parse(liesZeile());
         Artikel article = ladeArtikel();
         int quantity = Integer.parseInt(liesZeile());
         Nutzer nutzer = ladeNutzer();
