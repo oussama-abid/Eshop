@@ -25,10 +25,17 @@ public class WarenkorbVerwaltung {
     }
 
     public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws AnzahlException {
-
         Kunde kunde = (Kunde) authuser;
         Warenkorb warenkorb = kunde.getWarenkorb();
         boolean artikelImWarenkorb = istArtikelImWarenkorb(warenkorb, artikel);
+
+        if (artikel instanceof Massenartikel) {
+            Massenartikel massenartikel = (Massenartikel) artikel;
+            int packungsGrosse = massenartikel.getPackungsGrosse();
+            if (anzahl % packungsGrosse != 0) {
+                throw new AnzahlException("Die Anzahl muss ein Vielfaches der Packungsgröße von " + packungsGrosse + " sein.");
+            }
+        }
 
         if (artikelImWarenkorb) {
             aktualisiereArtikelImWarenkorb(warenkorb, artikel, anzahl);
@@ -36,6 +43,8 @@ public class WarenkorbVerwaltung {
             fuegeNeuenArtikelZumWarenkorbHinzu(warenkorb, artikel, anzahl);
         }
     }
+
+
 
     private boolean istArtikelImWarenkorb(Warenkorb warenkorb, Artikel artikel) {
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
@@ -50,6 +59,13 @@ public class WarenkorbVerwaltung {
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
             if (warenkorbArtikel.getArtikel().equals(artikel)) {
                 int gesamtAnzahl = warenkorbArtikel.getAnzahl() + anzahl;
+                if (artikel instanceof Massenartikel) {
+                    Massenartikel massenartikel = (Massenartikel) artikel;
+                    int packungsGrosse = massenartikel.getPackungsGrosse();
+                    if (gesamtAnzahl % packungsGrosse != 0) {
+                        throw new AnzahlException("Die Anzahl muss ein Vielfaches der Packungsgröße von " + packungsGrosse + " sein.");
+                    }
+                }
                 if (artikel.getBestand() >= gesamtAnzahl) {
                     warenkorbArtikel.setAnzahl(gesamtAnzahl);
                 } else {
@@ -85,11 +101,18 @@ public class WarenkorbVerwaltung {
         warenkorb.Warenkorbleeren();
     }
 
-    public void artikelMengeaendern(String Artikelname, int neueAnzahl, Nutzer authuser) throws AnzahlException, Artikelnamenichtgefunden {
+    public void artikelMengeaendern(int artikelNummer, int neueAnzahl, Nutzer authuser) throws AnzahlException, Artikelnamenichtgefunden {
         Warenkorb warenkorb = getWarenkorb(authuser);
         for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
-            if (warenkorbArtikel.getArtikel().getBezeichnung().toLowerCase().equals(Artikelname.toLowerCase())) {
+            if (warenkorbArtikel.getArtikel().getArtikelnummer() == artikelNummer) {
                 Artikel artikel = warenkorbArtikel.getArtikel();
+                if (artikel instanceof Massenartikel) {
+                    Massenartikel massenartikel = (Massenartikel) artikel;
+                    int packungsGrosse = massenartikel.getPackungsGrosse();
+                    if (neueAnzahl % packungsGrosse != 0) {
+                        throw new AnzahlException("Die Anzahl muss ein Vielfaches der Packungsgröße von " + packungsGrosse + " sein.");
+                    }
+                }
                 if (artikel.getBestand() >= neueAnzahl) {
                     warenkorbArtikel.setAnzahl(neueAnzahl);
                     if (neueAnzahl == 0) {
@@ -98,13 +121,12 @@ public class WarenkorbVerwaltung {
                 } else {
                     throw new AnzahlException(artikel.getBezeichnung());
                 }
-                break;
-            }
-            else {
-                throw new Artikelnamenichtgefunden(Artikelname);
+                return; // Artikel gefunden und Menge geändert, Methode beenden
             }
         }
+        throw new Artikelnamenichtgefunden("Artikelnummer: " + artikelNummer);
     }
+
 
     public boolean checkArtikelwarenkorb(String artikelname, Nutzer authuser) {
         Warenkorb warenkorb = getWarenkorb(authuser);

@@ -25,10 +25,10 @@ public class PersonenVerwaltung {
 
 
 
-    private int letzteBenutzernummer = 5000;
+    private int letzteBenutzernummer = 3000;
 
     public PersonenVerwaltung() {
-
+    registriereMitarbeiter("admin2","admin2","admin2");
     }
 
     public void loadUsers(String filePath) {
