@@ -18,8 +18,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ObservableValue;
+
+
+
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.stream.IntStream;
+import java.util.Optional;
+
+
+
 
 public class Gui extends Application {
 
@@ -287,6 +298,7 @@ public class Gui extends Application {
         artikelTableView.setItems(artikelListe);
     }
 
+
     private void handleCart() {
         Stage cartStage = new Stage();
         cartStage.setTitle("Warenkorb");
@@ -362,7 +374,7 @@ public class Gui extends Application {
 
         Button checkoutButton = new Button("Kaufen");
         checkoutButton.setOnAction(e -> {
-            shop.kaufen(authuser);
+            kaufen(); // Call the new kaufen method
             showAlert("Einkauf erfolgreich. Rechnung wurde erstellt.");
             zeigeArtikelliste(); // Aktualisiere die Artikelliste nach dem Kauf
             cartStage.close();
@@ -389,6 +401,18 @@ public class Gui extends Application {
         Scene cartScene = new Scene(cartLayout, 700, 500);
         cartStage.setScene(cartScene);
         cartStage.show();
+    }
+    private void kaufen() {
+        Warenkorb warenkorb = shop.getWarenkorb(authuser);
+
+        if (warenkorb.getWarenkorbListe().isEmpty()) {
+            showAlert("Ihr Warenkorb ist leer. Bitte fügen Sie Artikel hinzu, bevor Sie fortfahren.");
+            return;
+        }
+
+        shop.articlebestandanderen(authuser);
+        shop.kundeEreignisfesthalten("Auslagerung", authuser);
+        shop.kaufen(authuser);
     }
 
 
@@ -445,7 +469,7 @@ public class Gui extends Application {
                 shop.ArtikelHinzufuegen(bezeichnung, bestand, preis, istMassenartikel, packungsGrosse);
                 showAlert("Artikel erfolgreich hinzugefügt.");
                 addArtikelStage.close();
-                zeigeArtikelliste();
+                zeigeArtikelliste(); // Aktualisiere die Artikelliste
             } catch (Exception ex) {
                 showAlert("Fehler beim Hinzufügen des Artikels: " + ex.getMessage());
             }
@@ -465,9 +489,64 @@ public class Gui extends Application {
         addArtikelStage.show();
     }
 
+
     private void handleShopVerlauf() {
-        // Implement shop history viewing logic
+        Stage stage = new Stage();
+        stage.setTitle("Shop Verlauf");
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        TableView<Event> eventTableView = new TableView<>();
+        eventTableView.setPrefSize(800, 600);
+
+        TableColumn<Event, String> operationColumn = new TableColumn<>("Operation");
+        operationColumn.setCellValueFactory(new PropertyValueFactory<>("operation"));
+
+        TableColumn<Event, LocalDate> dateColumn = new TableColumn<>("Datum");
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        TableColumn<Event, String> artikelColumn = new TableColumn<>("Artikel");
+        artikelColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getArticle().getBezeichnung()));
+
+        TableColumn<Event, Integer> quantityColumn = new TableColumn<>("Menge");
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+        TableColumn<Event, String> nutzerColumn = new TableColumn<>("Nutzer");
+        nutzerColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getUser().getName()));
+
+        eventTableView.getColumns().addAll(operationColumn, dateColumn, artikelColumn, quantityColumn, nutzerColumn);
+
+        ObservableList<Event> eventList = FXCollections.observableArrayList(shop.ShopVerlaufAnzeigen());
+        eventTableView.setItems(eventList);
+
+        TextField filterField = new TextField();
+        filterField.setPromptText("Filter by Artikel/Nutzer");
+
+        Button filterButton = new Button("Filter");
+        filterButton.setOnAction(e -> {
+            String filterText = filterField.getText().toLowerCase();
+            if (filterText.isEmpty()) {
+                eventTableView.setItems(eventList);
+            } else {
+                ObservableList<Event> filteredList = FXCollections.observableArrayList();
+                for (Event event : eventList) {
+                    if (event.getArticle().getBezeichnung().toLowerCase().contains(filterText) || event.getUser().getName().toLowerCase().contains(filterText)) {
+                        filteredList.add(event);
+                    }
+                }
+                eventTableView.setItems(filteredList);
+            }
+        });
+
+        vbox.getChildren().addAll(new Label("Shop Verlauf"), filterField, filterButton, eventTableView);
+
+        Scene scene = new Scene(vbox);
+        stage.setScene(scene);
+        stage.show();
     }
+
+
 
     private void handleChangeBestand() {
         Stage changeBestandStage = new Stage();
@@ -524,7 +603,8 @@ public class Gui extends Application {
                 shop.BestandAendern(artikelnummer, neuerBestand);
                 showAlert("Bestand erfolgreich geändert.");
                 changeBestandStage.close();
-                zeigeArtikelliste(); // Aktualisiere die Artikel-Liste in der GUI
+                zeigeArtikelliste(); // Aktualisiere die Artikel-Liste
+                artikelTableView.refresh();
             } catch (Exception ex) {
                 showAlert("Fehler beim Ändern des Bestands: " + ex.getMessage());
             }
@@ -542,6 +622,7 @@ public class Gui extends Application {
         changeBestandStage.setScene(changeBestandScene);
         changeBestandStage.show();
     }
+
 
     private void addMitarbeiter() {
         Stage addMitarbeiterStage = new Stage();
@@ -595,8 +676,74 @@ public class Gui extends Application {
     }
 
     private void shopHistorieAnsehen() {
-        // Implement shop history viewing logic
+        Stage stage = new Stage();
+        stage.setTitle("Shop Historie ansehen");
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        ComboBox<Artikel> artikelComboBox = new ComboBox<>(FXCollections.observableArrayList(shop.getArtikelListe()));
+        artikelComboBox.setPromptText("Artikel auswählen");
+
+        NumberAxis xAxis = new NumberAxis(1, 30, 1);
+        xAxis.setLabel("Tage");
+
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Bestand");
+
+        LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setTitle("Bestandshistorie");
+
+        Button showHistoryButton = new Button("Historie anzeigen");
+        showHistoryButton.setOnAction(e -> {
+            Artikel selectedArtikel = artikelComboBox.getSelectionModel().getSelectedItem();
+            if (selectedArtikel != null) {
+                drawStockHistory(lineChart, selectedArtikel);
+            } else {
+                showAlert("Bitte wählen Sie einen Artikel aus.");
+            }
+        });
+
+        vbox.getChildren().addAll(new Label("Shop Historie"), artikelComboBox, showHistoryButton, lineChart);
+
+        Scene scene = new Scene(vbox);
+        stage.setScene(scene);
+        stage.show();
     }
+
+    private void drawStockHistory(LineChart<Number, Number> lineChart, Artikel artikel) {
+        List<Artikelhistory> historyList = shop.ShophistoryAnzeigen().stream()
+                .filter(history -> history.getArticle().getArtikelnummer() == artikel.getArtikelnummer())
+                .collect(Collectors.toList());
+
+        int[] stockData = new int[30];
+        LocalDate today = LocalDate.now();
+
+        for (int i = 0; i < 30; i++) {
+            LocalDate date = today.minusDays(29 - i);
+            Optional<Artikelhistory> historyForDay = historyList.stream()
+                    .filter(history -> history.getDate().equals(date))
+                    .findFirst();
+            stockData[i] = historyForDay.map(Artikelhistory::getTotalQuantity).orElse(0);
+        }
+
+        int initialStock = artikel.getBestand() - Arrays.stream(stockData).sum();
+        int[] cumulativeStock = IntStream.range(0, 30)
+                .map(i -> initialStock + IntStream.of(stockData).limit(i + 1).sum())
+                .toArray();
+
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName("Bestand");
+
+        for (int i = 0; i < 30; i++) {
+            series.getData().add(new XYChart.Data<>(i + 1, cumulativeStock[i]));
+        }
+
+        lineChart.getData().clear();
+        lineChart.getData().add(series);
+    }
+
+
 
     private void showKundenListe() {
         Stage kundenListeStage = new Stage();
