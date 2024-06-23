@@ -68,8 +68,7 @@ public class EShop {
        return Produkte.ArtikelHinzufuegen(Bezeichnung, bestand, Preis,istMassenartikel,packungsGrosse);
     }
 
-
-    public List<Artikel>  getArtikelListe(){
+    public List<Artikel> getArtikelListe(){
 
         return Produkte.getArtikelListe();
     }
@@ -100,6 +99,11 @@ public class EShop {
 
     public void kaufen(Nutzer authuser) {
         warenkorbVerwaltung.kaufen(authuser);
+
+        //
+        Warenkorb warenkorb = warenkorbVerwaltung.getWarenkorb(authuser);
+        warenkorbVerwaltung.aktualisiereArtikelbestandInDatei(warenkorb);
+
     }
 
     public void Warenkorbleeren(Nutzer authuser) {
@@ -108,6 +112,7 @@ public class EShop {
 
     public void articlebestandanderen(Nutzer authuser) {
         Produkte.articlebestandanderen(authuser);
+
     }
 
     public boolean checkUniqueUsername(String benutzerkennung) throws NutzernameExistiertBereits {

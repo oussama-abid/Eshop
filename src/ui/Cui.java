@@ -579,7 +579,7 @@ public class Cui {
 
     }
 
-private void Warenkorbleeren() {
+    private void Warenkorbleeren() {
         shop.Warenkorbleeren(authuser);
     }
 
