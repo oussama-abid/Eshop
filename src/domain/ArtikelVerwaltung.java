@@ -77,6 +77,7 @@ public class ArtikelVerwaltung {
             throw new Exception("Bestand kann nicht negativ sein");
         }
         veraenderterArtikel.setBestand(aktualisierterBestand);
+        fileManager.aendereArtikelInDatei(artikelnummer, aktualisierterBestand);
     }
 
     public Artikel SucheArtikelPerID(int artikelnummer) throws Artikelnichtgefunden {
@@ -87,6 +88,7 @@ public class ArtikelVerwaltung {
         }
         throw new Artikelnichtgefunden(artikelnummer);
     }
+
 
     public List<Artikel> getArtikelListe() {
                                             //Um die Artikelliste auszugeben
@@ -103,14 +105,17 @@ public class ArtikelVerwaltung {
                 if (artikel.getArtikelnummer() == item.getArtikel().getArtikelnummer()) {
                     int anzahl = item.getAnzahl();
 
-                    if (artikel instanceof Massenartikel) {
-                        Massenartikel massenartikel = (Massenartikel) artikel;
-                        int packungsGrosse = massenartikel.getPackungsGrosse();
-                        int packungen = anzahl / packungsGrosse;  // Anzahl der gekauften Packungen
-                        artikel.setBestand(artikel.getBestand() - packungen); // Bestand um die gekaufte Anzahl reduzieren
-                    } else {
-                        artikel.setBestand(artikel.getBestand() - anzahl);
-                    }
+            //        if (artikel instanceof Massenartikel) {
+            //            Massenartikel massenartikel = (Massenartikel) artikel;
+            //            int packungsGrosse = massenartikel.getPackungsGrosse();
+            //            int packungen = anzahl / packungsGrosse;  // Anzahl der gekauften Packungen
+
+                        artikel.setBestand(artikel.getBestand() - anzahl); // Bestand um die gekaufte Anzahl reduzieren
+                        fileManager.aendereArtikelInDatei(artikel.getArtikelnummer(),artikel.getBestand());
+
+            //        } else {
+            //            artikel.setBestand(artikel.getBestand() - anzahl);
+            //        }
                 }
             }
         }
@@ -150,6 +155,8 @@ public class ArtikelVerwaltung {
             e.printStackTrace();
         }
     }
+
+
 
 
 }

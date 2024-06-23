@@ -4,6 +4,8 @@ import Entities.*;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FilePersistenceManager implements PersistenceManager {
@@ -135,10 +137,6 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
-
-
-
-
     public Event ladeEvent() throws IOException {
         String operation = liesZeile();
         if (operation == null) {
@@ -166,12 +164,6 @@ public class FilePersistenceManager implements PersistenceManager {
 
 
 
-
-
-
-
-
-
     private String liesZeile() throws IOException {
         if (reader != null)
             return reader.readLine();
@@ -183,4 +175,81 @@ public class FilePersistenceManager implements PersistenceManager {
         if (writer != null)
             writer.println(daten);
     }
+
+    public boolean aendereArtikelInDatei(int artikelnummer, int neuerBestand) {
+
+        // Neue Artikelliste wird erstellt und wir lesen alle Artikel aus der .txt Datei ein.
+        // Dann ändern wir die eingelesene Liste mit der neuesten Bestandsänderung.
+        // Zum schluss überschrieben wir die temporäre Liste in die artikel.txt rein.
+
+        List<Artikel> artikelListe = new ArrayList<>();
+        boolean artikelGefunden = false;
+
+
+        // Hier wird eingelesen
+        try (BufferedReader reader = new BufferedReader(new FileReader("artikel.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.equals("artikel")) {
+                    int nummer = Integer.parseInt(reader.readLine());
+                    String bezeichnung = reader.readLine();
+                    int bestand = Integer.parseInt(reader.readLine());
+                    float preis = Float.parseFloat(reader.readLine());
+                    Artikel artikel = new Artikel(nummer, bezeichnung, bestand, preis, false);
+                    artikelListe.add(artikel);
+                } else if (line.equals("massenartikel")) {
+                    int nummer = Integer.parseInt(reader.readLine());
+                    String bezeichnung = reader.readLine();
+                    int bestand = Integer.parseInt(reader.readLine());
+                    float preis = Float.parseFloat(reader.readLine());
+                    int packungsGrosse = Integer.parseInt(reader.readLine());
+                    Massenartikel massenartikel = new Massenartikel(nummer, bezeichnung, bestand, preis, true, packungsGrosse);
+                    artikelListe.add(massenartikel);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Artikel in der Liste ändern
+        for (Artikel art : artikelListe) {
+            if (art.getArtikelnummer() == artikelnummer) {
+                art.setBestand(neuerBestand);
+                artikelGefunden = true;
+                break;
+            }
+        }
+
+        if (!artikelGefunden) {
+            return false;
+        }
+
+        // Artikel zurück in die Datei schreiben
+        try (PrintWriter writer = new PrintWriter(new FileWriter("artikel.txt"))) {
+            for (Artikel art : artikelListe) {
+                if (art.isIstMassenartikel()) {
+                    writer.println("massenartikel");
+                    writer.println(art.getArtikelnummer());
+                    writer.println(art.getBezeichnung());
+                    writer.println(art.getBestand());
+                    writer.println(art.getPreis());
+                    writer.println(((Massenartikel) art).getPackungsGrosse());
+                } else {
+                    writer.println("artikel");
+                    writer.println(art.getArtikelnummer());
+                    writer.println(art.getBezeichnung());
+                    writer.println(art.getBestand());
+                    writer.println(art.getPreis());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
 }

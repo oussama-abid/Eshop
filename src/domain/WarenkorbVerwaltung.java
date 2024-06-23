@@ -4,6 +4,7 @@ package domain;
 import Entities.*;
 import Exceptions.AnzahlException;
 import Exceptions.Artikelnamenichtgefunden;
+import Persistence.FilePersistenceManager;
 
 import java.util.Date;
 
@@ -13,7 +14,11 @@ public class WarenkorbVerwaltung {
     private Rechnung Rechnung;
     private Date date;
 
+    FilePersistenceManager FPM = new FilePersistenceManager();
+
     public WarenkorbVerwaltung() {
+
+        FilePersistenceManager fpm = new FilePersistenceManager();
 
     }
 
@@ -94,6 +99,7 @@ public class WarenkorbVerwaltung {
         System.out.println(Rechnung);
         warenkorb.Warenkorbleeren();
 
+
     }
 
     public void Warenkorbleeren(Nutzer authuser) {
@@ -138,6 +144,23 @@ public class WarenkorbVerwaltung {
         }
         return false;
     }
+
+
+    public void aktualisiereArtikelbestandInDatei(Warenkorb warenkorb) {
+        for (WarenkorbArtikel warenkorbArtikel : warenkorb.getWarenkorbListe()) {
+            Artikel artikel = warenkorbArtikel.getArtikel();
+            int artikelnummer = artikel.getArtikelnummer();
+            int neuerBestand = artikel.getBestand();
+
+            //
+            if (!FPM.aendereArtikelInDatei(artikelnummer, neuerBestand)) {
+                System.out.println("Fehler beim Aktualisieren des Bestands in der Datei für Artikelnummer: " + artikelnummer);
+                // Hier könntest du entsprechende Maßnahmen ergreifen, z.B. eine Rückgängig-Funktion implementieren.
+            }
+        }
+    }
+
+
 }
 
 
