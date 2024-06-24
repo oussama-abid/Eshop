@@ -9,11 +9,13 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.beans.property.SimpleObjectProperty;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,9 @@ public class Gui extends Application {
     private TextField zipCodeField;
     private TextField countryField;
 
+    private BorderPane mitarbeitermenuLayout;
+    private TabPane tabPane;
+
     private TextField bezeichnungField;
     private TextField bestandField;
     private TextField preisField;
@@ -69,7 +74,6 @@ public class Gui extends Application {
 
     private TableView<Artikel> artikelTableView;
 
-    @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
 
@@ -77,9 +81,12 @@ public class Gui extends Application {
         VBox loginLayout = new VBox(10);
         loginLayout.setPadding(new Insets(20));
         loginLayout.setPrefSize(400, 400);
+
+        tabPane = new TabPane();
+
         loginUsernameField = new TextField();
         loginUsernameField.setPromptText("Username");
-        loginPasswordField = new TextField();
+        loginPasswordField = new PasswordField(); // Change to PasswordField for better security
         loginPasswordField.setPromptText("Password");
         Button loginButton = new Button("Login");
         loginButton.setOnAction(e -> loginNutzer());
@@ -159,30 +166,42 @@ public class Gui extends Application {
         kundenmenuLayout.getChildren().addAll(cartButton, artikelListeAnzeigenButton, logoutButton, zumWarenkorbHinzufügenButton, artikelTableView);
 
         kundenmenu = new Scene(kundenmenuLayout);
+        artikelTableView = createArtikelTableView();
 
         // Setup employee menu
-        VBox mitarbeitermenuLayout = new VBox(10);
+        mitarbeitermenuLayout = new BorderPane();
         mitarbeitermenuLayout.setPadding(new Insets(20));
         mitarbeitermenuLayout.setPrefSize(500, 500);
+        VBox buttonBox = new VBox(10);
+
         Button addArtikelButton = new Button("Artikel hinzufügen");
         addArtikelButton.setOnAction(e -> handleAddArtikel());
+
         Button artikelListeAnzeigenButton2 = new Button("Artikel Liste anzeigen");
         artikelListeAnzeigenButton2.setOnAction(e -> zeigeArtikelliste());
+
         Button changeBestandButton = new Button("Bestand ändern");
         changeBestandButton.setOnAction(e -> handleChangeBestand());
+
         Button addNewMitarbeiterButton = new Button("Mitarbeiter hinzufügen");
         addNewMitarbeiterButton.setOnAction(e -> addMitarbeiter());
+
         Button showVerlaufButton = new Button("Shop Verlauf ansehen");
         showVerlaufButton.setOnAction(e -> handleShopVerlauf());
+
         Button shopHistoryAnsehenButton = new Button("Shop Historie ansehen");
         shopHistoryAnsehenButton.setOnAction(e -> shopHistorieAnsehen());
+
         Button kundenlisteAusgebenButton = new Button("Kundenliste ausgeben");
         kundenlisteAusgebenButton.setOnAction(e -> showKundenListe());
+
         Button mitarbeiterlisteAusgebenButton = new Button("Mitarbeiterliste ausgeben");
         mitarbeiterlisteAusgebenButton.setOnAction(e -> showMitarbeiterListe());
+
         Button mitarbeiterLogoutButton = new Button("Logout");
         mitarbeiterLogoutButton.setOnAction(e -> handleLogout());
-        mitarbeitermenuLayout.getChildren().addAll(
+
+        buttonBox.getChildren().addAll(
                 addArtikelButton,
                 artikelListeAnzeigenButton2,
                 changeBestandButton,
@@ -191,21 +210,23 @@ public class Gui extends Application {
                 shopHistoryAnsehenButton,
                 kundenlisteAusgebenButton,
                 mitarbeiterlisteAusgebenButton,
-                mitarbeiterLogoutButton,
-                artikelTableView
+                mitarbeiterLogoutButton
         );
+
+        mitarbeitermenuLayout.setLeft(buttonBox);
+        mitarbeitermenuLayout.setBottom(artikelTableView); // Always show the article list at the bottom
 
         mitarbeitermenu = new Scene(mitarbeitermenuLayout);
 
         // Show the login scene initially
-        stage.setScene(loginScene);
+        stage.setScene(loginScene); // Ensure the login scene is set initially
         stage.setTitle("Eshop");
         stage.show();
     }
 
     private TableView<Artikel> createArtikelTableView() {
         TableView<Artikel> tableView = new TableView<>();
-        tableView.setPrefSize(900, 900);
+        tableView.setPrefSize(500, 500);
 
         TableColumn<Artikel, Integer> artikelNummerColumn = new TableColumn<>("Artikel Nummer");
         artikelNummerColumn.setCellValueFactory(new PropertyValueFactory<>("artikelnummer"));
@@ -228,9 +249,99 @@ public class Gui extends Application {
             }
         });
 
-        tableView.getColumns().addAll(artikelNummerColumn, bezeichnungColumn, bestandColumn, preisColumn, packungsGrosseColumn);
+        TableColumn<Artikel, Void> changeStockColumn = new TableColumn<>("Bestand ändern");
+        changeStockColumn.setCellFactory(col -> new TableCell<Artikel, Void>() {
+            private final Button changeButton = new Button("+");
+
+            {
+                changeButton.setOnAction(e -> {
+                    Artikel artikel = getTableView().getItems().get(getIndex());
+                    openChangeStockDialog(artikel);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(changeButton);
+                }
+            }
+        });
+
+        tableView.getColumns().addAll(artikelNummerColumn, bezeichnungColumn, bestandColumn, preisColumn, packungsGrosseColumn, changeStockColumn);
 
         return tableView;
+    }
+
+    private void openChangeStockDialog(Artikel artikel) {
+        VBox changeBestandLayout = new VBox(10);
+        changeBestandLayout.setPadding(new Insets(20));
+
+        TextField bestandField = new TextField();
+        bestandField.setPromptText("Bestand (positive für Einlagerung, negative für Auslagerung)");
+
+        CheckBox massenartikelCheckBox = new CheckBox("Ist Massenartikel");
+        TextField packungsGrosseField = new TextField();
+        packungsGrosseField.setPromptText("Neue Packungsgröße");
+        packungsGrosseField.setDisable(true);
+
+        massenartikelCheckBox.setOnAction(e -> packungsGrosseField.setDisable(!massenartikelCheckBox.isSelected()));
+
+        Button changeBestandButton = new Button("Bestand ändern");
+        changeBestandButton.setOnAction(e -> {
+            try {
+                // Validate and parse stock change quantity
+                int bestand;
+                try {
+                    bestand = Integer.parseInt(bestandField.getText());
+                } catch (NumberFormatException ex) {
+                    showAlert("Bitte geben Sie eine gültige Zahl für den Bestand ein.");
+                    return;
+                }
+
+                // Update stock and log event
+                shop.BestandAendern(artikel.getArtikelnummer(), bestand);
+                String ereignisTyp = bestand >= 0 ? "Einlagerung" : "Auslagerung";
+                shop.Ereignisfesthalten(ereignisTyp, artikel, Math.abs(bestand), authuser);
+
+                // Optionally update package size for mass articles
+                if (artikel instanceof Massenartikel && massenartikelCheckBox.isSelected()) {
+                    try {
+                        int neuePackungsGrosse = Integer.parseInt(packungsGrosseField.getText());
+                        if (neuePackungsGrosse <= 0) {
+                            showAlert("Die Packungsgröße muss größer als 0 sein.");
+                            return;
+                        }
+                        ((Massenartikel) artikel).setPackungsGrosse(neuePackungsGrosse);
+                    } catch (NumberFormatException ex) {
+                        showAlert("Bitte geben Sie eine gültige Zahl für die Packungsgröße ein.");
+                        return;
+                    }
+                }
+
+                // Show success message and close the dialog
+                showAlert("Lagerbestand für Artikel " + artikel.getArtikelnummer() + " aktualisiert. Neuer Bestand: " + artikel.getBestand());
+                zeigeArtikelliste();
+                artikelTableView.refresh();
+                mitarbeitermenuLayout.setCenter(null); // Clear the center content
+            } catch (Artikelnichtgefunden ex) {
+                showAlert("Fehler: " + ex.getMessage());
+            } catch (Exception ex) {
+                showAlert("Fehler: " + ex.getMessage());
+            }
+        });
+
+        changeBestandLayout.getChildren().addAll(
+                new Label("Bestand"), bestandField,
+                massenartikelCheckBox,
+                new Label("Packungsgröße"), packungsGrosseField,
+                changeBestandButton
+        );
+
+        mitarbeitermenuLayout.setCenter(changeBestandLayout); // Update the center content
     }
 
     private void registerUser() {
@@ -277,6 +388,7 @@ public class Gui extends Application {
             zeigeArtikelliste();
         } else if (authuser instanceof Mitarbeiter) {
             stage.setScene(mitarbeitermenu);
+            zeigeArtikelliste();  // Load articles when employee menu is shown
         }
     }
 
@@ -423,9 +535,6 @@ public class Gui extends Application {
     }
 
     private void handleAddArtikel() {
-        Stage addArtikelStage = new Stage();
-        addArtikelStage.setTitle("Artikel hinzufügen");
-
         VBox addArtikelLayout = new VBox(10);
         addArtikelLayout.setPadding(new Insets(20));
 
@@ -468,8 +577,8 @@ public class Gui extends Application {
             try {
                 shop.ArtikelHinzufuegen(bezeichnung, bestand, preis, istMassenartikel, packungsGrosse);
                 showAlert("Artikel erfolgreich hinzugefügt.");
-                addArtikelStage.close();
                 zeigeArtikelliste(); // Aktualisiere die Artikelliste
+                mitarbeitermenuLayout.setCenter(null); // Clear the center content
             } catch (Exception ex) {
                 showAlert("Fehler beim Hinzufügen des Artikels: " + ex.getMessage());
             }
@@ -484,9 +593,7 @@ public class Gui extends Application {
                 addArtikelButton
         );
 
-        Scene addArtikelScene = new Scene(addArtikelLayout, 300, 400);
-        addArtikelStage.setScene(addArtikelScene);
-        addArtikelStage.show();
+        mitarbeitermenuLayout.setCenter(addArtikelLayout); // Update the center content
     }
 
 
@@ -546,8 +653,6 @@ public class Gui extends Application {
         stage.show();
     }
 
-
-
     private void handleChangeBestand() {
         Stage changeBestandStage = new Stage();
         changeBestandStage.setTitle("Bestand ändern");
@@ -558,76 +663,84 @@ public class Gui extends Application {
         TextField artikelNummerField = new TextField();
         artikelNummerField.setPromptText("Artikelnummer");
 
-        TextField neuerBestandField = new TextField();
-        neuerBestandField.setPromptText("Neuer Bestand");
+        TextField bestandField = new TextField();
+        bestandField.setPromptText("Bestand (positive für Einlagerung, negative für Auslagerung)");
 
         CheckBox massenartikelCheckBox = new CheckBox("Ist Massenartikel");
+        TextField packungsGrosseField = new TextField();
+        packungsGrosseField.setPromptText("Neue Packungsgröße");
+        packungsGrosseField.setDisable(true);
 
-        TextField neuePackungsGrosseField = new TextField();
-        neuePackungsGrosseField.setPromptText("Neue Packungsgröße");
-        neuePackungsGrosseField.setDisable(true);
-
-        massenartikelCheckBox.setOnAction(e -> neuePackungsGrosseField.setDisable(!massenartikelCheckBox.isSelected()));
+        massenartikelCheckBox.setOnAction(e -> packungsGrosseField.setDisable(!massenartikelCheckBox.isSelected()));
 
         Button changeBestandButton = new Button("Bestand ändern");
         changeBestandButton.setOnAction(e -> {
-            int artikelnummer;
-            int neuerBestand;
-            int neuePackungsGrosse = 0;
-            boolean istMassenartikel = massenartikelCheckBox.isSelected();
-
             try {
-                artikelnummer = Integer.parseInt(artikelNummerField.getText());
-                neuerBestand = Integer.parseInt(neuerBestandField.getText());
-                if (istMassenartikel) {
-                    neuePackungsGrosse = Integer.parseInt(neuePackungsGrosseField.getText());
-                    if (neuePackungsGrosse == 0) {
-                        showAlert("Packungsgröße darf nicht null sein.");
+                // Validate and parse article number
+                int artikelnummer = Integer.parseInt(artikelNummerField.getText());
+                Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
+
+                if (artikel == null) {
+                    showAlert("Artikel nicht gefunden.");
+                    return;
+                }
+
+                // Validate and parse stock change quantity
+                int bestand;
+                try {
+                    bestand = Integer.parseInt(bestandField.getText());
+                } catch (NumberFormatException ex) {
+                    showAlert("Bitte geben Sie eine gültige Zahl für den Bestand ein.");
+                    return;
+                }
+
+                // Update stock and log event
+                shop.BestandAendern(artikelnummer, bestand);
+                String ereignisTyp = bestand >= 0 ? "Einlagerung" : "Auslagerung";
+                shop.Ereignisfesthalten(ereignisTyp, artikel, Math.abs(bestand), authuser);
+
+                // Optionally update package size for mass articles
+                if (artikel instanceof Massenartikel && massenartikelCheckBox.isSelected()) {
+                    try {
+                        int neuePackungsGrosse = Integer.parseInt(packungsGrosseField.getText());
+                        if (neuePackungsGrosse <= 0) {
+                            showAlert("Die Packungsgröße muss größer als 0 sein.");
+                            return;
+                        }
+                        ((Massenartikel) artikel).setPackungsGrosse(neuePackungsGrosse);
+                    } catch (NumberFormatException ex) {
+                        showAlert("Bitte geben Sie eine gültige Zahl für die Packungsgröße ein.");
                         return;
                     }
                 }
-            } catch (NumberFormatException ex) {
-                showAlert("Bitte geben Sie gültige Werte ein.");
-                return;
-            }
 
-            try {
-                Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
-                if (artikel instanceof Massenartikel) {
-                    ((Massenartikel) artikel).setPackungsGrosse(neuePackungsGrosse);
-                }
-                if (neuerBestand == 0) {
-                    showAlert("Der Bestand darf nicht null sein.");
-                    return;
-                }
-                shop.BestandAendern(artikelnummer, neuerBestand);
-                showAlert("Bestand erfolgreich geändert.");
+                // Show success message and close the stage
+                showAlert("Lagerbestand für Artikel " + artikelnummer + " aktualisiert. Neuer Bestand: " + artikel.getBestand());
                 changeBestandStage.close();
-                zeigeArtikelliste(); // Aktualisiere die Artikel-Liste
+                zeigeArtikelliste();
                 artikelTableView.refresh();
+            } catch (Artikelnichtgefunden ex) {
+                showAlert("Fehler: " + ex.getMessage());
             } catch (Exception ex) {
-                showAlert("Fehler beim Ändern des Bestands: " + ex.getMessage());
+                showAlert("Fehler: " + ex.getMessage());
             }
         });
 
         changeBestandLayout.getChildren().addAll(
                 new Label("Artikelnummer"), artikelNummerField,
-                new Label("Neuer Bestand"), neuerBestandField,
+                new Label("Bestand"), bestandField,
                 massenartikelCheckBox,
-                new Label("Neue Packungsgröße"), neuePackungsGrosseField,
+                new Label("Packungsgröße"), packungsGrosseField,
                 changeBestandButton
         );
 
-        Scene changeBestandScene = new Scene(changeBestandLayout, 300, 400);
+        Scene changeBestandScene = new Scene(changeBestandLayout, 400, 300);
         changeBestandStage.setScene(changeBestandScene);
         changeBestandStage.show();
     }
 
 
     private void addMitarbeiter() {
-        Stage addMitarbeiterStage = new Stage();
-        addMitarbeiterStage.setTitle("Mitarbeiter hinzufügen");
-
         VBox addMitarbeiterLayout = new VBox(10);
         addMitarbeiterLayout.setPadding(new Insets(20));
 
@@ -655,7 +768,7 @@ public class Gui extends Application {
                 shop.checkUniqueUsername(benutzerkennung);
                 shop.registriereMitarbeiter(name, benutzerkennung, passwort);
                 showAlert("Mitarbeiter erfolgreich hinzugefügt.");
-                addMitarbeiterStage.close();
+                mitarbeitermenuLayout.setCenter(null); // Clear the center content
             } catch (NutzernameExistiertBereits ex) {
                 showAlert("Benutzerkennung existiert bereits.");
             } catch (Exception ex) {
@@ -670,15 +783,9 @@ public class Gui extends Application {
                 addMitarbeiterButton
         );
 
-        Scene addMitarbeiterScene = new Scene(addMitarbeiterLayout, 300, 250);
-        addMitarbeiterStage.setScene(addMitarbeiterScene);
-        addMitarbeiterStage.show();
+        mitarbeitermenuLayout.setCenter(addMitarbeiterLayout); // Update the center content
     }
-
     private void shopHistorieAnsehen() {
-        Stage stage = new Stage();
-        stage.setTitle("Shop Historie ansehen");
-
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(10));
 
@@ -706,9 +813,7 @@ public class Gui extends Application {
 
         vbox.getChildren().addAll(new Label("Shop Historie"), artikelComboBox, showHistoryButton, lineChart);
 
-        Scene scene = new Scene(vbox);
-        stage.setScene(scene);
-        stage.show();
+        mitarbeitermenuLayout.setCenter(vbox); // Update the center content
     }
 
     private void drawStockHistory(LineChart<Number, Number> lineChart, Artikel artikel) {
@@ -716,11 +821,25 @@ public class Gui extends Application {
                 .filter(history -> history.getArticle().getArtikelnummer() == artikel.getArtikelnummer())
                 .collect(Collectors.toList());
 
-        int[] stockData = new int[30];
+        Optional<LocalDate> earliestDateOpt = historyList.stream()
+                .map(Artikelhistory::getDate)
+                .min(LocalDate::compareTo);
+
+        if (!earliestDateOpt.isPresent()) {
+            showAlert("Keine Verlaufsdaten verfügbar.");
+            return;
+        }
+
+        LocalDate earliestDate = earliestDateOpt.get();
         LocalDate today = LocalDate.now();
 
-        for (int i = 0; i < 30; i++) {
-            LocalDate date = today.minusDays(29 - i);
+        int daysOfData = (int) ChronoUnit.DAYS.between(earliestDate, today) + 1;
+        daysOfData = Math.min(daysOfData, 30);
+
+        int[] stockData = new int[daysOfData];
+
+        for (int i = 0; i < daysOfData; i++) {
+            LocalDate date = today.minusDays(daysOfData - 1 - i);
             Optional<Artikelhistory> historyForDay = historyList.stream()
                     .filter(history -> history.getDate().equals(date))
                     .findFirst();
@@ -728,14 +847,14 @@ public class Gui extends Application {
         }
 
         int initialStock = artikel.getBestand() - Arrays.stream(stockData).sum();
-        int[] cumulativeStock = IntStream.range(0, 30)
+        int[] cumulativeStock = IntStream.range(0, daysOfData)
                 .map(i -> initialStock + IntStream.of(stockData).limit(i + 1).sum())
                 .toArray();
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Bestand");
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < daysOfData; i++) {
             series.getData().add(new XYChart.Data<>(i + 1, cumulativeStock[i]));
         }
 
@@ -743,11 +862,9 @@ public class Gui extends Application {
         lineChart.getData().add(series);
     }
 
-
-
     private void showKundenListe() {
-        Stage kundenListeStage = new Stage();
-        kundenListeStage.setTitle("Kundenliste");
+        VBox kundenListeLayout = new VBox(10);
+        kundenListeLayout.setPadding(new Insets(20));
 
         TableView<Kunde> kundenTableView = new TableView<>();
         kundenTableView.setPrefSize(600, 400);
@@ -770,18 +887,14 @@ public class Gui extends Application {
         ObservableList<Kunde> kundenData = FXCollections.observableArrayList(kundenListe);
         kundenTableView.setItems(kundenData);
 
-        VBox kundenListeLayout = new VBox(10);
-        kundenListeLayout.setPadding(new Insets(20));
         kundenListeLayout.getChildren().add(kundenTableView);
 
-        Scene kundenListeScene = new Scene(kundenListeLayout);
-        kundenListeStage.setScene(kundenListeScene);
-        kundenListeStage.show();
+        mitarbeitermenuLayout.setCenter(kundenListeLayout); // Update the center content
     }
 
     private void showMitarbeiterListe() {
-        Stage mitarbeiterListeStage = new Stage();
-        mitarbeiterListeStage.setTitle("Mitarbeiterliste");
+        VBox mitarbeiterListeLayout = new VBox(10);
+        mitarbeiterListeLayout.setPadding(new Insets(20));
 
         TableView<Mitarbeiter> mitarbeiterTableView = new TableView<>();
         mitarbeiterTableView.setPrefSize(600, 400);
@@ -801,14 +914,11 @@ public class Gui extends Application {
         ObservableList<Mitarbeiter> mitarbeiterData = FXCollections.observableArrayList(mitarbeiterListe);
         mitarbeiterTableView.setItems(mitarbeiterData);
 
-        VBox mitarbeiterListeLayout = new VBox(10);
-        mitarbeiterListeLayout.setPadding(new Insets(20));
         mitarbeiterListeLayout.getChildren().add(mitarbeiterTableView);
 
-        Scene mitarbeiterListeScene = new Scene(mitarbeiterListeLayout);
-        mitarbeiterListeStage.setScene(mitarbeiterListeScene);
-        mitarbeiterListeStage.show();
+        mitarbeitermenuLayout.setCenter(mitarbeiterListeLayout); // Update the center content
     }
+
     private void inWarenKorbLegen() {
         Stage stage = new Stage();
         stage.setTitle("Artikel in den Warenkorb legen");
