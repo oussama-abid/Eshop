@@ -127,6 +127,7 @@ public class WarenkorbVerwaltung {
                 } else {
                     throw new AnzahlException(artikel.getBezeichnung());
                 }
+
                 return; // Artikel gefunden und Menge geändert, Methode beenden
             }
         }
