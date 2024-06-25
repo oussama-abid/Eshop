@@ -99,7 +99,7 @@ public class Gui extends Application {
     public void start(Stage primaryStage) {
         stage = primaryStage;
         stage.setWidth(1000);
-        stage.setHeight(1000);
+        stage.setHeight(900);
 
         String css = getClass().getResource("styles.css").toExternalForm();
 
@@ -514,7 +514,7 @@ public class Gui extends Application {
         anzahlColumn.setCellValueFactory(new PropertyValueFactory<>("anzahl"));
 
         TableColumn<WarenkorbArtikel, Double> preisColumn = new TableColumn<>("Preis");
-        preisColumn.setCellValueFactory(new PropertyValueFactory<>("preis"));
+        preisColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(Math.round(cellData.getValue().getPreis() * 100.0) / 100.0));
 
         TableColumn<WarenkorbArtikel, Double> gesamtPreisColumn = new TableColumn<>("Gesamtpreis");
         gesamtPreisColumn.setCellValueFactory(new PropertyValueFactory<>("gesamtPreis"));
@@ -616,9 +616,9 @@ public class Gui extends Application {
     }
     private void openQuantityDialog(Artikel artikel) {
         TextInputDialog dialog = new TextInputDialog("0");
-        dialog.setTitle("Enter Quantity");
-        dialog.setHeaderText("Enter quantity for Artikel " + artikel.getBezeichnung());
-        dialog.setContentText("Quantity:");
+        dialog.setTitle("Menge wählen");
+        dialog.setHeaderText("Geben sie die gewünschte Menge ein von " + artikel.getBezeichnung());
+        dialog.setContentText("Menge:");
         dialog.getEditor().setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
         dialog.showAndWait().ifPresent(quantity -> {
             try {
@@ -669,10 +669,13 @@ public class Gui extends Application {
         mainLayout.getChildren().addAll(header, cartcontent);
 
     }
-    private Label totalprice(){
+    private Label totalprice() {
         if (warenkorb != null && !warenkorb.getWarenkorbListe().isEmpty()) {
-            totalPrice = warenkorb.calculateTotalPrice();
-            totalPriceLabel.setText("Gesamtpreis: " + String.format("%.2f", totalPrice));
+            totalPrice = warenkorb.getWarenkorbListe().stream()
+                    .mapToDouble(item -> item.getArtikel().getPreis() * item.getAnzahl())
+                    .sum();
+            totalPrice = Math.round(totalPrice * 100.0) / 100.0;  // Rounding to 2 decimal places
+            totalPriceLabel.setText("Gesamtpreis: " + String.format("%.2f EUR", totalPrice));
         } else {
             totalPriceLabel.setText("Der Warenkorb ist leer.");
         }
@@ -995,11 +998,15 @@ public class Gui extends Application {
         TableColumn<WarenkorbArtikel, Integer> anzahlColumn = new TableColumn<>("Anzahl");
         anzahlColumn.setCellValueFactory(new PropertyValueFactory<>("anzahl"));
 
-        TableColumn<WarenkorbArtikel, Double> einzelpreisColumn = new TableColumn<>("Einzelpreis");
-        einzelpreisColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getArtikel().getPreis()).asObject());
+        TableColumn<WarenkorbArtikel, String> einzelpreisColumn = new TableColumn<>("Einzelpreis");
+        einzelpreisColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+                String.format("%.2f", cellData.getValue().getArtikel().getPreis())
+        ));
 
-        TableColumn<WarenkorbArtikel, Double> gesamtpreisColumn = new TableColumn<>("Gesamtpreis");
-        gesamtpreisColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getArtikel().getPreis() * cellData.getValue().getAnzahl()).asObject());
+        TableColumn<WarenkorbArtikel, String> gesamtpreisColumn = new TableColumn<>("Gesamtpreis");
+        gesamtpreisColumn.setCellValueFactory(cellData -> new SimpleStringProperty(
+                String.format("%.2f", cellData.getValue().getArtikel().getPreis() * cellData.getValue().getAnzahl())
+        ));
 
         table.getColumns().addAll(artikelColumn, anzahlColumn, einzelpreisColumn, gesamtpreisColumn);
 
