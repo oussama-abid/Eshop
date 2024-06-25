@@ -59,7 +59,7 @@ public class Adresse {
     @Override
     public String toString() {
 
-        return "land:" + getLand() + ", bundesland=" + getBundesland() + ", stadt=" + getStadt() + ", straße :" + getStraße()+ ", PLZ :" + getPostleitzahl();
+        return "Land: " + getLand() + ", Bundesland: " + getBundesland() + ", Stadt: " + getStadt() + ", Straße: " + getStraße()+ ", PLZ: " + getPostleitzahl();
 
     }
 }

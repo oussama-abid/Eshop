@@ -594,6 +594,7 @@ public class Cui {
         shop.articlebestandanderen(authuser);
         shop.kundeEreignisfesthalten("Auslagerung", authuser);
         shop.kaufen(authuser);
+
     }
 
     public void SucheArtikelMitName() {
