@@ -59,11 +59,11 @@ public class EShop {
                                              // artikel funktionen
 
 
-    public void BestandAendern(int artikelnummer, int newBestand) throws Exception {
-        Produkte.BestandAendern(artikelnummer, newBestand);
+    public void BestandAendern(int artikelnummer, int newBestand,int neuePackungsGrosse) throws Exception {
+        Produkte.BestandAendern(artikelnummer, newBestand,neuePackungsGrosse);
     }
 
-    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis,boolean istMassenartikel, int packungsGrosse) {
+    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis,boolean istMassenartikel, int packungsGrosse) throws MassengutException {
 
        return Produkte.ArtikelHinzufuegen(Bezeichnung, bestand, Preis,istMassenartikel,packungsGrosse);
     }
@@ -88,7 +88,7 @@ public class EShop {
         return Produkte.SucheArtikelPerID(artikelnummer);
     }
 
-    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws AnzahlException {
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws AnzahlException, PackungsGrosseException {
         warenkorbVerwaltung.inWarenKorbLegen(artikel, anzahl, authuser);
     }
 
@@ -146,4 +146,11 @@ public class EShop {
     }
 
 
+    public void PackungsGrosseanderen(int artikel, int neuePackungsGrosse) throws Artikelnichtgefunden, PackungsGrosseException {
+        Produkte.PackungsGrosseanderen(artikel,neuePackungsGrosse);
+    }
+
+    public void checkpackunggrosse(int anzahl, Artikel artikel) throws PackungsGrosseException {
+        Produkte.checkpackunggrosse(anzahl,artikel);
+    }
 }

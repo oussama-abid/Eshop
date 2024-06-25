@@ -1,10 +1,7 @@
 package ui;
 
 import Entities.*;
-import Exceptions.AnzahlException;
-import Exceptions.Artikelnichtgefunden;
-import Exceptions.FalscheLoginDaten;
-import Exceptions.NutzernameExistiertBereits;
+import Exceptions.*;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -242,12 +239,10 @@ public class Cui {
                 System.out.print("Packungsgröße: ");
                 if (scanner.hasNextInt()) {
                     packungsGrosse = scanner.nextInt();
-                    if (packungsGrosse > 0 && bestand % packungsGrosse == 0) {
+                    if (packungsGrosse > 0) {
                         validPackungsGrosse = true;
                     } else if (packungsGrosse <= 0) {
                         System.out.println("Fehler: Bitte geben Sie eine Zahl größer als 0 ein.");
-                    } else {
-                        System.out.println("Fehler: Der Bestand muss durch die Packungsgröße teilbar sein.");
                     }
                 } else {
                     System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
@@ -255,9 +250,15 @@ public class Cui {
                 }
             }
         }
-        Artikel art = shop.ArtikelHinzufuegen(Bezeichnung, bestand, Preis,istMassenartikel,packungsGrosse);
-        System.out.println("Neuer Artikel hinzugefügt: " + art);
-        shop.Ereignisfesthalten("neuer Artikel", art, art.getBestand(), authuser);
+        try {
+            Artikel art = shop.ArtikelHinzufuegen(Bezeichnung, bestand, Preis,istMassenartikel,packungsGrosse);// Username is unique
+            System.out.println("Neuer Artikel hinzugefügt: " + art);
+            shop.Ereignisfesthalten("neuer Artikel", art, art.getBestand(), authuser);
+        } catch (MassengutException e) {
+            System.out.println(e.getMessage());
+        }
+
+
 
 
     }
@@ -382,9 +383,6 @@ public class Cui {
 
         try {
             Artikel artikel = shop.findeArtikelDurchID(artikelnummer);
-            if (artikel == null) {
-                System.out.println("Artikel nicht gefunden.");
-            } else {
                 System.out.print("Geben Sie die Anzahl der hinzuzufügenden/abzuziehenden Artikel ein: ");
                 int newBestand = 0;
                 boolean validBestand = false;
@@ -399,42 +397,44 @@ public class Cui {
                         scanner.next();
                     }
                 }
+            int neuePackungsGrosse = 0;
+
+            if (artikel instanceof Massenartikel) {
+                neuePackungsGrosse = ((Massenartikel) artikel).getPackungsGrosse() ;
+                System.out.print("Möchten Sie die Packungsgröße ändern? (ja/nein): ");
+                String packungsGrosseAntwort = scanner.nextLine().trim().toLowerCase();
+                if (packungsGrosseAntwort.equals("ja")) {
+                    System.out.print("Geben Sie die neue Packungsgröße ein: ");
+                    boolean validPackungsGrosse = false;
+                    while (!validPackungsGrosse) {
+                        if (scanner.hasNextInt()) {
+                            neuePackungsGrosse = scanner.nextInt();
+                            scanner.nextLine();  // consume the newline
+                            if (neuePackungsGrosse > 0) {
+                                validPackungsGrosse = true;
+                            } else {
+                                System.out.println("Fehler: Bitte geben Sie eine Zahl größer als 0 ein.");
+                            }
+                        } else {
+                            System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
+                            scanner.next();  // consume invalid input
+                        }
+                    }
+
+                }
+            }
 
                 try {
-                    shop.BestandAendern(artikelnummer, newBestand);
+
+                    shop.BestandAendern(artikelnummer, newBestand,neuePackungsGrosse);
                     System.out.println("Lagerbestand für Artikel " + artikelnummer + " aktualisiert. Neuer Bestand: " + artikel.getBestand());
                     String ereignisTyp = newBestand >= 0 ? "Einlagerung" : "Auslagerung";
                     shop.Ereignisfesthalten(ereignisTyp, artikel, Math.abs(newBestand), authuser);
 
-                    if (artikel instanceof Massenartikel) {
-                        System.out.print("Möchten Sie die Packungsgröße ändern? (ja/nein): ");
-                        String packungsGrosseAntwort = scanner.nextLine().trim().toLowerCase();
-                        if (packungsGrosseAntwort.equals("ja")) {
-                            System.out.print("Geben Sie die neue Packungsgröße ein: ");
-                            int neuePackungsGrosse = 0;
-                            boolean validPackungsGrosse = false;
-                            while (!validPackungsGrosse) {
-                                if (scanner.hasNextInt()) {
-                                    neuePackungsGrosse = scanner.nextInt();
-                                    scanner.nextLine();  // consume the newline
-                                    if (neuePackungsGrosse > 0) {
-                                        validPackungsGrosse = true;
-                                    } else {
-                                        System.out.println("Fehler: Bitte geben Sie eine Zahl größer als 0 ein.");
-                                    }
-                                } else {
-                                    System.out.println("Fehler: Bitte geben Sie eine ganze Zahl ein.");
-                                    scanner.next();  // consume invalid input
-                                }
-                            }
-                            ((Massenartikel) artikel).setPackungsGrosse(neuePackungsGrosse);
-                            System.out.println("Packungsgröße für Artikel " + artikelnummer + " aktualisiert. Neue Packungsgröße: " + neuePackungsGrosse);
-                        }
-                    }
                 } catch (Exception e) {
                     System.out.println("Fehler: " + e.getMessage());
                 }
-            }
+
         } catch (Artikelnichtgefunden e) {
             System.out.println("Fehler: " + e.getMessage());
         }
@@ -503,13 +503,13 @@ public class Cui {
                     scanner.nextLine();
                     if (anzahl > 0) {
                         if (artikel instanceof Massenartikel) {
-                            Massenartikel massenArtikel = (Massenartikel) artikel;
-                            int packungsGrosse = massenArtikel.getPackungsGrosse();
 
-                            if (anzahl % packungsGrosse != 0) {
-                                System.out.println("Fehler: Die Anzahl muss ein Vielfaches der Packungsgröße von " + packungsGrosse + " sein.");
-                            } else {
+                            try {
+                                shop.checkpackunggrosse(anzahl,artikel);
                                 validBestand = true;
+                            }
+                            catch (PackungsGrosseException e){
+                                System.out.println("Fehler: Bitte geben Sie eine >0 Zahl ein.");
                             }
                         } else {
                             validBestand = true;
@@ -526,6 +526,9 @@ public class Cui {
             try {
                 shop.inWarenKorbLegen(artikel, anzahl, authuser);
             } catch (AnzahlException e) {
+                System.out.println(e.getMessage());
+            }
+            catch (PackungsGrosseException e) {
                 System.out.println(e.getMessage());
             }
 

@@ -4,6 +4,7 @@ import Entities.*;
 import Exceptions.AnzahlException;
 import Exceptions.FalscheLoginDaten;
 import Exceptions.NutzernameExistiertBereits;
+import Exceptions.PackungsGrosseException;
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -593,19 +594,22 @@ public class Gui extends Application {
         dialog.showAndWait().ifPresent(quantity -> {
             try {
                 int newBestand = Integer.parseInt(quantity);
-                shop.BestandAendern(artikel.getArtikelnummer(), newBestand);
+                int neuePackungsGrosse =0;
+                if ( artikel instanceof Massenartikel) {
+                    neuePackungsGrosse = ((Massenartikel) artikel).getPackungsGrosse();
+                    if(changePackungsGrosseCheckbox != null && changePackungsGrosseCheckbox.isSelected()){
+                        if (neuePackungsGrosse > 0) {
+                            neuePackungsGrosse = Integer.parseInt(packungsGrosseField.getText());
+                        } else {
+                            showAlert("Fehler: Bitte geben Sie eine Zahl größer als 0 ein.");
+                        }
+                    }
+
+
+                }
+                shop.BestandAendern(artikel.getArtikelnummer(), newBestand,neuePackungsGrosse);
                 String ereignisTyp = newBestand >= 0 ? "Einlagerung" : "Auslagerung";
                 shop.Ereignisfesthalten(ereignisTyp, artikel, Math.abs(newBestand), authuser);
-
-                if (changePackungsGrosseCheckbox != null && changePackungsGrosseCheckbox.isSelected() && artikel instanceof Massenartikel) {
-                    int neuePackungsGrosse = Integer.parseInt(packungsGrosseField.getText());
-                    if (neuePackungsGrosse > 0) {
-                        ((Massenartikel) artikel).setPackungsGrosse(neuePackungsGrosse);
-                        System.out.println("Packungsgröße für Artikel " + artikel.getArtikelnummer() + " aktualisiert. Neue Packungsgröße: " + neuePackungsGrosse);
-                    } else {
-                        showAlert("Fehler: Bitte geben Sie eine Zahl größer als 0 ein.");
-                    }
-                }
                 showArtikelSection();
             } catch (NumberFormatException e) {
                 showAlert("Fehler: Bitte geben Sie eine gültige Zahl ein.");
@@ -625,6 +629,9 @@ public class Gui extends Application {
                 shop.inWarenKorbLegen(artikel, Integer.parseInt(quantity), authuser);
                 updateCartItemCount();
             } catch (AnzahlException e) {
+                showAlert(e.getMessage());
+            }
+            catch (PackungsGrosseException e) {
                 showAlert(e.getMessage());
             }
         });

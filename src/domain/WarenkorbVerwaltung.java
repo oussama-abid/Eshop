@@ -4,6 +4,7 @@ package domain;
 import Entities.*;
 import Exceptions.AnzahlException;
 import Exceptions.Artikelnamenichtgefunden;
+import Exceptions.PackungsGrosseException;
 import Persistence.FilePersistenceManager;
 
 import java.util.Date;
@@ -29,7 +30,7 @@ public class WarenkorbVerwaltung {
 
     }
 
-    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws AnzahlException {
+    public void inWarenKorbLegen(Artikel artikel, int anzahl, Nutzer authuser) throws PackungsGrosseException, AnzahlException {
         Kunde kunde = (Kunde) authuser;
         Warenkorb warenkorb = kunde.getWarenkorb();
         boolean artikelImWarenkorb = istArtikelImWarenkorb(warenkorb, artikel);
@@ -38,7 +39,7 @@ public class WarenkorbVerwaltung {
             Massenartikel massenartikel = (Massenartikel) artikel;
             int packungsGrosse = massenartikel.getPackungsGrosse();
             if (anzahl % packungsGrosse != 0) {
-                throw new AnzahlException("Die Anzahl muss ein Vielfaches der Packungsgröße von " + packungsGrosse + " sein.");
+                throw new PackungsGrosseException(packungsGrosse);
             }
         }
 

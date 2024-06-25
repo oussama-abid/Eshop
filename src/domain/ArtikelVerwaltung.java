@@ -2,6 +2,8 @@ package domain;
 
 import Entities.*;
 import Exceptions.Artikelnichtgefunden;
+import Exceptions.MassengutException;
+import Exceptions.PackungsGrosseException;
 import Persistence.FilePersistenceManager;
 import ui.EShop;
 
@@ -17,12 +19,18 @@ public class ArtikelVerwaltung {
     private EShop shop;
     private static int letzteArtikelnummer = 1000;
 
-    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis, boolean istMassenartikel, int packungsGrosse) {
+    public Artikel ArtikelHinzufuegen(String Bezeichnung, int bestand, float Preis, boolean istMassenartikel, int packungsGrosse) throws MassengutException {
         int nummer = Eindeutigenummer();
         Artikel artikel;
 
         if(istMassenartikel){
-            artikel = new Massenartikel(nummer, Bezeichnung, bestand, Preis, true, packungsGrosse);
+            if (bestand % packungsGrosse == 0){
+                artikel = new Massenartikel(nummer, Bezeichnung, bestand, Preis, true, packungsGrosse);
+            }
+            else {
+                throw new MassengutException();
+            }
+
         } else {
             artikel = new Artikel(nummer, Bezeichnung, bestand, Preis,false);
         }
@@ -62,20 +70,34 @@ public class ArtikelVerwaltung {
         artikelListe.remove(artikel);
     }
 
-    public void BestandAendern(int artikelnummer, int newBestand) throws Exception {
+    public void BestandAendern(int artikelnummer, int newBestand,int neuePackungsGrosse) throws Exception {
         Artikel veraenderterArtikel = SucheArtikelPerID(artikelnummer);
+
+        int aktualisierterBestand = veraenderterArtikel.getBestand() + newBestand;
+
 
         if (veraenderterArtikel instanceof Massenartikel) {
             Massenartikel massenartikel = (Massenartikel) veraenderterArtikel;
-            if (newBestand % massenartikel.getPackungsGrosse() != 0) {
-                throw new Exception("Bestand muss ein Vielfaches der Packungsgröße sein");
+
+            if (massenartikel.getPackungsGrosse() != neuePackungsGrosse ) {
+                if (aktualisierterBestand % neuePackungsGrosse != 0 ) {
+                    throw new Exception("Bestand muss ein Vielfaches der Packungsgröße sein");
+                }
+                else {
+                    PackungsGrosseanderen(veraenderterArtikel.getArtikelnummer(),neuePackungsGrosse);
+                }
+            }
+           else {
+                if (aktualisierterBestand % massenartikel.getPackungsGrosse() != 0 ) {
+                    throw new Exception("Bestand muss ein Vielfaches der Packungsgröße sein");
+                }
             }
         }
-
-        int aktualisierterBestand = veraenderterArtikel.getBestand() + newBestand;
         if (aktualisierterBestand < 0) {
             throw new Exception("Bestand kann nicht negativ sein");
         }
+
+
         veraenderterArtikel.setBestand(aktualisierterBestand);
         fileManager.aendereArtikelInDatei(artikelnummer, aktualisierterBestand);
     }
@@ -157,7 +179,20 @@ public class ArtikelVerwaltung {
     }
 
 
+    public void PackungsGrosseanderen(int artikel, int neuePackungsGrosse) throws Artikelnichtgefunden,PackungsGrosseException {
+        Artikel veraenderterArtikel = SucheArtikelPerID(artikel);
+        Massenartikel massenartikel = (Massenartikel) veraenderterArtikel;
+        massenartikel.setPackungsGrosse(neuePackungsGrosse);
 
+    }
 
+    public void checkpackunggrosse(int anzahl, Artikel artikel) throws PackungsGrosseException {
+        Massenartikel massenArtikel = (Massenartikel) artikel;
+        int packungsGrosse = massenArtikel.getPackungsGrosse();
+
+        if (anzahl % packungsGrosse != 0) {
+           throw new PackungsGrosseException(packungsGrosse);
+        }
+    }
 }
 

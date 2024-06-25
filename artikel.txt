@@ -6,7 +6,7 @@ EM Pokal
 massenartikel
 1002
 EM Sticker
-932
+928
 1.0
 2
 artikel
@@ -55,6 +55,12 @@ EM Ball
 massenartikel
 1011
 Pommes
-760
+1560
 9.99
 8
+massenartikel
+1012
+wasser
+300
+2.0
+10
