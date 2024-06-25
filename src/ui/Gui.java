@@ -293,7 +293,7 @@ public class Gui extends Application {
         Hyperlink addArtikel = new Hyperlink("Artikel hinzufügen");
         addArtikel.setOnAction(e -> handleAddArtikel());
 
-        Hyperlink history = new Hyperlink("shop history");
+        Hyperlink history = new Hyperlink("Shop Historie");
         history.setOnAction(e -> shopHistorieAnsehen());
 
 
@@ -318,7 +318,7 @@ public class Gui extends Application {
 
     private void showMitarbeiterManagementSection() {
         mainLayout.getChildren().clear();
-        Hyperlink addMitarbeiter = new Hyperlink("add Mitarbeiter");
+        Hyperlink addMitarbeiter = new Hyperlink("Füge Mitarbeiter hinzu");
         addMitarbeiter.setOnAction(e -> addMitarbeiter());
         TableView<Mitarbeiter> mitarbeiterTableView = showMitarbeiterListe();
 
