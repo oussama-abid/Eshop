@@ -605,6 +605,7 @@ private void loginNutzer() {
         if (cartItemCountLabel != null) {
             int itemCount = ((Kunde) authuser).getWarenkorb().getWarenkorbListe().size();
             cartItemCountLabel.setText(String.valueOf(itemCount));
+            cartTableView.refresh();
         } else {
             System.err.println("Cart item count label is null.");
         }
@@ -643,6 +644,7 @@ private void loginNutzer() {
                 btn.setOnAction(event -> {
                     WarenkorbArtikel artikel = getTableView().getItems().get(getIndex());
                     ArtikelMengeändern(artikel);
+                    cartTableView.refresh();
                 });
             }
 
@@ -667,7 +669,9 @@ private void loginNutzer() {
             try {
                 kaufen();
                 showAlert("Einkauf erfolgreich. Rechnung wurde erstellt.");
-                artikelListe = shop.getArtikelListe();
+                shop.getArtikelListe();
+                cartTableView.getItems().clear();
+
             } catch (Exception ex) {
                 showAlert("es gibt ein fehler");
             }
@@ -693,21 +697,25 @@ private void loginNutzer() {
         shop.articlebestandanderen(authuser);
         shop.kundeEreignisfesthalten("Auslagerung", authuser);
         shop.kaufen(authuser);
+
     }
+
     private void updateCartContent(TableView<WarenkorbArtikel> cartTableView, Label totalPriceLabel) {
-
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
+
         if (warenkorb != null && !warenkorb.getWarenkorbListe().isEmpty()) {
-            ObservableList<WarenkorbArtikel> cartItems = FXCollections.observableArrayList(warenkorb.getWarenkorbListe());
-            cartTableView.setItems(cartItems);
-
-
             double totalPrice = warenkorb.calculateTotalPrice();
             totalPriceLabel.setText("Gesamtpreis: " + String.format("%.2f", totalPrice));
+            ObservableList<WarenkorbArtikel> cartItems = FXCollections.observableArrayList(warenkorb.getWarenkorbListe());
+            cartTableView.setItems(cartItems);
+            shop.getArtikelListe();
+            cartTableView.refresh();
+
         } else {
-            cartTableView.setItems(FXCollections.emptyObservableList());
+            cartTableView.getItems().clear();
             totalPriceLabel.setText("Der Warenkorb ist leer.");
         }
+
     }
     private void ArtikelMengeändern(WarenkorbArtikel artikel) {
 
@@ -721,7 +729,6 @@ private void loginNutzer() {
         if (result.isPresent()) {
             try {
                 int neueAnzahl = Integer.parseInt(result.get().trim());
-
 
                 shop.artikelMengeaendern(artikel.getArtikel().getArtikelnummer(), neueAnzahl, authuser);
                 System.out.println("Anzahl erfolgreich geändert.");
@@ -918,6 +925,7 @@ private void loginNutzer() {
         }
         return null;
     }
+
     private void drawStockHistory(LineChart<Number, Number> lineChart, Artikel artikel) {
         List<Artikelhistory> historyList = shop.ShophistoryAnzeigen().stream()
                 .filter(history -> history.getArticle().getArtikelnummer() == artikel.getArtikelnummer())

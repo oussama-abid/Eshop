@@ -113,3 +113,13 @@ Mitarbeiter
 tstgui
 tst
 a31fe9656fc8d3a459e623dc8204e6d0268f8df56d734dac3ca3262edb5db883
+Kunde
+5012
+a
+a
+ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb
+a
+a
+a
+2
+a
