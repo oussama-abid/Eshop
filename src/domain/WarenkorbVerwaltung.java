@@ -99,7 +99,6 @@ public class WarenkorbVerwaltung {
         System.out.println(Rechnung);
         warenkorb.Warenkorbleeren();
 
-
     }
 
     public void Warenkorbleeren(Nutzer authuser) {
