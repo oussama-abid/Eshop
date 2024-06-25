@@ -5,6 +5,7 @@ import Exceptions.AnzahlException;
 import Exceptions.FalscheLoginDaten;
 import Exceptions.NutzernameExistiertBereits;
 import javafx.application.Application;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -26,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -614,7 +616,8 @@ private void loginNutzer() {
         BorderPane cartLayout = new BorderPane();
         Scene cartScene = new Scene(cartLayout, 600, 400);
         Button backButton = new Button("Zurück zur Homepage");
-        backButton.setOnAction(e -> stage.setScene(mainScene));
+        backButton.setOnAction(e ->
+                stage.setScene(mainScene));
         TableView<WarenkorbArtikel> cartTableView = new TableView<>();
 
         TableColumn<WarenkorbArtikel, String> artikelColumn = new TableColumn<>("Artikel");
@@ -645,6 +648,7 @@ private void loginNutzer() {
                     WarenkorbArtikel artikel = getTableView().getItems().get(getIndex());
                     ArtikelMengeändern(artikel);
                     cartTableView.refresh();
+
                 });
             }
 
@@ -672,9 +676,11 @@ private void loginNutzer() {
                 shop.getArtikelListe();
                 cartTableView.getItems().clear();
 
+
             } catch (Exception ex) {
                 showAlert("es gibt ein fehler");
             }
+            updateCartItemCount();
         });
 
         Button emptyCartButton = new Button("Warenkorb leeren");
@@ -695,9 +701,64 @@ private void loginNutzer() {
             return;
         }
         shop.articlebestandanderen(authuser);
-        shop.kundeEreignisfesthalten("Auslagerung", authuser);
-        shop.kaufen(authuser);
+        shop.kundeEreignisfesthalten("Kauf", authuser);
 
+        // Erstellen der Rechnung
+        double gesamtpreis = warenkorb.calculateTotalPrice();
+        Rechnung rechnung = new Rechnung(new Date(), gesamtpreis, (Kunde) authuser);
+        rechnungErstellen(rechnung);
+        shop.kaufen(authuser);
+        artikelTableView.refresh();
+
+
+
+    }
+
+    private void rechnungErstellen(Rechnung rechnung) {
+
+        Stage rechnungStage = new Stage();
+        rechnungStage.setTitle("Rechnung");
+
+        VBox rechnungLayout = new VBox(10);
+        rechnungLayout.setPadding(new Insets(10));
+        rechnungLayout.setAlignment(Pos.CENTER);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = sdf.format(rechnung.getDate());
+        Label dateLabel = new Label("Datum: " + formattedDate);
+        Label kundeLabel = new Label("Kunde: " + rechnung.getKunde().getName());
+        Label adresseLabel = new Label("Adresse: " + rechnung.getKunde().getAdresse());
+
+        TableView<WarenkorbArtikel> rechnungTableView = new TableView<>();
+        rechnungTableView.setEditable(false);
+
+        TableColumn<WarenkorbArtikel, String> artikelColumn = new TableColumn<>("Artikel");
+        artikelColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getArtikel().getBezeichnung()));
+
+        TableColumn<WarenkorbArtikel, Integer> anzahlColumn = new TableColumn<>("Anzahl");
+        anzahlColumn.setCellValueFactory(new PropertyValueFactory<>("anzahl"));
+
+        TableColumn<WarenkorbArtikel, Double> einzelpreisColumn = new TableColumn<>("Einzelpreis");
+        einzelpreisColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getArtikel().getPreis()).asObject());
+
+        TableColumn<WarenkorbArtikel, Double> gesamtpreisColumn = new TableColumn<>("Gesamtpreis");
+        gesamtpreisColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getArtikel().getPreis() * cellData.getValue().getAnzahl()).asObject());
+
+        rechnungTableView.getColumns().addAll(artikelColumn, anzahlColumn, einzelpreisColumn, gesamtpreisColumn);
+
+        ObservableList<WarenkorbArtikel> rechnungItems = FXCollections.observableArrayList(rechnung.getKunde().getWarenkorb().getWarenkorbListe());
+        rechnungTableView.setItems(rechnungItems);
+
+        Label totalPriceLabel = new Label(String.format("Gesamtpreis: %.2f EUR", rechnung.getGesamtpreis()));
+
+        Button closeButton = new Button("Schließen");
+        closeButton.setOnAction(e -> rechnungStage.close());
+
+        rechnungLayout.getChildren().addAll(dateLabel, kundeLabel, adresseLabel, rechnungTableView, totalPriceLabel, closeButton);
+
+        Scene rechnungScene = new Scene(rechnungLayout, 600, 400);
+        rechnungStage.setScene(rechnungScene);
+        rechnungStage.show();
     }
 
     private void updateCartContent(TableView<WarenkorbArtikel> cartTableView, Label totalPriceLabel) {
@@ -705,7 +766,7 @@ private void loginNutzer() {
 
         if (warenkorb != null && !warenkorb.getWarenkorbListe().isEmpty()) {
             double totalPrice = warenkorb.calculateTotalPrice();
-            totalPriceLabel.setText("Gesamtpreis: " + String.format("%.2f", totalPrice));
+            totalPriceLabel.setText("Gesamtpreis5555: " + String.format("%.2f", totalPrice));
             ObservableList<WarenkorbArtikel> cartItems = FXCollections.observableArrayList(warenkorb.getWarenkorbListe());
             cartTableView.setItems(cartItems);
             shop.getArtikelListe();
