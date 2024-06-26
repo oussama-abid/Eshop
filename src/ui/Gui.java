@@ -779,13 +779,12 @@ public class Gui extends Application {
             if (filterText.isEmpty()) {
                 eventTableView.setItems(eventList);
             } else {
-                ObservableList<Event> filteredList = FXCollections.observableArrayList();
-                for (Event event : eventList) {
-                    if (event.getArticle().getBezeichnung().toLowerCase().contains(filterText) || event.getUser().getName().toLowerCase().contains(filterText)) {
-                        filteredList.add(event);
-                    }
-                }
+
+                List<Event> filtredevents = shop.filterevents(filterText);
+                ObservableList<Event> filteredList = FXCollections.observableArrayList(filtredevents);
                 eventTableView.setItems(filteredList);
+
+
             }
         });
 

@@ -153,4 +153,9 @@ public class EShop {
     public void checkpackunggrosse(int anzahl, Artikel artikel) throws PackungsGrosseException {
         Produkte.checkpackunggrosse(anzahl,artikel);
     }
+
+    public List<Event> filterevents(String filterText) {
+
+        return VerlaufVerwaltung.filterEvents(filterText) ;
+    }
 }

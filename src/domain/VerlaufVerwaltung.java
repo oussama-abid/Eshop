@@ -114,6 +114,17 @@ public class VerlaufVerwaltung {
     }
 
 
+    public List<Event> filterEvents(String filterText) {
+        List<Event> filteredList = new ArrayList<>();
 
+        for (Event event : eventList) {
+            if (event.getArticle().getBezeichnung().toLowerCase().contains(filterText.toLowerCase())
+                    || event.getUser().getName().toLowerCase().contains(filterText.toLowerCase())) {
+                filteredList.add(event);
+            }
+        }
+
+        return filteredList;
+    }
 }
 
