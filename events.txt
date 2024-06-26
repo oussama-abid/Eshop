@@ -754,3 +754,50 @@ Mitarbeiter
 admin2
 admin2
 1c142b2d01aa34e9a36bde480645a57fd69e14155dacfab5a3f9257b77fdc8d8
+neuer Artikel
+2024-06-26
+massenartikel
+1013
+Red Bull
+100
+2.0
+5
+100
+Mitarbeiter
+3001
+admin2
+admin2
+1c142b2d01aa34e9a36bde480645a57fd69e14155dacfab5a3f9257b77fdc8d8
+Einlagerung
+2024-06-26
+massenartikel
+1013
+Red Bull
+105
+2.0
+7
+5
+Mitarbeiter
+3001
+admin2
+admin2
+1c142b2d01aa34e9a36bde480645a57fd69e14155dacfab5a3f9257b77fdc8d8
+Auslagerung
+2024-06-26
+massenartikel
+1013
+Red Bull
+84
+2.0
+7
+21
+Kunde
+5018
+user
+user
+04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb
+violenstr
+Bremen
+Bremen
+25889
+De

@@ -64,3 +64,9 @@ wasser
 300
 2.0
 10
+massenartikel
+1013
+Red Bull
+84
+2.0
+5

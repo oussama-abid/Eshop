@@ -2,6 +2,7 @@ package domain;
 
 import Entities.*;
 import Exceptions.Artikelnichtgefunden;
+import Exceptions.BestandException;
 import Exceptions.MassengutException;
 import Exceptions.PackungsGrosseException;
 import Persistence.FilePersistenceManager;
@@ -81,7 +82,7 @@ public class ArtikelVerwaltung {
 
             if (massenartikel.getPackungsGrosse() != neuePackungsGrosse ) {
                 if (aktualisierterBestand % neuePackungsGrosse != 0 ) {
-                    throw new Exception("Bestand muss ein Vielfaches der Packungsgröße sein");
+                    throw new BestandException();
                 }
                 else {
                     PackungsGrosseanderen(veraenderterArtikel.getArtikelnummer(),neuePackungsGrosse);
@@ -89,7 +90,7 @@ public class ArtikelVerwaltung {
             }
            else {
                 if (aktualisierterBestand % massenartikel.getPackungsGrosse() != 0 ) {
-                    throw new Exception("Bestand muss ein Vielfaches der Packungsgröße sein");
+                    throw new BestandException();
                 }
             }
         }

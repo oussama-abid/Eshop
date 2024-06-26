@@ -6,7 +6,6 @@ import Exceptions.FalscheLoginDaten;
 import Exceptions.NutzernameExistiertBereits;
 import Exceptions.PackungsGrosseException;
 import javafx.application.Application;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -40,6 +39,7 @@ import java.util.stream.IntStream;
 public class Gui extends Application {
 
     private Stage stage;
+
     private Scene loginScene;
     private Scene registerScene;
     private Scene mainScene;
@@ -90,7 +90,7 @@ public class Gui extends Application {
     private Label totalPriceLabel = new Label();
 
     private  double totalPrice;
-    Warenkorb warenkorb;
+    private Warenkorb warenkorb;
 
 
     private VBox mainLayout;
@@ -333,7 +333,7 @@ public class Gui extends Application {
     // generating tableviews
 
     private TableView<Artikel> showartikelListe() {
-        // Clear any existing columns to avoid duplication
+
         artikelTableView.getColumns().clear();
         artikelTableView.setPrefSize(800, 400);
 
@@ -678,9 +678,8 @@ public class Gui extends Application {
     }
     private Label totalprice() {
         if (warenkorb != null && !warenkorb.getWarenkorbListe().isEmpty()) {
-            totalPrice = warenkorb.getWarenkorbListe().stream()
-                    .mapToDouble(item -> item.getArtikel().getPreis() * item.getAnzahl())
-                    .sum();
+            totalPrice = warenkorb.calculateTotalPrice();
+
             totalPrice = Math.round(totalPrice * 100.0) / 100.0;  // Rounding to 2 decimal places
             totalPriceLabel.setText("Gesamtpreis: " + String.format("%.2f EUR", totalPrice));
         } else {
