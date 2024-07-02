@@ -1,12 +1,12 @@
 artikel
 1001
 EM Pokal
-316
+315
 39.99
 massenartikel
 1002
 EM Sticker
-928
+930
 1.0
 2
 artikel
@@ -70,3 +70,8 @@ Red Bull
 84
 2.0
 5
+artikel
+1014
+Hamster
+23
+9.99

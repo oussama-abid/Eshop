@@ -1,4 +1,4 @@
-package ui;
+/*package ui;
 
 import Entities.*;
 import Exceptions.AnzahlException;
@@ -1071,3 +1071,43 @@ public class Gui extends Application {
     }
 
 }
+*/
+
+package ui;
+
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Gui extends MainLayout {
+
+    protected TextField loginUsernameField = new TextField();
+    protected PasswordField loginPasswordField = new PasswordField();
+
+    @Override
+    public void start(Stage primaryStage) {
+        stage = primaryStage;
+        stage.setWidth(1000);
+        stage.setHeight(900);
+
+        String css = getClass().getResource("styles.css").toExternalForm();
+
+        Authentication auth = new Authentication(this);
+        loginScene = auth.createLoginScene(css);
+        registerScene = auth.createRegisterScene(css);
+
+        mainLayout = new VBox(10);
+        mainLayout.setPadding(new Insets(20));
+        mainLayout.setPrefSize(500, 500);
+        mainScene = new Scene(mainLayout);
+        mainScene.getStylesheets().add(css);
+
+        stage.setScene(loginScene);
+        stage.setTitle("Eshop");
+        stage.show();
+    }
+}
+
