@@ -801,3 +801,48 @@ Bremen
 Bremen
 25889
 De
+Einlagerung
+2024-07-02
+massenartikel
+1002
+EM Sticker
+930
+1.0
+2
+2
+Mitarbeiter
+5017
+Thorsten Teschke
+Teschke
+919050c5eba7bb07c34d9f71d26844ce9290e756e705261d69add0004cbdcba7
+Auslagerung
+2024-07-02
+artikel
+1001
+EM Pokal
+315
+39.99
+1
+Kunde
+5018
+user
+user
+04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb
+violenstr
+Bremen
+Bremen
+25889
+De
+neuer Artikel
+2024-07-02
+artikel
+1014
+Hamster
+23
+9.99
+23
+Mitarbeiter
+5019
+Akhi
+Akhi
+9b4d3808c817e40aa8c94a5762ebe7227fa4ac136920079e3f9ebe8844654d9f
