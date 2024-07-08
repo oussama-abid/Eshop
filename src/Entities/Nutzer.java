@@ -1,6 +1,8 @@
 package Entities;
 
-public class Nutzer
+import java.io.Serializable;
+
+public class Nutzer implements Serializable
 {
     private int nutzerNummer;
     private String name;
