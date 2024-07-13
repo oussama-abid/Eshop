@@ -74,6 +74,7 @@ public class EmployeeSection {
         mainLayout.artikelTableView = createArtikelTableView();
 
         VBox artikelContent = new VBox();
+
         artikelContent.getChildren().addAll(mainLayout.artikelTableView);
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, addArtikel, history, artikelContent);
     }

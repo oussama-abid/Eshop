@@ -6,14 +6,15 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EshopServer {
-
-    public final static int DEFAULT_PORT = 9800;
-
+    public final static int DEFAULT_PORT = 9801;
     protected int port;
     protected ServerSocket serverSocket;
     private EShop shop;
+    private static List<ClientRequestProcessor> clients = new ArrayList<>();
 
     public EshopServer(int port) throws IOException {
         shop = new EShop();
@@ -29,6 +30,7 @@ public class EshopServer {
             System.out.println("Server *" + ia.getHostAddress() + "* is listening on port " + port);
         } catch (IOException e) {
             System.out.println(e + "An exception occurred while creating the server socket");
+            throw e; // Rethrow the exception to indicate server startup failure
         }
     }
 
@@ -36,12 +38,21 @@ public class EshopServer {
         try {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                ClientRequestProcessor c = new ClientRequestProcessor(clientSocket, shop);
-                Thread t = new Thread(c);
+                System.out.println("Accepted connection from " + clientSocket.getInetAddress());
+                ClientRequestProcessor clientProcessor = new ClientRequestProcessor(clientSocket, shop);
+                clients.add(clientProcessor);
+                Thread t = new Thread(clientProcessor);
                 t.start();
             }
         } catch (IOException e) {
             System.out.println(e + "Error while listening for connections");
+        }
+    }
+
+    // Broadcast message to all clients
+    public static void broadcastMessage(String message) {
+        for (ClientRequestProcessor client : clients) {
+            client.sendToClient(message);
         }
     }
 
