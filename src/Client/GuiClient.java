@@ -134,7 +134,7 @@ public class GuiClient extends Application {
         primaryStage.show();
 
         // Start listening for server messages
-        listenForServerMessages();
+        //  listenForServerMessages();
     }
 
     private void listenForServerMessages() {
