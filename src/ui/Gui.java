@@ -1075,17 +1075,33 @@ public class Gui extends Application {
 
 package ui;
 
+import Server.ClientObserver;
+import Server.eShopClient;
+import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import java.io.IOException;
 
-public class Gui extends MainLayout {
 
-    protected TextField loginUsernameField = new TextField();
-    protected PasswordField loginPasswordField = new PasswordField();
+
+import javafx.application.Platform;
+
+
+
+
+
+public class Gui extends MainLayout implements ClientObserver {
+
+    private eShopClient client;
+
+    public void setClient(eShopClient client) {
+        this.client = client;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -1108,6 +1124,39 @@ public class Gui extends MainLayout {
         stage.setScene(loginScene);
         stage.setTitle("Eshop");
         stage.show();
+
+        try {
+            client = new eShopClient("localhost", 8081);
+            client.connect();
+            client.setObserver(this); // Observer setzen
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Verbindung zum Server fehlgeschlagen. Bitte starten Sie den Server und versuchen Sie es erneut.");
+            return;
+        }
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    @Override
+    public void update(String message) {
+        // GUI aktualisieren
+        Platform.runLater(() -> {
+            showAlert("Update vom Server: " + message);
+            // Hier können Sie die GUI-Komponenten aktualisieren
+        });
     }
 }
+
+
+
+
+
+
 

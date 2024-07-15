@@ -1,14 +1,34 @@
 package ui;
 
-public class   Main {
+import Server.EshopServer;
+import Server.eShopClient;
+import java.io.IOException;
+
+public class Main {
 
     public static void main(String[] args) {
 
+        // Starten Sie den Server in einem neuen Thread
+        new Thread(() -> {
+            try {
+                EshopServer server = new EshopServer(8081);
+                server.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
 
-       Gui.launch(Gui.class, args);
+        // Starten Sie die GUI
+        Gui.launch(Gui.class, args);
 
-         EShop shop = new EShop();
-
-         Cui cui = new Cui(shop);
+        // Verbindung zum Server herstellen und sich als Client registrieren
+        try {
+            eShopClient client = new eShopClient("localhost", 8081);
+            client.connect();
+            // Registrieren Sie den Client beim Server
+            // server.registerClient(client);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

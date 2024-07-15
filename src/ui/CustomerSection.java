@@ -227,7 +227,7 @@ public class CustomerSection {
     }
 
     private void changeQuantityDialog(WarenkorbArtikel artikel) {
-
+        // Implementieren Sie die Logik zum Ändern der Menge im Warenkorb
     }
 
     private Label calculateTotalPrice() {
