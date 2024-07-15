@@ -2,6 +2,7 @@ package ui;
 
 import Entities.*;
 import Exceptions.AnzahlException;
+import Exceptions.Artikelnamenichtgefunden;
 import Exceptions.PackungsGrosseException;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -270,7 +271,30 @@ public class CustomerSection {
      * @param artikel the article in the cart to change quantity
      */
     private void changeQuantityDialog(WarenkorbArtikel artikel) {
-        // Implementation of change quantity dialog
+        TextInputDialog dialog = new TextInputDialog(String.valueOf(artikel.getAnzahl()));
+        dialog.setTitle("Menge ändern");
+        dialog.setHeaderText("Ändern der Menge für " + artikel.getArtikel().getBezeichnung());
+        dialog.setContentText("Neue Menge:");
+        dialog.getEditor().setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
+
+        dialog.showAndWait().ifPresent(quantity -> {
+            try {
+                int neueMenge = Integer.parseInt(quantity);
+                if (neueMenge <= 0) {
+                    throw new AnzahlException("Die Menge muss größer als 0 sein.");
+                }
+                mainLayout.shop.artikelMengeaendern(artikel.getArtikel().getArtikelnummer(), neueMenge, mainLayout.authuser);
+                updateCartItemCount();
+                mainLayout.totalPriceLabel = calculateTotalPrice();
+                mainLayout.warenkorbArtikelTableView.setItems(FXCollections.observableArrayList(mainLayout.warenkorb.getWarenkorbListe()));
+            } catch (AnzahlException e) {
+                showAlert(e.getMessage());
+            } catch (NumberFormatException e) {
+                showAlert("Bitte geben Sie eine gültige Zahl ein.");
+            } catch (Artikelnamenichtgefunden e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
