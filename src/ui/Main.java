@@ -1,6 +1,6 @@
 package ui;
 
-import Client.*;
+import Client.GuiClient;
 
 public class   Main {
 
@@ -15,6 +15,6 @@ public class   Main {
         //  Client/server
 
         GuiClient.launch(GuiClient.class, args);
-        Client client = new Client();
+        //Client client = new Client();
     }
 }

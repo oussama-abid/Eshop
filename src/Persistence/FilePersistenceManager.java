@@ -1,27 +1,45 @@
 package Persistence;
 
 import Entities.*;
-
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Manages reading from and writing to files for entities like Nutzer, Artikel, and Event.
+ */
 public class FilePersistenceManager implements PersistenceManager {
     private BufferedReader reader = null;
     private PrintWriter writer = null;
 
+    /**
+     * Opens a file for reading.
+     *
+     * @param datei The file to be opened for reading.
+     * @throws IOException If an I/O error occurs while opening the file.
+     */
     @Override
     public void openForReading(String datei) throws IOException {
         reader = new BufferedReader(new FileReader(datei));
     }
 
+    /**
+     * Opens a file for writing.
+     *
+     * @param datei The file to be opened for writing.
+     * @throws IOException If an I/O error occurs while opening the file.
+     */
     @Override
     public void openForWriting(String datei) throws IOException {
-        writer = new PrintWriter(new BufferedWriter(new FileWriter(datei, true)));  // true indicates append mode
+        writer = new PrintWriter(new BufferedWriter(new FileWriter(datei, true)));
     }
 
+    /**
+     * Closes the currently open reader and writer.
+     *
+     * @return True if the close operations were successful, false otherwise.
+     */
     @Override
     public boolean close() {
         if (writer != null)
@@ -38,6 +56,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * Loads  user  from the  file.
+     *
+     * @return The loaded Nutzer object.
+     * @throws IOException If an I/O error occurs while reading the Nutzer information.
+     */
     public Nutzer ladeNutzer() throws IOException {
         String type = liesZeile();
         if (type == null) {
@@ -63,6 +87,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return null;
     }
 
+    /**
+     * Saves a user  to the file.
+     *
+     * @param nutzer The Nutzer object to be saved.
+     * @return True if the saving operation was successful, false otherwise.
+     */
     public boolean speichereNutzer(Nutzer nutzer) {
         if (nutzer instanceof Kunde) {
             Kunde kunde = (Kunde) nutzer;
@@ -89,6 +119,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * Loads an Artikel from  file.
+     *
+     * @return The loaded Artikel object.
+     * @throws IOException If an I/O error occurs while reading the Artikel information.
+     */
     public Artikel ladeArtikel() throws IOException {
         String artikelTyp = liesZeile();
         if (artikelTyp == null) {
@@ -105,7 +141,7 @@ public class FilePersistenceManager implements PersistenceManager {
                 int packungsGrosse = Integer.parseInt(liesZeile());
                 return new Massenartikel(artikelnummer, bezeichnung, bestand, preis, true, packungsGrosse);
             } else if (artikelTyp.equals("artikel")) {
-                return new Artikel(artikelnummer, bezeichnung, bestand, preis,false);
+                return new Artikel(artikelnummer, bezeichnung, bestand, preis, false);
             } else {
                 throw new IOException("Unbekannter Artikeltyp: " + artikelTyp);
             }
@@ -116,7 +152,12 @@ public class FilePersistenceManager implements PersistenceManager {
         }
     }
 
-
+    /**
+     * Saves an Artikel object to the file.
+     *
+     * @param artikel The Artikel object to be saved.
+     * @return True if the saving operation was successful, false otherwise.
+     */
     public boolean speichereArtikel(Artikel artikel) {
         if (artikel instanceof Massenartikel) {
             Massenartikel massenartikel = (Massenartikel) artikel;
@@ -137,6 +178,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * Loads an Event object from the currently open file.
+     *
+     * @return The loaded Event object.
+     * @throws IOException If an I/O error occurs while reading the Event information.
+     */
     public Event ladeEvent() throws IOException {
         String operation = liesZeile();
         if (operation == null) {
@@ -151,6 +198,12 @@ public class FilePersistenceManager implements PersistenceManager {
         return new Event(operation, date, article, quantity, nutzer);
     }
 
+    /**
+     * Saves an Event object to the file.
+     *
+     * @param event The Event object to be saved.
+     * @return True if the saving operation was successful, false otherwise.
+     */
     public boolean speichereevent(Event event) {
         schreibeZeile(event.getOperation());
         schreibeZeile(event.getDate().toString());
@@ -161,32 +214,17 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
-
-
-
-    private String liesZeile() throws IOException {
-        if (reader != null)
-            return reader.readLine();
-        else
-            return "";
-    }
-
-    private void schreibeZeile(String daten) {
-        if (writer != null)
-            writer.println(daten);
-    }
-
+    /**
+     * Changes the stock of an article in the file.
+     *
+     * @param artikelnummer The article number of the article whose stock is to be changed.
+     * @param neuerBestand  The new stock quantity to be set for the article.
+     * @return True if the stock change operation was successful, false otherwise.
+     */
     public boolean aendereArtikelInDatei(int artikelnummer, int neuerBestand) {
-
-        // Neue Artikelliste wird erstellt und wir lesen alle Artikel aus der .txt Datei ein.
-        // Dann ändern wir die eingelesene Liste mit der neuesten Bestandsänderung.
-        // Zum schluss überschrieben wir die temporäre Liste in die artikel.txt rein.
-
         List<Artikel> artikelListe = new ArrayList<>();
         boolean artikelGefunden = false;
 
-
-        // Hier wird eingelesen
         try (BufferedReader reader = new BufferedReader(new FileReader("artikel.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -212,7 +250,6 @@ public class FilePersistenceManager implements PersistenceManager {
             return false;
         }
 
-        // Artikel in der Liste ändern
         for (Artikel art : artikelListe) {
             if (art.getArtikelnummer() == artikelnummer) {
                 art.setBestand(neuerBestand);
@@ -225,7 +262,6 @@ public class FilePersistenceManager implements PersistenceManager {
             return false;
         }
 
-        // Artikel zurück in die Datei schreiben
         try (PrintWriter writer = new PrintWriter(new FileWriter("artikel.txt"))) {
             for (Artikel art : artikelListe) {
                 if (art.isIstMassenartikel()) {
@@ -251,5 +287,26 @@ public class FilePersistenceManager implements PersistenceManager {
         return true;
     }
 
+    /**
+     * Reads a line from the currently open reader.
+     *
+     * @return The read line.
+     * @throws IOException If an I/O error occurs while reading the line.
+     */
+    private String liesZeile() throws IOException {
+        if (reader != null)
+            return reader.readLine();
+        else
+            return "";
+    }
 
+    /**
+     * Writes a line to the currently open writer.
+     *
+     * @param daten The data to be written as a line.
+     */
+    private void schreibeZeile(String daten) {
+        if (writer != null)
+            writer.println(daten);
+    }
 }

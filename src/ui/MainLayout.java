@@ -1,6 +1,7 @@
 package ui;
 
 import Entities.*;
+import domain.EShop;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -13,6 +14,24 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code MainLayout} class serves as the base class for the application's main layout and functionality.
+ * It extends the {@code Application} class and provides the structure for various scenes and components
+ * used throughout the application, such as login, registration, and the main menu.
+ * <p>
+ * This class manages user authentication, scene transitions, and data loading for different user roles.
+ * It contains various UI components and methods to handle the application's main operations.
+ * </p>
+ *
+ * @see Application
+ * @see Nutzer
+ * @see EShop
+ * @see Kunde
+ * @see Mitarbeiter
+ * @see Artikel
+ * @see Event
+ * @see WarenkorbArtikel
+ */
 public abstract class MainLayout extends Application {
 
     protected Stage stage;
@@ -47,22 +66,38 @@ public abstract class MainLayout extends Application {
 
     protected VBox mainLayout;
 
+    /**
+     * Loads the list of articles from the shop.
+     */
     protected void loadArtikel() {
         artikelListe = shop.getArtikelListe();
     }
 
+    /**
+     * Loads the list of customers from the shop.
+     */
     protected void loadKunde() {
         kundenList = shop.getKundenList();
     }
 
+    /**
+     * Loads the list of employees from the shop.
+     */
     protected void loadMitarbeiter() {
         mitarbeiterList = shop.getMitarbeiterlist();
     }
 
+    /**
+     * Loads the shop's event history.
+     */
     protected void loadEvents() {
         shopVerlauf = shop.ShopVerlaufAnzeigen();
     }
 
+    /**
+     * Displays the main menu based on the authenticated user's role.
+     * Initializes the customer or employee section accordingly.
+     */
     protected void showMainMenu() {
         mainLayout.getChildren().clear();
         header = new VBox();

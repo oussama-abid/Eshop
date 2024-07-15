@@ -2,7 +2,6 @@ package Client;
 
 import Entities.Artikel;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -12,18 +11,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.Socket;
 import java.util.List;
 
 public class GuiClient extends Application {
 
-    private BufferedReader in;
-    private PrintStream out;
-    private Socket socket;
+
+
     private Stage primaryStage; // Reference to the primary stage
     private VBox header;
     private VBox mainLayout;
@@ -31,19 +25,10 @@ public class GuiClient extends Application {
     private TextField loginUsernameField = new TextField();
     private PasswordField loginPasswordField = new PasswordField();
     private ServerRequest serverRequest;
-    private Thread messageListenerThread;
-    public GuiClient() {
-        String serverAddress = "localhost";
-        int port = 9800;
-        try {
-            socket = new Socket(serverAddress, port);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintStream(socket.getOutputStream());
-            serverRequest = new ServerRequest(in, out);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
+    public GuiClient() {
+
+       serverRequest =new ServerRequest(this);
         // Initialize mainLayout
         mainLayout = new VBox();
     }
@@ -75,25 +60,24 @@ public class GuiClient extends Application {
     private void loginNutzer() {
         String username = loginUsernameField.getText();
         String password = loginPasswordField.getText();
+        try {
+            String response = serverRequest.login(username, password);
 
-        new Thread(() -> {
-            try {
-                out.println("login," + username + "," + password);
-                String response = in.readLine();
-                Platform.runLater(() -> {
-                    if (response.equals("success")) {
-                        showMainMenu();
-                    } else {
-                        showAlert("Login failed: " + response);
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (response.equals("success")) {
+                showMainMenu();
+            } else {
+                showAlert("Login Failed: " + response);
             }
-        }).start();
+        } catch (IOException e) {
+            showAlert("Login problem: " + e.getMessage());
+        }
     }
 
-    private void showMainMenu() {
+
+
+
+
+    public void showMainMenu() {
         if (header == null) {
             header = new VBox();
         }
@@ -102,11 +86,10 @@ public class GuiClient extends Application {
         Button artikelButton = new Button("Artikel");
         artikelButton.setOnAction(e -> showArtikelSection());
 
-        Button kundeManagementButton = new Button("Kunde Management");
-        kundeManagementButton.setOnAction(e -> showKundeManagementSection());
+
 
         HBox navBar = new HBox(10);
-        navBar.getChildren().addAll(artikelButton, kundeManagementButton);
+        navBar.getChildren().addAll(artikelButton);
         navBar.getStyleClass().add("nav-bar");
 
         Button logoutButton = new Button("Logout");
@@ -133,37 +116,13 @@ public class GuiClient extends Application {
         primaryStage.setScene(mainScene);
         primaryStage.show();
 
-        // Start listening for server messages
-        //  listenForServerMessages();
-    }
-
-    private void listenForServerMessages() {
-        new Thread(() -> {
-            try {
-                String message;
-                while (!Thread.interrupted()) { // Check interruption flag to exit the loop
-                    message = in.readLine();
-                    if (message == null) {
-                        break; // Exit loop if end of stream is reached
-                    }
-                    if (message.startsWith("Neuer Artikel hinzugefügt: ")) {
-                        final String alertMessage = "New article added: " + message.substring(24);
-                        Platform.runLater(() -> showArtikelSection()
-                        );
-                        showArtikelSection();
-
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace(); // Handle IOException gracefully
-            }
-        }).start();
     }
 
 
 
 
-    private void showArtikelSection() {
+
+    public void showArtikelSection() {
         // Clear existing content
         mainLayout.getChildren().clear();
         mainLayout.setStyle("-fx-padding: 10;");
@@ -175,7 +134,8 @@ public class GuiClient extends Application {
         titleLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
 
         artikelContent.getChildren().add(titleLabel);
-
+        Button addButton = new Button("Add New Artikel");
+        addButton.setOnAction(e -> addNewArtikelForm());
         artikelTable = new TableView<>();
         TableColumn<Artikel, Integer> artikelnummerCol = new TableColumn<>("Artikelnummer");
         artikelnummerCol.setCellValueFactory(new PropertyValueFactory<>("artikelnummer"));
@@ -193,37 +153,74 @@ public class GuiClient extends Application {
         istMassenartikelCol.setCellValueFactory(new PropertyValueFactory<>("istMassenartikel"));
 
         artikelTable.getColumns().addAll(artikelnummerCol, bezeichnungCol, bestandCol, preisCol, istMassenartikelCol);
-        artikelContent.getChildren().add(artikelTable);
+
+        artikelContent.getChildren().addAll(addButton, artikelTable);
 
         mainLayout.getChildren().addAll(header, artikelContent);
-
-        // Fetch articles from server asynchronously
-        new Thread(() -> {
-            try {
-                List<Artikel> articles = serverRequest.requestArticleList();
-
-                // Update UI on JavaFX application thread
-                Platform.runLater(() -> {
-                    // Access artikelTable and update its items
-                    if (artikelTable != null) {
-                        artikelTable.getItems().setAll(articles);
-                    } else {
-                        System.err.println("artikelTable is null, cannot update items.");
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace(); // Handle exception appropriately
+        try {
+            List<Artikel> articles = serverRequest.requestArticleList();
+            if (artikelTable != null) {
+                artikelTable.getItems().clear();
+                artikelTable.getItems().addAll(articles);
             }
-        }).start();
+        } catch (IOException e) {
+            showAlert("Fehler beim Laden der Artikelliste");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
-    private void showKundeManagementSection() {
-        // Implement functionality for showing customer management section
-        showAlert("Kundenverwaltung wird in Zukunft implementiert.");
+
+    private void addNewArtikelForm() {
+        // Clear existing content
+        mainLayout.getChildren().clear();
+        mainLayout.setStyle("-fx-padding: 10;");
+
+        VBox formLayout = new VBox(10);
+        formLayout.setPadding(new Insets(10));
+
+        Label formTitleLabel = new Label("Add New Artikel");
+        formTitleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+
+
+        TextField bezeichnungField = new TextField();
+        bezeichnungField.setPromptText("Bezeichnung");
+
+        TextField bestandField = new TextField();
+        bestandField.setPromptText("Bestand");
+
+        TextField preisField = new TextField();
+        preisField.setPromptText("Preis");
+
+        CheckBox istMassenartikelCheckbox = new CheckBox("Ist Massenartikel");
+
+        Button submitButton = new Button("Submit");
+        submitButton.setOnAction(e -> {
+            String bezeichnung = bezeichnungField.getText().trim();
+            int bestand = Integer.parseInt(bestandField.getText().trim());
+            float preis = Float.parseFloat(preisField.getText().trim());
+            boolean istMassenartikel = istMassenartikelCheckbox.isSelected();
+            try {
+               String response = serverRequest.addarticle(bezeichnung,bestand,preis,istMassenartikel);
+                if (response.startsWith("Neuer Artikel hinzugefügt")) {
+                    showArtikelSection();
+                } else {
+                    showAlert("error bei adding article" +response);
+                }
+            } catch (IOException ex) {
+                showAlert("error bei adding article");
+            }
+        });
+
+        formLayout.getChildren().addAll(formTitleLabel, bezeichnungField, bestandField, preisField, istMassenartikelCheckbox, submitButton);
+        mainLayout.getChildren().addAll(header, formLayout);
     }
+
+
+
 
     private void handleLogout() {
-        // Implement logout functionality
-        showLoginMenu(); // After logout, go back to login screen
+        showLoginMenu();
     }
 
     private void showAlert(String message) {
@@ -241,13 +238,7 @@ public class GuiClient extends Application {
     }
 
     private void closeConnections() {
-        try {
-            if (in != null) in.close();
-            if (out != null) out.close();
-            if (socket != null) socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+     serverRequest.closeConnections();
     }
 
     public static void main(String[] args) {

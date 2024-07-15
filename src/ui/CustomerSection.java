@@ -23,14 +23,28 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The  CustomerSection class is responsible for managing and displaying
+ * the UI components related to the customer section of the application.
+ * It handles the main eshop view (displaying all articles available in the eshop),shopping cart, and all related operations such as
+ * adding items to the cart, updating quantities, and checking out.
+ */
 public class CustomerSection {
 
     private MainLayout mainLayout;
 
+    /**
+     * Constructor to initialize the CustomerSection with the main layout.
+     *
+     * @param mainLayout the main layout of the application
+     */
     public CustomerSection(MainLayout mainLayout) {
         this.mainLayout = mainLayout;
     }
 
+    /**
+     * Initializes the customer section by setting up the header and showing the eshop .
+     */
     public void initialize() {
         mainLayout.header.getChildren().clear();
 
@@ -62,6 +76,9 @@ public class CustomerSection {
         showShop();
     }
 
+    /**
+     * Shows the shop view by clearing the main layout and setting up the table of articles.
+     */
     private void showShop() {
         mainLayout.mainLayout.getChildren().clear();
         mainLayout.artikelTableView = createArtikelTableView();
@@ -71,6 +88,11 @@ public class CustomerSection {
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, artikelContent);
     }
 
+    /**
+     * Creates and returns a TableView of articles.
+     *
+     * @return the TableView of articles
+     */
     private TableView<Artikel> createArtikelTableView() {
         mainLayout.artikelTableView.getColumns().clear();
         mainLayout.artikelTableView.setPrefSize(800, 400);
@@ -129,6 +151,11 @@ public class CustomerSection {
         return mainLayout.artikelTableView;
     }
 
+    /**
+     * Opens a dialog to enter the quantity of an article to be added to the cart.
+     *
+     * @param artikel the article to be added to the cart
+     */
     private void openQuantityDialog(Artikel artikel) {
         TextInputDialog dialog = new TextInputDialog("0");
         dialog.setTitle("Menge wählen");
@@ -145,6 +172,9 @@ public class CustomerSection {
         });
     }
 
+    /**
+     * Updates the cart item count label with the current number of items in the cart.
+     */
     private void updateCartItemCount() {
         if (mainLayout.cartItemCountLabel != null) {
             int itemCount = mainLayout.warenkorb.getWarenkorbListe().size();
@@ -154,6 +184,9 @@ public class CustomerSection {
         }
     }
 
+    /**
+     * Handles the display of the cart view.
+     */
     private void handleCart() {
         mainLayout.mainLayout.getChildren().clear();
         mainLayout.warenkorbArtikelTableView = createWarenkorbTableView();
@@ -175,6 +208,11 @@ public class CustomerSection {
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, cartContent);
     }
 
+    /**
+     * Creates and returns a TableView of items in the cart.
+     *
+     * @return the TableView of cart items
+     */
     private TableView<WarenkorbArtikel> createWarenkorbTableView() {
         mainLayout.warenkorbArtikelTableView.getColumns().clear();
         mainLayout.warenkorbArtikelTableView.setPrefSize(800, 600);
@@ -226,10 +264,20 @@ public class CustomerSection {
         return mainLayout.warenkorbArtikelTableView;
     }
 
+    /**
+     * Opens a dialog to change the quantity of an article in the cart.
+     *
+     * @param artikel the article in the cart to change quantity
+     */
     private void changeQuantityDialog(WarenkorbArtikel artikel) {
-
+        // Implementation of change quantity dialog
     }
 
+    /**
+     * Calculates and updates the total price label for the items in the cart.
+     *
+     * @return the updated total price label
+     */
     private Label calculateTotalPrice() {
         if (mainLayout.warenkorb != null && !mainLayout.warenkorb.getWarenkorbListe().isEmpty()) {
             mainLayout.totalPrice = mainLayout.warenkorb.calculateTotalPrice();
@@ -241,6 +289,9 @@ public class CustomerSection {
         return mainLayout.totalPriceLabel;
     }
 
+    /**
+     * Clears the shopping cart by removing all items.
+     */
     private void warenkorbLeeren() {
         mainLayout.shop.Warenkorbleeren(mainLayout.authuser);
         updateCartItemCount();
@@ -248,6 +299,10 @@ public class CustomerSection {
         showAlert("Warenkorb erfolgreich geleert.");
     }
 
+    /**
+     * Completes the purchase process, creating a new invoice for the customer.
+     * Updates the UI accordingly after the purchase.
+     */
     private void kaufen() {
         if (mainLayout.warenkorb.getWarenkorbListe().isEmpty()) {
             showAlert("Ihr Warenkorb ist leer. Bitte fügen Sie Artikel hinzu, bevor Sie fortfahren.");
@@ -262,8 +317,7 @@ public class CustomerSection {
         } catch (Exception e) {
             showAlert("Es gibt ein Problem.");
         }
-        mainLayout.shop.articlebestandanderen(mainLayout.authuser);
-        mainLayout.shop.kundeEreignisfesthalten("Auslagerung", mainLayout.authuser);
+
         mainLayout.shop.kaufen(mainLayout.authuser);
         updateCartItemCount();
         mainLayout.totalPriceLabel = calculateTotalPrice();
@@ -271,6 +325,11 @@ public class CustomerSection {
         mainLayout.warenkorbArtikelTableView = createWarenkorbTableView();
     }
 
+    /**
+     * Shows the details of the invoice in an alert dialog.
+     *
+     * @param rechnung the invoice to display
+     */
     private void showRechnung(Rechnung rechnung) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Rechnung Details");
@@ -317,12 +376,20 @@ public class CustomerSection {
         alert.showAndWait();
     }
 
+    /**
+     * Handles the logout action by resetting the authenticated user and navigating to the login scene.
+     */
     private void handleLogout() {
         mainLayout.authuser = null;
         showAlert("Logout erfolgreich.");
         mainLayout.stage.setScene(mainLayout.loginScene);
     }
 
+    /**
+     * Shows an alert dialog with the given message.
+     *
+     * @param message the message to display in the alert dialog
+     */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");

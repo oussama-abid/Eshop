@@ -19,7 +19,7 @@ public class Client {
     public Client() {
         this.authuser = null;
         String serverAddress = "localhost";
-        int port = 9800;
+        int port = 9801;
         try {
             socket = new Socket(serverAddress, port);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

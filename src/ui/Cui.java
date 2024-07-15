@@ -2,9 +2,15 @@ package ui;
 
 import Entities.*;
 import Exceptions.*;
+import domain.EShop;
 
 import java.time.LocalDate;
 import java.util.*;
+
+/**
+ * The Cui class manages the Command-line User Interface (CUI) for an EShop application.
+ * It handles user interaction, including registration, login, and menu navigation for customers and employees.
+ */
 
 public class Cui {
     private Scanner scanner;
@@ -19,6 +25,12 @@ public class Cui {
 
     private Nutzer authuser ;
 
+    /**
+     * Constructor for Cui class that initializes  an EShop instance and starts the login menu.
+     *
+     * @param shop The EShop instance to associate with the Cui interface.
+     */
+
     public Cui(EShop shop) {
         scanner = new Scanner(System.in);
         this.shop = shop;
@@ -29,7 +41,9 @@ public class Cui {
 
     //-----------------------------------------------for both ---------------------------------------------------
 
-
+    /**
+     * Displays the login menu , Allows registration, login, or exiting the shop.
+     */
     private void loginMenue() {
         boolean menueVerlassen = false;
         while (!menueVerlassen) {
@@ -61,7 +75,9 @@ public class Cui {
         scanner.close();
     }
 
-
+    /**
+     * Handles the user registration process, collecting user information and registering them in the EShop.
+     */
 
     private void registriereNutzer()  {
         boolean istValideEingabe = false;
@@ -116,12 +132,22 @@ public class Cui {
             System.out.print("Land: ");
             String land = scanner.nextLine();
 
-            shop.registriereKunde(name, benutzerkennung, passwort, straße, stadt, bundesland, postleitzahl, land);
-            System.out.println("Registrierung erfolgreich, Sie können sich nun einloggen!");
-            istValideEingabe = true; // Falls alle Eingabe OK, Schleife beenden
+            try {
+             Kunde kunde = shop.registriereKunde(name, benutzerkennung, passwort, straße, stadt, bundesland, postleitzahl, land);
+             System.out.println("Kunde registriert: Benutzernummer: " + kunde.getNutzerNummer() + " Name: " + kunde.getName());
+                System.out.println("Registrierung erfolgreich, Sie können sich nun einloggen!");
+                istValideEingabe = true;
+            } catch (Plzexception e) {
+
+                System.out.println(e.getMessage());
+            }
         }
     }
 
+    /**
+     * Handles the user login process.
+     * save the authenticated user after successful login.
+     */
 
     private void loginNutzer() {
         System.out.println("Geben Sie Ihre Login-Informationen ein:");
@@ -143,6 +169,11 @@ public class Cui {
 
     }
 
+    /**
+     * Displays the main menu based on the authenticated user's type (Kunde or Mitarbeiter).
+     * Redirects to specific menus for customers or employees.
+     */
+
     private void showMainMenu() {
         // Display main menu options based on user's role
         if (authuser instanceof Kunde) {
@@ -151,6 +182,11 @@ public class Cui {
             Mitarbeitermenu();
         }
     }
+
+    /**
+     * Displays the list of articles available in the shop.
+     * For each article, display its details including article number, description, stock, and price.
+     */
 
     private void zeigeArtikelliste() {
         artikelListe = shop.getArtikelListe();
@@ -176,6 +212,9 @@ public class Cui {
 
     //--------------------- Mitarbeiter functions --------------------------------------------------
 
+    /**
+     * Allows an employee to add a new article to the shop's inventory.
+     */
 
     private void FuegeArtikelHinzu() {
         System.out.println("Artikelbeschreibung: ");
@@ -263,6 +302,10 @@ public class Cui {
 
     }
 
+    /**
+     * Mitarbeiter menu to access different eshop parts.
+     */
+
     private void Mitarbeitermenu (){
         boolean isValid = false;
         while (!isValid) {
@@ -309,14 +352,18 @@ public class Cui {
             }
         }
     }
-
+    /**
+     * Displays the shop history for every article
+     */
     private void ShophistoryAnzeigen() {
         List<Artikelhistory> quantities = shop.ShophistoryAnzeigen();
         for (Artikelhistory dailyQuantity : quantities) {
             System.out.println(dailyQuantity);
         }
     }
-
+    /**
+     * Allow an employee to register a new employee
+     */
     private void registriereMitarbeiter() {
         System.out.println("Geben sie die Informationen ein");
         System.out.print("Name: ");
@@ -337,25 +384,32 @@ public class Cui {
         System.out.print("Passwort: ");
         String passwort = scanner.nextLine();
 
-        shop.registriereMitarbeiter(name, benutzerkennung, passwort);
-        System.out.println("Mitarbeiter  wird erfolgreich registriert");
+        Mitarbeiter mitarbeiter = shop.registriereMitarbeiter(name, benutzerkennung, passwort);
+        System.out.println("Mitarbeiter registriert: Benutzernummer: " + mitarbeiter.getNutzerNummer() + " Name: " + mitarbeiter.getName());
+
 
     }
-
+    /**
+     * Displays the employess list
+     */
     private void ZeigeMitarbeiterListe() {
         mitarbeiterlist = shop.getMitarbeiterlist();
         for (Mitarbeiter mitarbeiter : mitarbeiterlist) {
             System.out.println(mitarbeiter);
         }
     }
-
+    /**
+     * Displays the customers list
+     */
     private void ZeigeKundenListe() {
         kundenList = shop.getKundenList();
         for (Kunde kunde : kundenList) {
             System.out.println(kunde);
         }
     }
-
+    /**
+     * Displays the operations list for every article
+     */
     private void ShopVerlaufAnzeigen() {
         ShopVerlauf = shop.ShopVerlaufAnzeigen();
         if (ShopVerlauf.size() == 0) {
@@ -366,7 +420,9 @@ public class Cui {
             }
         }
     }
-
+    /**
+     * allow mitarbeiter to edit stock of an article
+     */
     private void aendereBestand() {
         int artikelnummer = 0;
 
@@ -445,6 +501,9 @@ public class Cui {
 
 //--------------------- Kunde functions --------------------------------------------------
 
+    /**
+     * Displays the customers menu
+     */
 
     private void KundenMenu() {
         boolean isValid = false;
@@ -482,6 +541,11 @@ public class Cui {
             }
         }
     }
+
+
+    /**
+     * Allow customer to add article to his cart
+     */
     private void HinzufuegenZumWarenkorb() {
         System.out.print("Geben Sie die Artikelnummer des zu hinzufügenden Artikels ein: ");
         int artikelnummer;
@@ -539,7 +603,9 @@ public class Cui {
     }
 
 
-
+    /**
+     * Displays a menu to manage the cart
+     */
 
     private void WarenkorbAnsehen() {
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
@@ -582,9 +648,17 @@ public class Cui {
 
     }
 
+    /**
+     * make the cart empty
+     */
+
     private void Warenkorbleeren() {
         shop.Warenkorbleeren(authuser);
     }
+
+    /**
+     * allow customer to continue the purchase process
+     */
 
     private void kaufen() {
         Warenkorb warenkorb = shop.getWarenkorb(authuser);
@@ -594,11 +668,13 @@ public class Cui {
             return;
         }
 
-        shop.articlebestandanderen(authuser);
-        shop.kundeEreignisfesthalten("Auslagerung", authuser);
         shop.kaufen(authuser);
 
     }
+
+    /**
+     * allow customer to search artikel with name
+     */
 
     public void SucheArtikelMitName() {
         //eine extra Funktion um eine Suchmaschiene zu simmulieren die auch ungenaue suche erlaubt
@@ -626,6 +702,9 @@ public class Cui {
 
 
     }
+    /**
+     * allow customer to change quantity of added article in cart
+     */
 
     private void ArtikelMengeändern() {
         System.out.print("Geben Sie die Artikelnummer des zu ändernden Artikels ein: ");

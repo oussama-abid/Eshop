@@ -5,7 +5,7 @@ import Entities.Kunde;
 import Entities.Nutzer;
 import Exceptions.FalscheLoginDaten;
 import Exceptions.MassengutException;
-import ui.EShop;
+import domain.EShop;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,14 +15,24 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ClientRequestProcessor handles client requests on the server side .
+ * It reads commands from clients, processes them, and sends appropriate responses.
+ */
 class ClientRequestProcessor implements Runnable {
-
 
     private final EShop eShop;
     private Socket clientSocket;
     private BufferedReader in;
     private PrintStream out;
     List<Artikel> artikels;
+
+    /**
+     * Constructs a ClientRequestProcessor instance for a connected client socket.
+     *
+     * @param socket The client socket representing the connected client.
+     * @param eShop  The instance of EShop handling business logic.
+     */
     public ClientRequestProcessor(Socket socket, EShop eShop) {
         this.eShop = eShop;
         clientSocket = socket;
@@ -45,6 +55,9 @@ class ClientRequestProcessor implements Runnable {
         artikels = new ArrayList<>(); // Initialize artikels with an empty list
     }
 
+    /**
+     * Continuously reads commands from the client, processes them, and sends responses.
+     */
     public void run() {
         String input = "";
 
@@ -52,11 +65,11 @@ class ClientRequestProcessor implements Runnable {
             while ((input = in.readLine()) != null) {
                 if (input.startsWith("login,")) {
                     handleLogin(input);
-                }else if (input.startsWith("addartikel,")) {
+                } else if (input.startsWith("addartikel,")) {
                     addartikel(input);
                 } else if (input.equals("3")) {
                     displayKunden();
-                }else if (input.equals("1")) {
+                } else if (input.equals("1")) {
                     displayArtikel();
                 } else if (input.equals("Q")) {
                     disconnect();
@@ -70,45 +83,70 @@ class ClientRequestProcessor implements Runnable {
         }
     }
 
-
-
+    /**
+     * loading the list of articles .
+     */
     private void displayArtikel() {
         List<Artikel> artikels = eShop.getArtikelListe();
         sendartikelstoclient(artikels);
     }
 
-
-
+    /**
+     * Sends a list of articles to the client.
+     *
+     * @param artikels The list of articles to send.
+     */
     private void sendartikelstoclient(List<Artikel> artikels) {
         out.println("artikellist," + artikels.size()); // Prefix the response
         for (Artikel artikel : artikels) {
             sendartikeltoclient(artikel);
         }
     }
-    private void sendartikeltoclient(Artikel artikel) {
-        out.println(artikel.getArtikelnummer());
-        out.println(artikel.getBezeichnung());
-        out.println(artikel.getBestand());
-        out.println(artikel.getPreis());
 
+    /**
+     * Sends a single article.
+     *
+     * @param artikel The article to send.
+     */
+    private void sendartikeltoclient(Artikel artikel) {
+        out.println(artikel.getArtikelnummer() + "," + artikel.getBezeichnung() + "," + artikel.getBestand() + "," + artikel.getPreis() + "," + artikel.isIstMassenartikel());
     }
 
+    /**
+     * loading the list of customers.
+     */
     private void displayKunden() {
         List<Kunde> kunden = eShop.getKundenList();
         sendKundenToClient(kunden);
     }
+
+    /**
+     * Sends a list of customers to the client.
+     *
+     * @param kunden The list of customers to send.
+     */
     private void sendKundenToClient(List<Kunde> kunden) {
         out.println("customerlist," + kunden.size());
         for (Kunde kunde : kunden) {
             sendKundeToClient(kunde);
         }
     }
+
+    /**
+     * Sends a single customer.
+     *
+     * @param kunde The customer to send.
+     */
     private void sendKundeToClient(Kunde kunde) {
         out.println(kunde.getName());
         out.println(kunde.getAdresse());
     }
 
-
+    /**
+     * Handles the login request from the client.
+     *
+     * @param input The login command received from the client.
+     */
     private void handleLogin(String input) {
         String[] parts = input.split(",");
         if (parts.length == 3 && parts[0].equals("login")) {
@@ -126,6 +164,11 @@ class ClientRequestProcessor implements Runnable {
         }
     }
 
+    /**
+     * Handles the add article request from the client.
+     *
+     * @param input The add article command received from the client.
+     */
     private void addartikel(String input) {
         String[] parts = input.split(",");
         if (parts.length == 6 && parts[0].equals("addartikel")) {
@@ -149,13 +192,18 @@ class ClientRequestProcessor implements Runnable {
         }
     }
 
-    // Method to send a message to this client
+    /**
+     * Sends a message to the client.
+     *
+     * @param message The message to send.
+     */
     public void sendToClient(String message) {
         out.println(message);
     }
 
-
-
+    /**
+     * Disconnects the client from the server.
+     */
     private void disconnect() {
         try {
             out.println("session end");

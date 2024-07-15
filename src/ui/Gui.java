@@ -1077,16 +1077,28 @@ package ui;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * The {@code Gui} class represents the graphical user interface for the eshop.
+ * It extends {@code MainLayout} and initializes the main stages and scenes for the application.
+ * <p>
+ * The class sets up the login and registration scenes using the {@code Authentication} class
+ * and applies the specified CSS styles. It also configures the main layout and scene for the application.
+ * </p>
+ *
+ * @see MainLayout
+ * @see Authentication
+ */
 public class Gui extends MainLayout {
 
-    protected TextField loginUsernameField = new TextField();
-    protected PasswordField loginPasswordField = new PasswordField();
-
+    /**
+     * Starts the application by setting up the primary stage, applying CSS styles,
+     * and initializing the login and registration scenes.
+     *
+     * @param primaryStage the primary stage for this application
+     */
     @Override
     public void start(Stage primaryStage) {
         stage = primaryStage;
@@ -1110,4 +1122,5 @@ public class Gui extends MainLayout {
         stage.show();
     }
 }
+
 

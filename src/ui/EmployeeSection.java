@@ -24,14 +24,32 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
+/**
+ * The  EmployeeSection class is responsible for managing and displaying
+ * the UI components related to the Employee section of the application.
+ * It handles management of different sections such as articles,
+ * customer management, and employee management, events management and shop history
+ */
+
 public class EmployeeSection {
 
     private MainLayout mainLayout;
+
+
+    /**
+     * Constructor to initialize the EmployeeSection with the main layout.
+     *
+     * @param mainLayout the main layout of the application
+     */
 
     public EmployeeSection(MainLayout mainLayout) {
         this.mainLayout = mainLayout;
     }
 
+    /**
+     * Initializes the employee section by setting up the header and showing the first view (Artikel management section) .
+     */
     public void initialize() {
         mainLayout.header.getChildren().clear();
 
@@ -61,7 +79,9 @@ public class EmployeeSection {
         mainLayout.header.getChildren().add(mitarbeiterHeader);
         showArtikelSection();
     }
-
+    /**
+     * Displays the article section.
+     */
     private void showArtikelSection() {
         mainLayout.mainLayout.getChildren().clear();
 
@@ -78,6 +98,12 @@ public class EmployeeSection {
         artikelContent.getChildren().addAll(mainLayout.artikelTableView);
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, addArtikel, history, artikelContent);
     }
+
+    /**
+     * Creates the TableView for displaying articles.
+     *
+     * @return The TableView for articles.
+     */
 
     private TableView<Artikel> createArtikelTableView() {
         mainLayout.artikelTableView.getColumns().clear();
@@ -136,6 +162,12 @@ public class EmployeeSection {
 
         return mainLayout.artikelTableView;
     }
+
+    /**
+     * Displays a dialog to update the quantity of an article.
+     *
+     * @param artikel The article to update.
+     */
 
     private void updateQuantityDialog(Artikel artikel) {
         TextInputDialog dialog = new TextInputDialog("1");
@@ -200,6 +232,10 @@ public class EmployeeSection {
         });
     }
 
+    /**
+     * Handles the process of  adding a new article.
+     */
+
     private void handleAddArtikel() {
         mainLayout.mainLayout.getChildren().clear();
 
@@ -237,6 +273,16 @@ public class EmployeeSection {
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, addArtikelLayout);
     }
 
+    /**
+     * Adds a new article to the inventory using Eshop class.
+     *
+     * @param bezeichnungField The TextField for the article's name.
+     * @param bestandField The TextField for the article's stock.
+     * @param preisField The TextField for the article's price.
+     * @param massenartikelCheckBox The CheckBox to indicate if it's a mass article.
+     * @param packungsGrosseField The TextField for the package size.
+     */
+
     private void addArtikel(TextField bezeichnungField, TextField bestandField, TextField preisField, CheckBox massenartikelCheckBox, TextField packungsGrosseField) {
         String bezeichnung = bezeichnungField.getText();
         int bestand;
@@ -263,6 +309,10 @@ public class EmployeeSection {
             showAlert("Fehler beim Hinzufügen des Artikels: " + ex.getMessage());
         }
     }
+
+    /**
+     * used to display eshop events section and handles the displaying of  articles history chart using  drawStockHistory functions.
+     */
 
     private void shopHistorieAnsehen() {
         mainLayout.mainLayout.getChildren().clear();
@@ -320,6 +370,12 @@ public class EmployeeSection {
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, vbox);
     }
 
+    /**
+     * Creates the TableView for displaying eshop operations (einlagerung , auslagerung  , kaufen )
+     *
+     * @return The TableView for events.
+     */
+
     private TableView<Event> createVerlaufTableView() {
         mainLayout.eventTableView.getColumns().clear();
         mainLayout.eventTableView.setPrefSize(800, 600);
@@ -347,6 +403,13 @@ public class EmployeeSection {
 
         return mainLayout.eventTableView;
     }
+
+    /**
+     * Draws the stock history chart of a given article.
+     *
+     * @param lineChart The line chart where the stock history will be drawn.
+     * @param artikel   The article for which the stock history will be displayed.
+     */
 
     private void drawStockHistory(LineChart<Number, Number> lineChart, Artikel artikel) {
         List<Artikelhistory> historyList = mainLayout.shop.ShophistoryAnzeigen().stream()
@@ -394,6 +457,12 @@ public class EmployeeSection {
         lineChart.getData().add(series);
     }
 
+    /**
+     * Finds an article by its name.
+     *
+     * @param bezeichnung The name of the article to find.
+     * @return The found article, or null if no article with the given name is found.
+     */
     private Artikel findArtikelByBezeichnung(String bezeichnung) {
         for (Artikel artikel : mainLayout.shop.getArtikelListe()) {
             if (artikel.getBezeichnung().equals(bezeichnung)) {
@@ -403,6 +472,9 @@ public class EmployeeSection {
         return null;
     }
 
+    /**
+     * Displays the customer management section in the main layout.
+     */
     private void showKundeManagementSection() {
         mainLayout.mainLayout.getChildren().clear();
         mainLayout.kundeTableView = createKundenTableView();
@@ -411,6 +483,12 @@ public class EmployeeSection {
         kundeManagementContent.getChildren().addAll(mainLayout.kundeTableView);
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, kundeManagementContent);
     }
+
+    /**
+     * Creates a TableView for displaying customers.
+     *
+     * @return The created TableView for customers.
+     */
 
     private TableView<Kunde> createKundenTableView() {
         mainLayout.kundeTableView.getColumns().clear();
@@ -449,6 +527,10 @@ public class EmployeeSection {
         return mainLayout.kundeTableView;
     }
 
+    /**
+     * Displays the employee management section in the main layout.
+     */
+
     private void showMitarbeiterManagementSection() {
         mainLayout.mainLayout.getChildren().clear();
         Hyperlink addMitarbeiter = new Hyperlink("Füge Mitarbeiter hinzu");
@@ -460,6 +542,13 @@ public class EmployeeSection {
         mitarbeiterManagementContent.getChildren().addAll(mainLayout.mitarbeiterTableView);
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, addMitarbeiter, mitarbeiterManagementContent);
     }
+
+
+    /**
+     * Creates a TableView for displaying employees.
+     *
+     * @return The created TableView for employees.
+     */
 
     private TableView<Mitarbeiter> createMitarbeiterTableView() {
         mainLayout.mitarbeiterTableView.getColumns().clear();
@@ -485,6 +574,10 @@ public class EmployeeSection {
 
         return mainLayout.mitarbeiterTableView;
     }
+
+    /**
+     * Handles the process of  adding a new employee .
+     */
 
     private void addMitarbeiter() {
         mainLayout.mainLayout.getChildren().clear();
@@ -513,6 +606,13 @@ public class EmployeeSection {
         mainLayout.mainLayout.getChildren().addAll(mainLayout.header, addMitarbeiterLayout);
     }
 
+    /**
+     * adding a new employee with the provided name, username, and password fields using eshop class.
+     *
+     * @param mitarbeiterNameField       The TextField for the employee's name.
+     * @param mitarbeiterUsernameField   The TextField for the employee's username.
+     * @param mitarbeiterPasswordField   The PasswordField for the employee's password.
+     */
     private void registerMitarbeiter(TextField mitarbeiterNameField, TextField mitarbeiterUsernameField, PasswordField mitarbeiterPasswordField) {
         String name = mitarbeiterNameField.getText();
         String benutzerkennung = mitarbeiterUsernameField.getText();
@@ -525,19 +625,27 @@ public class EmployeeSection {
 
         try {
             mainLayout.shop.checkUniqueUsername(benutzerkennung);
-            mainLayout.shop.registriereMitarbeiter(name, benutzerkennung, passwort);
+          Mitarbeiter mitarbeite =  mainLayout.shop.registriereMitarbeiter(name, benutzerkennung, passwort);
             showAlert("Mitarbeiter erfolgreich hinzugefügt.");
         } catch (NutzernameExistiertBereits ex) {
             showAlert(ex.getMessage());
         }
     }
 
+    /**
+     * Handles the logout action by resetting the authenticated user and navigating to the login scene.
+     */
+
     private void handleLogout() {
         mainLayout.authuser = null;
         showAlert("Logout erfolgreich.");
         mainLayout.stage.setScene(mainLayout.loginScene);
     }
-
+    /**
+     * Shows an alert dialog with the given message.
+     *
+     * @param message the message to display in the alert dialog
+     */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Information");

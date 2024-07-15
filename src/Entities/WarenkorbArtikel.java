@@ -1,54 +1,100 @@
 package Entities;
 
-
-import java.util.List;
-
+/**
+ * This class Represents an item in the shopping cart, consisting of an article, quantity added to the cart , and price per piece.
+ */
 public class WarenkorbArtikel {
-    private Artikel Artikel;
-    private int Anzahl;
-    private double Preis;
+    private Artikel artikel;
+    private int anzahl;
+    private double preis;
 
-
+    /**
+     * Constructs a new item in the cart with the specified article and quantity. and getting the price per piece for the specefeid article
+     *
+     * @param artikel the article added to the cart
+     * @param anzahl the quantity of the article in the shopping cart
+     */
     public WarenkorbArtikel(Artikel artikel, int anzahl) {
-        this.Artikel = artikel;
-        this.Anzahl = anzahl;
-        this.Preis = artikel.getPreis();
+        this.artikel = artikel;
+        this.anzahl = anzahl;
+        this.preis = artikel.getPreis();
     }
 
-    public Entities.Artikel getArtikel() {
-        return Artikel;
+    /**
+     * Retrieves the shopping cart item.
+     *
+     * @return the article
+     */
+    public Artikel getArtikel() {
+        return artikel;
     }
 
-    public void setArtikel(Entities.Artikel artikel) {
-        Artikel = artikel;
+    /**
+     * Sets the  shopping cart item.
+     *
+     * @param artikel the article to set
+     */
+    public void setArtikel(Artikel artikel) {
+        this.artikel = artikel;
     }
 
+    /**
+     * Retrieves the quantity of the article in the shopping cart.
+     *
+     * @return the quantity of the article
+     */
     public int getAnzahl() {
-        return Anzahl;
+        return anzahl;
     }
 
+    /**
+     * Sets the quantity of the article in the shopping cart.
+     *
+     * @param anzahl the quantity to set
+     */
     public void setAnzahl(int anzahl) {
-        Anzahl = anzahl;
+        this.anzahl = anzahl;
     }
 
-    public void setPreis(double preis) {
-        Preis = preis;
-    }
-
+    /**
+     * Retrieves the price per piece of the article.
+     *
+     * @return the price per piece
+     */
     public double getPreis() {
-        return Preis;
+        return preis;
     }
 
+    /**
+     * Sets the price per piece of the article.
+     *
+     * @param preis the price per piece to set
+     */
+    public void setPreis(double preis) {
+        this.preis = preis;
+    }
+
+    /**
+     * Calculates the total price of this item in the shopping cart.
+     *
+     * @return the total price of this item (price per piece * quantity)
+     */
     public double getGesamtPreis() {
-        double gesamtPreis = Artikel.getPreis() * Anzahl;
+        double gesamtPreis = artikel.getPreis() * anzahl;
         return Math.round(gesamtPreis * 100.0) / 100.0;
     }
+
+    /**
+     * Returns a string representation of the WarenkorbArtikel object.
+     *
+     * @return a string representation of the object
+     */
     @Override
     public String toString() {
-        return
-                "artikel=" + Artikel +
-                ", quantity=" + Anzahl +
-                        ", preis=" + Preis +
+        return "WarenkorbArtikel{" +
+                "artikel=" + artikel +
+                ", anzahl=" + anzahl +
+                ", preis=" + preis +
                 '}';
     }
 }
