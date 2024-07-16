@@ -68,10 +68,10 @@ Navigate to `ui/Main.java` and select the preferred user interface to run.
    Note: Uncomment `//listenForServerMessages();` inside `requestArticleList()` in `client/ServerRequest.java` to test real-time updates.
 
 
+### Server-Client Communication protocols :
 
-
-
-
+ -The transport layer protocol used is TCP, which ensures reliable and ordered delivery of data between the server and clients. By default, The Java ServerSocket and Socket classes use TCP to establish connections and communicate between the server and client 
+ -The application layer protocol is a custom text-based protocol where commands and responses are exchanged as plain text strings following predefined formats.
 
 
 
