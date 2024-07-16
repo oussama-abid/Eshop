@@ -6,16 +6,6 @@ This project is developed in Java version "1.8.0_411".
 
 Eshop is a Java application that enables users to browse and purchase products. It offers extensive functionalities for both customers and administrators, featuring user-friendly interfaces for authentication, product management, order management, user management, and more.
 
-## Project Structure
-
-Eshop
-├── src
-│   ├── Client
-│   ├── domain
-│   ├── Exceptions
-│   ├── Persistence
-│   ├── Server
-│   └── ui
 ## Getting Started
 
 ### Prerequisites
