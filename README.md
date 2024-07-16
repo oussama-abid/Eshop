@@ -61,10 +61,10 @@ Navigate to `ui/Main.java` and select the preferred user interface to run.
 
 ### Server-Client Version
 
-1. **Running Server**.
-2. **Running Clients**:
-   - Use the same login credentials as above.
-
+1. **Running Server**. `Server/EshopServer.java`
+2. **Running Clients**: ui/Main.java
+   - Use the same login credentials as above , explore articles list , add new articles
+     
    Note: Uncomment `//listenForServerMessages();` inside `requestArticleList()` in `client/ServerRequest.java` to test real-time updates.
 
 
