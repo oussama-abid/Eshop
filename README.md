@@ -29,7 +29,7 @@ Navigate to `ui/Main.java` and select the preferred user interface to run.
 ### Using Server-Client version (CuI or GUI)
 
 1. Start the server: `Server/EshopServer.java`.
-2. Run the CLI or GUI client using `ui/Main.java`.
+2. Run the CUI or GUI client using `ui/Main.java`.
    
     Note: Uncomment `//listenForServerMessages();` inside `requestArticleList()` in `client/ServerRequest.java` to test real-time updates.
 
